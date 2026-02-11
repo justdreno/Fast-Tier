@@ -15,12 +15,13 @@ export default function Navigation({ searchQuery, setSearchQuery }: NavigationPr
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center gap-10">
-            <div className="flex items-center gap-2.5 group cursor-pointer">
-              <img
-                src="/logo.png"
-                alt="FastTier"
-                className="h-10 object-contain"
-              />
+            <div className="flex flex-col justify-center cursor-pointer">
+              <span className="text-2xl font-black text-[#ff9f43] tracking-tight leading-none">
+                FastTier
+              </span>
+              <span className="text-[8px] font-bold text-[#ff9f43]/70 tracking-[0.15em] uppercase">
+                Minecraft Tier Testing
+              </span>
             </div>
 
             {/* Nav Links */}
