@@ -1,4 +1,4 @@
-import { Trophy, BookOpen, Search, Zap } from 'lucide-react';
+import { Trophy, Search } from 'lucide-react';
 import { useState } from 'react';
 
 interface NavigationProps {
@@ -16,20 +16,11 @@ export default function Navigation({ searchQuery, setSearchQuery }: NavigationPr
           {/* Logo */}
           <div className="flex items-center gap-10">
             <div className="flex items-center gap-2.5 group cursor-pointer">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#ff9f43] to-[#ff8c00] rounded-lg blur opacity-50 group-hover:opacity-90 transition-opacity duration-500" />
-                <div className="relative bg-[#0a0a0a] p-2 rounded-lg border border-white/5 group-hover:border-[#ff9f43]/30 transition-all duration-300">
-                  <Zap className="text-[#ff9f43]" size={18} />
-                </div>
-              </div>
-              <div>
-                <div className="text-lg font-black bg-gradient-to-r from-white via-white to-[#ff9f43] bg-clip-text text-transparent tracking-tight">
-                  FAST TIER
-                </div>
-                <div className="text-[9px] text-[#ff9f43]/70 font-semibold tracking-[0.2em] uppercase">
-                  Minecraft Rankings
-                </div>
-              </div>
+              <img 
+                src="/src/assets/images/logo.png" 
+                alt="FastTier" 
+                className="h-10 object-contain"
+              />
             </div>
 
             {/* Nav Links */}
@@ -38,10 +29,6 @@ export default function Navigation({ searchQuery, setSearchQuery }: NavigationPr
                 <Trophy size={16} />
                 <span>Rankings</span>
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-8 bg-gradient-to-r from-transparent via-[#ff9f43] to-transparent rounded-full" />
-              </button>
-              <button className="group flex items-center gap-2 px-4 py-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 font-medium text-sm transition-all duration-300">
-                <BookOpen size={16} className="group-hover:text-[#ff9f43] transition-colors duration-300" />
-                <span>API Docs</span>
               </button>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LucideIcon, X, Copy, Share2, Hash, User, CheckCircle } from 'lucide-react';
+import { LucideIcon, X, Copy, Hash, User, CheckCircle } from 'lucide-react';
 import { Heart, Flame, Sword, Axe, Hammer, Users, Swords } from 'lucide-react';
 
 interface Tier {
@@ -166,13 +166,13 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
             </div>
           </div>
 
-          {/* Share button */}
+          {/* Copy UID button */}
           <button
-            onClick={() => handleCopy(`${player.username} | ${player.rank} | #${rank}`, 'Profile info')}
+            onClick={() => handleCopy(player.uid, 'UID')}
             className="w-full flex items-center justify-center gap-2 px-4 py-2.5 mb-6 bg-gradient-to-r from-[#ff9f43]/10 to-[#ff8c00]/10 border border-[#ff9f43]/15 rounded-xl text-[#ff9f43] text-sm font-semibold hover:from-[#ff9f43]/15 hover:to-[#ff8c00]/15 transition-all duration-300"
           >
-            <Share2 size={14} />
-            Share Profile
+            <Copy size={14} />
+            Copy UID
           </button>
 
           {/* Tier Achievements - Hover to reveal */}
