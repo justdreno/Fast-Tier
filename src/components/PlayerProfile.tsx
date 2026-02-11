@@ -1,21 +1,7 @@
 import { useState, useEffect } from 'react';
 import { LucideIcon, X, Copy, Hash, User, CheckCircle } from 'lucide-react';
 import { Heart, Flame, Sword, Axe, Hammer, Users, Swords } from 'lucide-react';
-
-interface Tier {
-  gamemode: string;
-  tier: string;
-}
-
-interface Player {
-  id: string;
-  uid: string;
-  username: string;
-  rank: string;
-  points: number;
-  region: string;
-  tiers: Tier[];
-}
+import type { Player } from '../lib/supabase';
 
 interface PlayerProfileProps {
   player: Player;
@@ -179,7 +165,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
           <div>
             <h3 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-3">Gamemodes</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {player.tiers.map((tierData, index) => {
+              {(player.tiers || []).map((tierData, index) => {
                 const Icon = gamemodeIcons[tierData.gamemode] || Swords;
                 const colors = getTierColor(tierData.tier);
                 return (

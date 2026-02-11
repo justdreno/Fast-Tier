@@ -1,29 +1,62 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PlayerRow from './PlayerRow';
 import PlayerProfile from './PlayerProfile';
-import { mockPlayers } from '../data/mockData';
+import { getPlayers, searchPlayers, type Player } from '../lib/supabase';
 
 interface LeaderboardProps {
   gamemode: string;
   searchQuery: string;
 }
 
-interface Player {
-  id: string;
-  uid: string;
-  username: string;
-  rank: string;
-  points: number;
-  region: string;
-  tiers: Array<{ gamemode: string; tier: string }>;
-}
-
 export default function Leaderboard({ gamemode, searchQuery }: LeaderboardProps) {
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedPlayer, setSelectedPlayer] = useState<{ player: Player; rank: number } | null>(null);
 
-  const filteredPlayers = mockPlayers.filter(player =>
-    player.username.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    async function fetchPlayers() {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        if (searchQuery) {
+          const data = await searchPlayers(searchQuery);
+          setPlayers(data);
+        } else {
+          const data = await getPlayers();
+          setPlayers(data);
+        }
+      } catch (err) {
+        setError('Failed to load players. Please try again later.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPlayers();
+  }, [searchQuery]);
+
+  if (loading) {
+    return (
+      <div className="animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+        <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20 p-12 text-center">
+          <div className="text-white/30">Loading players...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+        <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20 p-12 text-center">
+          <div className="text-red-400">{error}</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -48,8 +81,8 @@ export default function Leaderboard({ gamemode, searchQuery }: LeaderboardProps)
                 </tr>
               </thead>
               <tbody>
-                {filteredPlayers.length > 0 ? (
-                  filteredPlayers.map((player, index) => (
+                {players.length > 0 ? (
+                  players.map((player, index) => (
                     <tr
                       key={player.id}
                       onClick={() => setSelectedPlayer({ player, rank: index + 1 })}

@@ -1,14 +1,5 @@
 import TierBadge from './TierBadge';
-
-interface Player {
-  id: string;
-  uid: string;
-  username: string;
-  rank: string;
-  points: number;
-  region: string;
-  tiers: Array<{ gamemode: string; tier: string }>;
-}
+import type { Player } from '../lib/supabase';
 
 interface PlayerRowProps {
   player: Player;
@@ -56,9 +47,10 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
   };
 
   // Filter tiers by gamemode
+  const playerTiers = player.tiers || [];
   const displayTiers = gamemode === 'overall'
-    ? player.tiers
-    : player.tiers.filter(t => t.gamemode === gamemode);
+    ? playerTiers
+    : playerTiers.filter(t => t.gamemode === gamemode);
 
   return (
     <>
