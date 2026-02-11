@@ -16,9 +16,9 @@ export default function Navigation({ searchQuery, setSearchQuery }: NavigationPr
           {/* Logo */}
           <div className="flex items-center gap-10">
             <div className="flex items-center gap-2.5 group cursor-pointer">
-              <img 
-                src="/src/assets/images/logo.png" 
-                alt="FastTier" 
+              <img
+                src="/logo.png"
+                alt="FastTier"
                 className="h-10 object-contain"
               />
             </div>
