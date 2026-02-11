@@ -11,11 +11,24 @@ export default function RankedListing({
   avatarUrl,
   className = '' 
 }: RankedListingProps) {
+  const getRankStyle = (rank: number) => {
+    switch (rank) {
+      case 1:
+        return 'from-[#ffd700] to-[#ffb800]';
+      case 2:
+        return 'from-[#c0c0c0] to-[#a8a8a8]';
+      case 3:
+        return 'from-[#cd7f32] to-[#b8620e]';
+      default:
+        return 'from-[#4a4a4a] to-[#3a3a3a]';
+    }
+  };
+
   return (
     <div className={`relative flex items-center overflow-hidden ${className}`}>
-      {/* Gold slanted background */}
+      {/* Slanted background */}
       <div 
-        className="absolute inset-y-0 left-0 bg-gradient-to-r from-[#ffd700] to-[#ffb800]"
+        className={`absolute inset-y-0 left-0 bg-gradient-to-r ${getRankStyle(rank)}`}
         style={{
           clipPath: 'polygon(0 0, 85% 0, 100% 100%, 0 100%)',
           width: '120px'

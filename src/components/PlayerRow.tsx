@@ -23,7 +23,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
         <div className="relative w-11 h-11 flex items-center justify-center">
           <div className="absolute inset-0 bg-gradient-to-br from-[#ffd700] to-[#ffb800] rounded-xl opacity-20 blur-sm" />
           <div className="relative w-11 h-11 bg-gradient-to-br from-[#ffd700]/20 to-[#ffb800]/10 border border-[#ffd700]/30 rounded-xl flex items-center justify-center">
-            <span className="text-lg">👑</span>
+            <span className="text-lg font-bold text-[#ffd700]">1</span>
           </div>
         </div>
       );
@@ -33,7 +33,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
         <div className="relative w-11 h-11 flex items-center justify-center">
           <div className="absolute inset-0 bg-gradient-to-br from-[#c0c0c0] to-[#a8a8a8] rounded-xl opacity-15 blur-sm" />
           <div className="relative w-11 h-11 bg-gradient-to-br from-[#c0c0c0]/15 to-[#a8a8a8]/10 border border-[#c0c0c0]/25 rounded-xl flex items-center justify-center">
-            <span className="text-lg">🥈</span>
+            <span className="text-lg font-bold text-[#c0c0c0]">2</span>
           </div>
         </div>
       );
@@ -43,7 +43,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
         <div className="relative w-11 h-11 flex items-center justify-center">
           <div className="absolute inset-0 bg-gradient-to-br from-[#cd7f32] to-[#b8620e] rounded-xl opacity-15 blur-sm" />
           <div className="relative w-11 h-11 bg-gradient-to-br from-[#cd7f32]/15 to-[#b8620e]/10 border border-[#cd7f32]/25 rounded-xl flex items-center justify-center">
-            <span className="text-lg">🥉</span>
+            <span className="text-lg font-bold text-[#cd7f32]">3</span>
           </div>
         </div>
       );
