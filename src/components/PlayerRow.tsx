@@ -50,7 +50,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
   const playerTiers = player.tiers || [];
   const displayTiers = gamemode === 'overall'
     ? playerTiers
-    : playerTiers.filter(t => t.gamemode === gamemode);
+    : playerTiers.filter(t => t.gamemode?.code === gamemode);
 
   return (
     <>
@@ -93,14 +93,18 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
       <td className="px-5 py-4">
         <div className="flex flex-wrap gap-1.5">
           {displayTiers.length > 0 ? (
-            displayTiers.map((tier, index) => (
-              <TierBadge
-                key={index}
-                gamemode={tier.gamemode}
-                tier={tier.tier}
-                showGamemode={gamemode === 'overall'}
-              />
-            ))
+            displayTiers.map((playerTier, index) => {
+              const gamemodeCode = playerTier.gamemode?.code ?? 'unknown';
+              const tierCode = playerTier.tier_definition?.code ?? 'N/A';
+              return (
+                <TierBadge
+                  key={index}
+                  gamemode={gamemodeCode}
+                  tier={tierCode}
+                  showGamemode={gamemode === 'overall'}
+                />
+              );
+            })
           ) : (
             <span className="text-white/20 text-xs italic">No tier</span>
           )}

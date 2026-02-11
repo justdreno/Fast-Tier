@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { LucideIcon, X, Copy, Hash, User, CheckCircle } from 'lucide-react';
+import { LucideIcon, X, Copy, Hash, User, CheckCircle, Trophy, Target, Zap, Medal, Crown } from 'lucide-react';
 import { Heart, Flame, Sword, Axe, Hammer, Users, Swords } from 'lucide-react';
-import type { Player } from '../lib/supabase';
+import type { Player, PlayerAchievement } from '../lib/supabase';
 
 interface PlayerProfileProps {
   player: Player;
@@ -39,8 +39,16 @@ const gamemodeIcons: Record<string, LucideIcon> = {
   ltms: Swords,
 };
 
+const achievementIcons: Record<string, LucideIcon> = {
+  Target,
+  Zap,
+  Trophy,
+  Medal,
+  Crown,
+};
+
 const getTierColor = (tier: string) => {
-  if (tier.startsWith('HT')) {
+  if (tier?.startsWith('HT')) {
     const num = parseInt(tier.replace('HT', ''));
     if (num === 1) return { bg: 'from-[#10b981] to-[#059669]', border: 'border-[#10b981]/25', text: 'text-white' };
     if (num === 2) return { bg: 'from-[#8b5cf6] to-[#7c3aed]', border: 'border-[#8b5cf6]/25', text: 'text-white' };
@@ -48,6 +56,10 @@ const getTierColor = (tier: string) => {
     return { bg: 'from-[#ff9f43] to-[#ff7700]', border: 'border-[#ff9f43]/25', text: 'text-white' };
   }
   return { bg: 'from-white/[0.06] to-white/[0.03]', border: 'border-white/[0.08]', text: 'text-white/60' };
+};
+
+const getAchievementIcon = (iconName: string): LucideIcon => {
+  return achievementIcons[iconName] || Trophy;
 };
 
 export default function PlayerProfile({ player, rank, onClose }: PlayerProfileProps) {
@@ -161,13 +173,15 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
             Copy UID
           </button>
 
-          {/* Tier Achievements - Hover to reveal */}
+            {/* Gamemodes & Tiers */}
           <div>
             <h3 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-3">Gamemodes</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {(player.tiers || []).map((tierData, index) => {
-                const Icon = gamemodeIcons[tierData.gamemode] || Swords;
-                const colors = getTierColor(tierData.tier);
+              {(player.tiers || []).map((playerTier, index) => {
+                const gamemodeCode = playerTier.gamemode?.code ?? 'unknown';
+                const tierCode = playerTier.tier_definition?.code ?? 'N/A';
+                const Icon = gamemodeIcons[gamemodeCode] || Swords;
+                const colors = getTierColor(tierCode);
                 return (
                   <div
                     key={index}
@@ -176,16 +190,43 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                   >
                     <Icon size={16} className="text-white/30 group-hover:text-white/60 transition-colors duration-300 mb-0.5" strokeWidth={2} />
                     <span className="gamemode-label text-[11px] font-semibold text-white/50 group-hover:text-white/70 transition-all duration-300">
-                      {gamemodeLabels[tierData.gamemode] || tierData.gamemode}
+                      {gamemodeLabels[gamemodeCode] || gamemodeCode}
                     </span>
                     <div className={`tier-label px-2.5 py-0.5 rounded-md bg-gradient-to-r ${colors.bg} ${colors.border} border ${colors.text} text-[10px] font-black tracking-wide`}>
-                      {tierData.tier}
+                      {tierCode}
                     </div>
                   </div>
                 );
               })}
             </div>
           </div>
+
+          {/* Achievements */}
+          {(player.achievements || []).length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-3">Achievements</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {(player.achievements || []).map((playerAchievement: PlayerAchievement, index: number) => {
+                  const achievement = playerAchievement.achievement;
+                  if (!achievement) return null;
+                  const Icon = getAchievementIcon(achievement.icon_name || 'Trophy');
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 p-2 bg-white/[0.02] border border-white/[0.05] rounded-lg"
+                      style={{ borderColor: `${achievement.color_hex}20` }}
+                    >
+                      <Icon size={14} style={{ color: achievement.color_hex }} />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[10px] font-semibold text-white/70 truncate">{achievement.name}</div>
+                        <div className="text-[8px] text-white/40">+{achievement.points_bonus} pts</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Last Updated */}
           <div className="mt-6 pt-4 border-t border-white/[0.04] flex items-center justify-between">
