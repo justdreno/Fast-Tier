@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import PlayerRow from './PlayerRow';
-import ServerInfo from './ServerInfo';
 import PlayerProfile from './PlayerProfile';
 import { mockPlayers } from '../data/mockData';
 
@@ -11,6 +10,7 @@ interface LeaderboardProps {
 
 interface Player {
   id: string;
+  uid: string;
   username: string;
   rank: string;
   points: number;
@@ -27,47 +27,44 @@ export default function Leaderboard({ gamemode, searchQuery }: LeaderboardProps)
 
   return (
     <>
-      <div className="relative">
-        <div className="absolute top-0 right-0 z-10">
-          <ServerInfo />
-        </div>
-
-        <div className="bg-gradient-to-b from-[#0f0f0f] to-[#1a1a1a] rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
+      <div className="animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+        <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20">
           <div className="overflow-x-auto scrollbar-thin">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/5 bg-[#0a0a0a]/50">
-                  <th className="px-6 py-5 text-left text-xs font-bold text-white/40 uppercase tracking-widest">
+                <tr className="border-b border-white/[0.04]">
+                  <th className="px-5 py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em]">
                     Rank
                   </th>
-                  <th className="px-6 py-5 text-left text-xs font-bold text-white/40 uppercase tracking-widest">
+                  <th className="px-5 py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em]">
                     Player
                   </th>
-                  <th className="px-6 py-5 text-left text-xs font-bold text-white/40 uppercase tracking-widest">
+                  <th className="px-5 py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em]">
                     Region
                   </th>
-                  <th className="px-6 py-5 text-left text-xs font-bold text-white/40 uppercase tracking-widest">
-                    Tiers
+                  <th className="px-5 py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em]">
+                    {gamemode === 'overall' ? 'Tiers' : `${gamemode.charAt(0).toUpperCase() + gamemode.slice(1)} Tier`}
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody>
                 {filteredPlayers.length > 0 ? (
                   filteredPlayers.map((player, index) => (
                     <tr
                       key={player.id}
                       onClick={() => setSelectedPlayer({ player, rank: index + 1 })}
-                      className="border-b border-white/5 hover:bg-[#1a1a1a]/60 transition-all cursor-pointer group"
+                      className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-all duration-300 cursor-pointer group animate-fadeInUp"
+                      style={{ animationDelay: `${0.25 + index * 0.05}s` }}
                     >
-                      <PlayerRow player={player} rank={index + 1} />
+                      <PlayerRow player={player} rank={index + 1} gamemode={gamemode} />
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} className="px-6 py-16 text-center text-white/40">
+                    <td colSpan={4} className="px-6 py-20 text-center">
                       <div className="space-y-2">
-                        <div className="text-lg font-semibold">No players found</div>
-                        <div className="text-sm">Try searching for a different player</div>
+                        <div className="text-base font-semibold text-white/25">No players found</div>
+                        <div className="text-sm text-white/15">Try a different search</div>
                       </div>
                     </td>
                   </tr>

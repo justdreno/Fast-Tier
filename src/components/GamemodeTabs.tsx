@@ -20,9 +20,9 @@ const gamemodes = [
 
 export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: GamemodeTabsProps) {
   return (
-    <div className="mb-10">
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
-        {gamemodes.map((gamemode) => {
+    <div className="mb-10 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
+      <div className="flex flex-wrap items-center gap-2.5">
+        {gamemodes.map((gamemode, index) => {
           const Icon = gamemode.icon;
           const isSelected = selectedGamemode === gamemode.id;
 
@@ -30,16 +30,24 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
             <button
               key={gamemode.id}
               onClick={() => setSelectedGamemode(gamemode.id)}
+              style={{ animationDelay: `${index * 0.04}s` }}
               className={`
-                flex items-center gap-2 px-5 py-3 rounded-lg font-semibold transition-all whitespace-nowrap text-sm
+                animate-fadeInUp
+                relative flex items-center gap-2 px-4 py-2 rounded-full font-semibold transition-all duration-300 whitespace-nowrap text-[13px]
                 ${isSelected
-                  ? 'bg-gradient-to-br from-[#ff9f43] to-[#ff8c00] text-black shadow-xl shadow-[#ff9f43]/40 scale-105'
-                  : 'bg-[#0f0f0f] text-white/50 hover:text-white hover:bg-[#1a1a1a] border border-white/10 hover:border-white/20'
+                  ? 'bg-gradient-to-r from-[#ff9f43] to-[#ff8c00] text-black shadow-lg shadow-[#ff9f43]/25 scale-105'
+                  : 'bg-white/[0.04] text-white/40 hover:text-white/80 hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/[0.12]'
                 }
               `}
             >
-              <Icon size={16} />
+              {isSelected && (
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#ff9f43] to-[#ff8c00] opacity-20 blur-md -z-10" />
+              )}
+              <Icon size={14} strokeWidth={2.5} />
               <span>{gamemode.label}</span>
+              {isSelected && (
+                <div className="w-1.5 h-1.5 rounded-full bg-black/40 ml-0.5" />
+              )}
             </button>
           );
         })}

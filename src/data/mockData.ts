@@ -1,6 +1,7 @@
 export const mockPlayers = [
   {
     id: '1',
+    uid: 'FT-00291',
     username: 'Marlowww',
     rank: 'Combat Grandmaster',
     points: 435,
@@ -18,6 +19,7 @@ export const mockPlayers = [
   },
   {
     id: '2',
+    uid: 'FT-00184',
     username: 'ItzRealMe',
     rank: 'Combat Master',
     points: 330,
@@ -35,6 +37,7 @@ export const mockPlayers = [
   },
   {
     id: '3',
+    uid: 'FT-00327',
     username: 'Swight',
     rank: 'Combat Master',
     points: 290,
@@ -52,6 +55,7 @@ export const mockPlayers = [
   },
   {
     id: '4',
+    uid: 'FT-00412',
     username: 'coldified',
     rank: 'Combat Master',
     points: 281,
@@ -69,6 +73,7 @@ export const mockPlayers = [
   },
   {
     id: '5',
+    uid: 'FT-00158',
     username: 'janeky',
     rank: 'Combat Expert',
     points: 275,
@@ -86,6 +91,7 @@ export const mockPlayers = [
   },
   {
     id: '6',
+    uid: 'FT-00573',
     username: 'TechnoGamer',
     rank: 'Combat Expert',
     points: 268,
@@ -103,6 +109,7 @@ export const mockPlayers = [
   },
   {
     id: '7',
+    uid: 'FT-00689',
     username: 'SkyWarrior',
     rank: 'Combat Specialist',
     points: 254,
@@ -120,6 +127,7 @@ export const mockPlayers = [
   },
   {
     id: '8',
+    uid: 'FT-00745',
     username: 'NetherKnight',
     rank: 'Combat Specialist',
     points: 247,
@@ -137,6 +145,7 @@ export const mockPlayers = [
   },
   {
     id: '9',
+    uid: 'FT-00831',
     username: 'CrystalPVP',
     rank: 'Combat Veteran',
     points: 235,
@@ -154,6 +163,7 @@ export const mockPlayers = [
   },
   {
     id: '10',
+    uid: 'FT-00902',
     username: 'DiamondSlayer',
     rank: 'Combat Veteran',
     points: 228,
