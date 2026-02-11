@@ -10,6 +10,17 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
 }
 
 @layer base {
@@ -220,6 +231,77 @@ body {
     height: 4px;
     background: #ff9f43;
     border-radius: 50%;
-    animation: fireParticle 1.5s ease-out forwards;
+    animation: fireParticle 2s ease-out infinite;
+    will-change: transform, opacity;
+    pointer-events: none;
+  }
+
+  /* Floating particles animation */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.3;
+    }
+    50% {
+      transform: translateY(-20px) translateX(10px);
+      opacity: 0.6;
+    }
+  }
+
+  /* Gradient shift animation */
+  .animate-gradient-shift {
+    animation: gradientShift 15s ease-in-out infinite;
+    background-size: 200% 200%;
+  }
+
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Background orb animations */
+  .animate-orb {
+    animation: orbFloat 20s ease-in-out infinite;
+    will-change: transform;
+    contain: layout style;
+  }
+
+  @keyframes orbFloat {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+    }
+    25% {
+      transform: translate(50px, -30px) scale(1.1);
+    }
+    50% {
+      transform: translate(0, 50px) scale(0.9);
+    }
+    75% {
+      transform: translate(-50px, -20px) scale(1.05);
+    }
+  }
+
+  /* Performance optimizations */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  /* Content visibility for off-screen elements */
+  .content-visibility-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 100px;
   }
 }

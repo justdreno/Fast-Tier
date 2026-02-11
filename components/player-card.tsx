@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { memo, useMemo, useState, useCallback } from 'react'
+import Image from 'next/image'
 import TierBadge from './tier-badge'
 import PlayerProfileModal from './player-profile-modal'
 
@@ -16,7 +17,79 @@ interface PlayerCardProps {
   stats?: Record<string, { tier: string; rank: number; points: number }>
 }
 
-export default function PlayerCard({
+// Memoized card styles to prevent recalculation
+const CARD_STYLES = {
+  1: {
+    container: 'bg-gradient-to-br from-[#fbbf24] via-[#f59e0b] to-[#d97706]',
+    stripe: 'from-yellow-400/30 to-transparent',
+    number: 'text-yellow-900/40',
+    accent: 'text-yellow-900',
+    subtext: 'text-yellow-800/80',
+    border: 'border-yellow-500/50',
+    shadow: 'shadow-yellow-500/20',
+  },
+  2: {
+    container: 'bg-gradient-to-br from-[#e5e7eb] via-[#d1d5db] to-[#9ca3af]',
+    stripe: 'from-gray-300/40 to-transparent',
+    number: 'text-gray-900/30',
+    accent: 'text-gray-900',
+    subtext: 'text-gray-700/80',
+    border: 'border-gray-400/50',
+    shadow: 'shadow-gray-400/20',
+  },
+  3: {
+    container: 'bg-gradient-to-br from-[#fdba74] via-[#fb923c] to-[#ea580c]',
+    stripe: 'from-orange-300/30 to-transparent',
+    number: 'text-orange-900/30',
+    accent: 'text-orange-900',
+    subtext: 'text-orange-800/80',
+    border: 'border-orange-500/50',
+    shadow: 'shadow-orange-500/20',
+  },
+  default: {
+    container: 'bg-card/80 backdrop-blur-sm',
+    stripe: 'from-orange-500/10 to-transparent',
+    number: 'text-orange-500/20',
+    accent: 'text-foreground',
+    subtext: 'text-muted-foreground',
+    border: 'border-white/10',
+    shadow: 'shadow-black/10',
+  }
+}
+
+// Minecraft face component with fallback
+function MinecraftFace({ username, size = 48 }: { username: string; size?: number }) {
+  const [hasError, setHasError] = useState(false)
+  
+  // Use minotar API for 2D face render with Steve fallback
+  const faceUrl = `https://minotar.net/helm/${username}/${size}`
+  const steveUrl = `https://minotar.net/helm/Steve/${size}`
+
+  if (hasError) {
+    return (
+      <div 
+        className="rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center"
+        style={{ width: size, height: size }}
+      >
+        <span className="text-xl font-bold text-white">{username.charAt(0)}</span>
+      </div>
+    )
+  }
+
+  return (
+    <Image
+      src={faceUrl}
+      alt={`${username}'s skin`}
+      width={size}
+      height={size}
+      className="rounded-lg"
+      onError={() => setHasError(true)}
+      unoptimized // Disable Next.js image optimization for external URLs
+    />
+  )
+}
+
+function PlayerCardComponent({
   rank,
   name,
   tier,
@@ -27,227 +100,102 @@ export default function PlayerCard({
   stats = {},
 }: PlayerCardProps) {
   const [showModal, setShowModal] = useState(false)
-  const winRate = ((wins / (wins + losses)) * 100).toFixed(1)
 
-  // Different styles for top 3
+  // Memoize expensive calculations
+  const winRate = useMemo(() => {
+    return ((wins / (wins + losses)) * 100).toFixed(1)
+  }, [wins, losses])
+
+  // Memoize card styles
+  const styles = useMemo(() => {
+    return CARD_STYLES[rank as keyof typeof CARD_STYLES] || CARD_STYLES.default
+  }, [rank])
+
+  // Memoize callback to prevent unnecessary re-renders
+  const handleClick = useCallback(() => setShowModal(true), [])
+  const handleClose = useCallback(() => setShowModal(false), [])
+
+  // Memoize tier badges slice
+  const displayedTiers = useMemo(() => tiers.slice(0, 4), [tiers])
+
   const isTop3 = rank <= 3
-  const rankColors = {
-    1: 'from-yellow-400 to-yellow-600',
-    2: 'from-gray-300 to-gray-500',
-    3: 'from-orange-400 to-orange-600',
-  }
 
-  const getRankStyle = () => {
-    if (!isTop3) return { badge: 'from-orange-400 to-orange-600', size: 'w-16 h-16', textSize: 'text-2xl' }
-
-    const color = rankColors[rank as 1 | 2 | 3]
-    if (rank === 1) return { badge: color, size: 'w-20 h-20', textSize: 'text-3xl', scale: 'scale-105', shadow: 'shadow-2xl' }
-    if (rank === 2) return { badge: color, size: 'w-18 h-18', textSize: 'text-2xl', scale: 'scale-100', shadow: 'shadow-lg' }
-    return { badge: color, size: 'w-16 h-16', textSize: 'text-2xl', scale: 'scale-100', shadow: 'shadow-lg' }
-  }
-
-  const style = getRankStyle()
-
-  const handleClick = () => setShowModal(true)
-
-  if (rank === 1) {
-    // 1st Place - Premium Style
-    return (
-      <>
-        <PlayerProfileModal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          player={{ name, tier, rank, region, wins, losses, tiers, stats }}
-        />
-        <button onClick={handleClick} className="w-full slide-in-right group relative mb-4 text-left">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-500/50 to-yellow-400/50 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
-          <div className={`relative glass-morphism rounded-2xl px-6 py-6 hover:bg-card/80 transition-all duration-300 cursor-pointer border-2 border-yellow-500/50 ${style.scale}`}>
-            <div className="flex items-center gap-6">
-              <div className={`flex-shrink-0 ${style.shadow}`}>
-                <div className={`${style.size} bg-gradient-to-br ${style.badge} rounded-xl flex items-center justify-center`}>
-                  <span className={`text-white font-black ${style.textSize}`}>👑</span>
-                </div>
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-2xl font-black text-foreground mb-1">{name}</h3>
-                <p className="text-sm text-yellow-300 font-bold mb-3">{tier}</p>
-                <div className="flex items-center gap-6 text-sm">
-                  <div>
-                    <span className="text-muted-foreground">Win Rate: </span>
-                    <span className="font-bold text-yellow-300">{winRate}%</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Record: </span>
-                    <span className="font-bold text-yellow-300">{wins}W-{losses}L</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex-shrink-0 hidden lg:flex items-center gap-1">
-                {tiers.slice(0, 5).map((t, i) => (
-                  <div key={i} className="scale-90">
-                    <TierBadge tier={t} label={t} />
-                  </div>
-                ))}
-              </div>
-              <span className="flex-shrink-0 bg-yellow-500/30 text-yellow-300 px-3 py-1.5 rounded-lg text-xs font-bold border border-yellow-500/50">
-                {region}
-              </span>
-            </div>
-          </div>
-        </button>
-      </>
-    )
-  }
-
-  if (rank === 2) {
-    // 2nd Place - Silver Style
-    return (
-      <>
-        <PlayerProfileModal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          player={{ name, tier, rank, region, wins, losses, tiers, stats }}
-        />
-        <button onClick={handleClick} className="w-full slide-in-right group relative mb-4 text-left">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-gray-400/40 to-gray-500/40 rounded-xl opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
-          <div className={`relative glass-morphism rounded-xl px-5 py-5 hover:bg-card/80 transition-all duration-300 cursor-pointer border-2 border-gray-400/40`}>
-            <div className="flex items-center gap-4">
-              <div className={`flex-shrink-0 ${style.shadow}`}>
-                <div className={`${style.size} bg-gradient-to-br ${style.badge} rounded-lg flex items-center justify-center`}>
-                  <span className={`text-gray-900 font-black ${style.textSize}`}>🥈</span>
-                </div>
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-baseline gap-2 mb-2">
-                  <h3 className="text-lg font-bold text-foreground truncate">{name}</h3>
-                  <span className="text-xs font-semibold text-gray-300">{tier}</span>
-                </div>
-                <div className="flex items-center gap-6 text-xs">
-                  <div>
-                    <span className="text-muted-foreground">Win Rate: </span>
-                    <span className="font-bold text-gray-300">{winRate}%</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Record: </span>
-                    <span className="font-bold text-gray-300">{wins}W-{losses}L</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex-shrink-0 hidden lg:flex items-center gap-1">
-                {tiers.slice(0, 4).map((t, i) => (
-                  <div key={i} className="scale-75">
-                    <TierBadge tier={t} label={t} />
-                  </div>
-                ))}
-              </div>
-              <span className="flex-shrink-0 bg-red-500/20 text-red-300 px-2 py-1 rounded text-xs font-semibold border border-red-500/30">
-                {region}
-              </span>
-            </div>
-          </div>
-        </button>
-      </>
-    )
-  }
-
-  if (rank === 3) {
-    // 3rd Place - Bronze Style
-    return (
-      <>
-        <PlayerProfileModal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          player={{ name, tier, rank, region, wins, losses, tiers, stats }}
-        />
-        <button onClick={handleClick} className="w-full slide-in-right group relative mb-4 text-left">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-600/40 to-amber-600/40 rounded-xl opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
-          <div className={`relative glass-morphism rounded-xl px-5 py-5 hover:bg-card/80 transition-all duration-300 cursor-pointer border-2 border-orange-600/40`}>
-            <div className="flex items-center gap-4">
-              <div className={`flex-shrink-0 ${style.shadow}`}>
-                <div className={`${style.size} bg-gradient-to-br ${style.badge} rounded-lg flex items-center justify-center`}>
-                  <span className={`text-white font-black ${style.textSize}`}>🥉</span>
-                </div>
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-baseline gap-2 mb-2">
-                  <h3 className="text-lg font-bold text-foreground truncate">{name}</h3>
-                  <span className="text-xs font-semibold text-orange-300">{tier}</span>
-                </div>
-                <div className="flex items-center gap-6 text-xs">
-                  <div>
-                    <span className="text-muted-foreground">Win Rate: </span>
-                    <span className="font-bold text-orange-300">{winRate}%</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Record: </span>
-                    <span className="font-bold text-orange-300">{wins}W-{losses}L</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex-shrink-0 hidden lg:flex items-center gap-1">
-                {tiers.slice(0, 4).map((t, i) => (
-                  <div key={i} className="scale-75">
-                    <TierBadge tier={t} label={t} />
-                  </div>
-                ))}
-              </div>
-              <span className="flex-shrink-0 bg-red-500/20 text-red-300 px-2 py-1 rounded text-xs font-semibold border border-red-500/30">
-                {region}
-              </span>
-            </div>
-          </div>
-        </button>
-      </>
-    )
-  }
-
-  // Regular players
   return (
     <>
       <PlayerProfileModal
         isOpen={showModal}
-        onClose={() => setShowModal(false)}
+        onClose={handleClose}
         player={{ name, tier, rank, region, wins, losses, tiers, stats }}
       />
-      <button onClick={handleClick} className="w-full slide-in-right group relative mb-3 text-left">
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-500/20 to-orange-600/20 rounded-xl opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
-
-        <div className="relative glass-morphism rounded-xl px-5 py-4 hover:bg-card/80 transition-all duration-300 cursor-pointer border border-white/10">
-          <div className="flex items-center gap-4">
-            <div className="flex-shrink-0">
-              <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-lg flex items-center justify-center shadow-lg">
-                <span className="text-white font-black text-2xl">{rank}</span>
-              </div>
+      <button 
+        onClick={handleClick} 
+        className="w-full slide-in-right group relative text-left will-change-transform"
+      >
+        <div className={`
+          relative overflow-hidden rounded-xl 
+          ${isTop3 ? styles.container : 'glass-morphism'}
+          border ${styles.border}
+          shadow-lg ${styles.shadow}
+          hover:scale-[1.02] hover:shadow-xl
+          transition-transform duration-300 ease-out
+          cursor-pointer
+        `}>
+          {/* Diagonal stripe overlay */}
+          <div 
+            className={`
+              absolute inset-0 bg-gradient-to-br ${styles.stripe}
+              transform -skew-x-12 origin-top-left
+            `}
+            style={{ width: '40%' }}
+          />
+          
+          {/* Content */}
+          <div className="relative flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3 sm:py-4">
+            {/* Large rank number */}
+            <div className="flex-shrink-0 relative">
+              <span className={`
+                text-4xl sm:text-5xl font-black ${styles.number}
+                leading-none
+              `}>
+                {rank}.
+              </span>
             </div>
 
+            {/* Minecraft Face Avatar */}
+            <div className="flex-shrink-0">
+              <MinecraftFace username={name} size={48} />
+            </div>
+
+            {/* Player Info */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-baseline gap-2 mb-2">
-                <h3 className="text-lg font-bold text-foreground truncate">{name}</h3>
-                <span className="text-xs font-semibold bg-orange-500/20 text-orange-300 px-2 py-0.5 rounded border border-orange-500/30">
-                  {tier}
-                </span>
+              <div className="flex items-center gap-2 mb-0.5 sm:mb-1">
+                <h3 className={`text-base sm:text-lg font-bold truncate ${styles.accent}`}>
+                  {name}
+                </h3>
               </div>
-
-              <div className="flex items-center gap-6 text-xs text-muted-foreground">
-                <div>
-                  <span className="text-muted-foreground">Win Rate: </span>
-                  <span className="font-bold text-yellow-400">{winRate}%</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Record: </span>
-                  <span className="font-bold text-foreground">{wins}W-{losses}L</span>
-                </div>
+              <div className={`text-xs sm:text-sm ${styles.subtext}`}>
+                <span className="font-medium hidden sm:inline">{tier}</span>
+                <span className="font-medium sm:hidden">{tier.split(' ')[1] || tier}</span>
+                <span className="mx-1 sm:mx-2">•</span>
+                <span>{winRate}% WR</span>
               </div>
             </div>
 
-            <div className="flex-shrink-0">
-              <span className="bg-red-500/20 text-red-300 px-2.5 py-1 rounded text-xs font-semibold border border-red-500/30">
+            {/* Region Badge */}
+            <div className="flex-shrink-0 hidden sm:block">
+              <span className={`
+                px-2.5 py-1 rounded-lg text-xs font-bold
+                ${isTop3 
+                  ? 'bg-black/10 text-black/70' 
+                  : 'bg-orange-500/20 text-orange-300 border border-orange-500/30'}
+              `}>
                 {region}
               </span>
             </div>
 
-            <div className="flex-shrink-0 hidden lg:flex items-center gap-1">
-              {tiers.slice(0, 4).map((t, i) => (
+            {/* Tier Badges - Only on larger screens */}
+            <div className="flex-shrink-0 hidden xl:flex items-center gap-0.5">
+              {displayedTiers.map((t, i) => (
                 <div key={i} className="scale-75">
                   <TierBadge tier={t} label={t} />
                 </div>
@@ -259,3 +207,5 @@ export default function PlayerCard({
     </>
   )
 }
+
+export default memo(PlayerCardComponent)

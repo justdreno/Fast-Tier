@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { memo, useMemo } from 'react'
 
 interface TierBadgeProps {
   tier: string
@@ -27,28 +27,25 @@ const tierInfo: Record<
   'UNRANKED': { bg: 'bg-gray-600', color: 'text-white', icon: '⚫', status: 'Normal' },
 }
 
-export default function TierBadge({ tier, label }: TierBadgeProps) {
-  const [hovering, setHovering] = useState(false)
-  const tierData = tierInfo[tier] || tierInfo['UNRANKED']
+function TierBadgeComponent({ tier, label }: TierBadgeProps) {
+  // Memoize tier data lookup
+  const tierData = useMemo(() => tierInfo[tier] || tierInfo['UNRANKED'], [tier])
 
   return (
-    <div
-      className="relative flex flex-col items-center gap-1"
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
-    >
+    <div className="relative flex flex-col items-center gap-1 group">
       <div
-        className={`w-10 h-10 rounded-full ${tierData.bg} flex items-center justify-center text-xs font-bold ${tierData.color} transition-all duration-200 ${hovering ? 'scale-110 shadow-lg' : ''}`}
+        className={`w-10 h-10 rounded-full ${tierData.bg} flex items-center justify-center text-xs font-bold ${tierData.color} transition-all duration-200 group-hover:scale-110 group-hover:shadow-lg will-change-transform`}
       >
         {tierData.icon}
       </div>
       <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">{tier}</span>
 
-      {hovering && (
-        <div className="absolute bottom-full mb-2 bg-secondary border border-white/20 rounded-lg px-3 py-2 text-xs font-semibold text-foreground whitespace-nowrap shadow-lg z-50 animate-in fade-in duration-150">
-          {tierData.status}
-        </div>
-      )}
+      {/* Tooltip - CSS hover, no React state */}
+      <div className="absolute bottom-full mb-2 bg-secondary border border-white/20 rounded-lg px-3 py-2 text-xs font-semibold text-foreground whitespace-nowrap shadow-lg z-[100] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150">
+        {tierData.status}
+      </div>
     </div>
   )
 }
+
+export default memo(TierBadgeComponent)
