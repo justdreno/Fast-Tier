@@ -379,6 +379,9 @@ export async function createApplication(applicationData: {
   if (!supabase) {
     throw new Error('Supabase not configured');
   }
+
+  // Debug: Log the data being sent
+  console.log('createApplication called with:', applicationData);
   
   const { data, error } = await supabase
     .from('applications')

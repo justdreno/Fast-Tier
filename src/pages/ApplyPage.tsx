@@ -105,6 +105,17 @@ export default function ApplyPage() {
         return;
       }
 
+      // Debug: Log form data before submission
+      console.log('Submitting application with data:', {
+        username: form.username,
+        discord_username: form.discord_username,
+        discord_user_id: form.discord_id,
+        email: form.email,
+        region: form.region,
+        region_uppercase: form.region.toUpperCase(),
+        gamemode_id: gamemode.id,
+      });
+
       // Create application with actual Discord ID
       await createApplication({
         username: form.username,
