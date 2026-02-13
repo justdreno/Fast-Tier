@@ -24,6 +24,9 @@ The FastTier system tracks Minecraft PvP player rankings across multiple gamemod
 - **Player Tiers**: Junction table linking players to their tier in each gamemode
 - **Achievements**: Special accomplishments players can earn
 - **Player Achievements**: Junction table for earned achievements
+- **Applications**: Tier testing queue for players applying for tier test
+- **Testers**: Discord users authorized to conduct tier tests
+- **Tester Gamemodes**: Junction table linking testers to specific gamemodes they can test
 
 ---
 
@@ -167,7 +170,7 @@ CREATE TABLE player_achievements (
 CREATE INDEX idx_player_achievements_player ON player_achievements(player_id);
 ```
 
-### 7. Applications Table
+### 7. Applications Table (Tier Testing Queue)
 
 ```sql
 CREATE TABLE applications (
@@ -176,15 +179,50 @@ CREATE TABLE applications (
   discord_username VARCHAR(100) NOT NULL,
   email VARCHAR(255) NOT NULL,
   region VARCHAR(10) NOT NULL,
-  status VARCHAR(20) DEFAULT 'pending', -- pending, approved, rejected
+  gamemode_id UUID REFERENCES gamemodes(id), -- Gamemode they want to test
+  status VARCHAR(20) DEFAULT 'pending', -- pending, invited, testing, completed, expired
   reviewed_by UUID REFERENCES players(id),
   reviewed_at TIMESTAMP WITH TIME ZONE,
+  invited_at TIMESTAMP WITH TIME ZONE,
+  expires_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 CREATE INDEX idx_applications_status ON applications(status);
-CREATE INDEX idx_applications_username ON applications(username);
+CREATE INDEX idx_applications_gamemode ON applications(gamemode_id);
+CREATE INDEX idx_applications_created ON applications(created_at);
+```
+
+### 8. Testers Table
+
+```sql
+CREATE TABLE testers (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  discord_user_id VARCHAR(20) UNIQUE NOT NULL,
+  discord_username VARCHAR(100) NOT NULL,
+  can_test_all BOOLEAN DEFAULT false, -- Can test all gamemodes if true
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_testers_active ON testers(is_active);
+```
+
+### 9. Tester Gamemodes Table (Junction)
+
+Links testers to specific gamemodes they can test (only used if can_test_all = false).
+
+```sql
+CREATE TABLE tester_gamemodes (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  tester_id UUID NOT NULL REFERENCES testers(id) ON DELETE CASCADE,
+  gamemode_id UUID NOT NULL REFERENCES gamemodes(id) ON DELETE CASCADE,
+  UNIQUE(tester_id, gamemode_id)
+);
+
+CREATE INDEX idx_tester_gamemodes_tester ON tester_gamemodes(tester_id);
+CREATE INDEX idx_tester_gamemodes_gamemode ON tester_gamemodes(gamemode_id);
 ```
 
 ---
