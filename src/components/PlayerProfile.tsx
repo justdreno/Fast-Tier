@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Copy, Hash, User, CheckCircle, Trophy, Target, Zap, Medal, Crown } from 'lucide-react';
+import { X, Copy, User, CheckCircle, Trophy, Target, Zap, Medal, Crown, Wifi, WifiOff } from 'lucide-react';
 import type { Player, PlayerAchievement } from '../lib/supabase';
 
 interface PlayerProfileProps {
@@ -38,6 +38,18 @@ const gamemodeIconPaths: Record<string, string> = {
   ltms: '/kits/global.svg',
 };
 
+const gamemodeColors: Record<string, string> = {
+  vanilla: '#ef4444',
+  uhc: '#dc2626',
+  pot: '#f97316',
+  nethop: '#ea580c',
+  smp: '#22c55e',
+  sword: '#3b82f6',
+  axe: '#8b5cf6',
+  mace: '#a855f7',
+  ltms: '#ec4899',
+};
+
 const achievementIcons: Record<string, React.ElementType> = {
   Target,
   Zap,
@@ -46,23 +58,71 @@ const achievementIcons: Record<string, React.ElementType> = {
   Crown,
 };
 
-const getTierColor = (tier: string) => {
+const getTierStyle = (tier: string) => {
   if (tier?.startsWith('HT')) {
     const num = parseInt(tier.replace('HT', ''));
-    if (num === 1) return { bg: 'from-[#10b981] to-[#059669]', border: 'border-[#10b981]/25', text: 'text-white' };
-    if (num === 2) return { bg: 'from-[#8b5cf6] to-[#7c3aed]', border: 'border-[#8b5cf6]/25', text: 'text-white' };
-    if (num === 3) return { bg: 'from-[#ff9f43] to-[#ff8c00]', border: 'border-[#ff9f43]/25', text: 'text-white' };
-    return { bg: 'from-[#ff9f43] to-[#ff7700]', border: 'border-[#ff9f43]/25', text: 'text-white' };
+    if (num === 1) return { bg: 'bg-gradient-to-br from-[#10b981] to-[#059669]', text: 'text-white', shadow: 'shadow-[#10b981]/30', glow: 'from-[#10b981]/20' };
+    if (num === 2) return { bg: 'bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed]', text: 'text-white', shadow: 'shadow-[#8b5cf6]/30', glow: 'from-[#8b5cf6]/20' };
+    if (num === 3) return { bg: 'bg-gradient-to-br from-[#ff9f43] to-[#ff8c00]', text: 'text-black', shadow: 'shadow-[#ff9f43]/30', glow: 'from-[#ff9f43]/20' };
+    return { bg: 'bg-gradient-to-br from-[#ff9f43] to-[#ff7700]', text: 'text-black', shadow: 'shadow-[#ff9f43]/30', glow: 'from-[#ff9f43]/20' };
   }
-  return { bg: 'from-white/[0.06] to-white/[0.03]', border: 'border-white/[0.08]', text: 'text-white/60' };
+  return { bg: 'bg-gradient-to-br from-white/[0.1] to-white/[0.05]', text: 'text-white/80', shadow: 'shadow-white/10', glow: 'from-white/10' };
 };
 
 const getAchievementIcon = (iconName: string): React.ElementType => {
   return achievementIcons[iconName] || Trophy;
 };
 
+const formatUUID = (uuid: string) => {
+  // Format UUID with dashes if it's not already formatted
+  if (uuid.length === 32) {
+    return `${uuid.slice(0, 8)}-${uuid.slice(8, 12)}-${uuid.slice(12, 16)}-${uuid.slice(16, 20)}-${uuid.slice(20)}`;
+  }
+  return uuid;
+};
+
+const getMCUUID = async (username: string): Promise<{ uuid: string; isOffline: boolean }> => {
+  try {
+    // Try to get online UUID from Mojang
+    const response = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`);
+    if (response.ok) {
+      const data = await response.json();
+      return { uuid: formatUUID(data.id), isOffline: false };
+    }
+  } catch {
+    // Continue to offline generation
+  }
+  
+  // Generate offline UUID (based on username hash)
+  const offlineUUID = generateOfflineUUID(username);
+  return { uuid: offlineUUID, isOffline: true };
+};
+
+const generateOfflineUUID = (username: string): string => {
+  // Simple offline UUID generation (version 3 style)
+  let hash = 0;
+  for (let i = 0; i < username.length; i++) {
+    const char = username.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  const hex = Math.abs(hash).toString(16).padStart(32, '0');
+  return formatUUID(hex);
+};
+
 export default function PlayerProfile({ player, rank, onClose }: PlayerProfileProps) {
   const [toast, setToast] = useState<ToastState>({ message: '', visible: false, exiting: false });
+  const [mcUUID, setMcUUID] = useState<{ uuid: string; isOffline: boolean } | null>(null);
+  const [loadingUUID, setLoadingUUID] = useState(true);
+
+  useEffect(() => {
+    const fetchUUID = async () => {
+      const result = await getMCUUID(player.username);
+      setMcUUID(result);
+      setLoadingUUID(false);
+    };
+    fetchUUID();
+  }, [player.username]);
 
   const showToast = (message: string) => {
     setToast({ message, visible: true, exiting: false });
@@ -83,79 +143,106 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 animate-backdropIn" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-3 sm:p-4 animate-backdropIn" onClick={onClose}>
       <div
-        className="w-full max-w-xl max-h-[90vh] overflow-y-auto scrollbar-thin bg-gradient-to-b from-[#111111] to-[#0c0c0c] border border-white/[0.08] rounded-2xl shadow-2xl shadow-black/50 animate-scaleIn"
+        className="w-full max-w-xl max-h-[90vh] overflow-y-auto scrollbar-thin bg-gradient-to-b from-[#141414] to-[#0a0a0a] border border-white/[0.08] rounded-3xl shadow-2xl shadow-black/60 animate-scaleIn relative"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Orange glow from corner */}
+        <div className="absolute top-0 right-0 w-48 h-48 bg-[#ff9f43]/10 blur-3xl rounded-full pointer-events-none" />
+
         {/* Header */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-white/[0.05] sticky top-0 bg-gradient-to-b from-[#111111] to-[#111111]/95 backdrop-blur z-10">
-          <h2 className="text-sm sm:text-base font-bold text-white/80">Player Profile</h2>
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-white/[0.05] sticky top-0 bg-[#141414]/95 backdrop-blur-xl z-20 rounded-t-3xl">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-[#ff9f43] animate-pulse" />
+            <h2 className="text-sm font-bold text-white/70 tracking-wide">PLAYER PROFILE</h2>
+          </div>
           <button
             onClick={onClose}
-            className="p-2 sm:p-1.5 hover:bg-white/[0.06] rounded-lg transition-colors text-white/30 hover:text-white/60 active:bg-white/[0.1]"
+            className="p-2 hover:bg-white/[0.08] rounded-xl transition-all text-white/30 hover:text-white/80 active:bg-white/[0.12]"
           >
-            <X size={20} className="sm:w-[18px] sm:h-[18px]" />
+            <X size={20} />
           </button>
         </div>
 
         {/* Profile Content */}
-        <div className="p-4 sm:p-6">
+        <div className="p-5 sm:p-6 relative z-10">
           {/* Player Info */}
-          <div className="flex items-start gap-3 sm:gap-5 mb-4 sm:mb-6">
+          <div className="flex items-start gap-4 sm:gap-5 mb-6">
             <div className="relative flex-shrink-0">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#ff9f43] to-[#ff8c00] rounded-2xl opacity-15 blur-lg" />
-              <img
-                src={`https://render.crafty.gg/3d/bust/${player.username}`}
-                alt={player.username}
-                className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border border-white/[0.08] bg-[#1a1a1a]"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://via.placeholder.com/128?text=Player';
-                }}
-              />
-              {/* Rank badge */}
-              <div className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-[#ff9f43] to-[#ff8c00] rounded-lg flex items-center justify-center shadow-lg shadow-[#ff9f43]/30">
-                <span className="text-[10px] sm:text-xs font-black text-black">#{rank}</span>
+              {/* Avatar glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#ff9f43] to-[#ff8c00] rounded-3xl opacity-20 blur-xl scale-110" />
+              <div className="relative">
+                <img
+                  src={`https://render.crafty.gg/3d/bust/${player.username}`}
+                  alt={player.username}
+                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl border-2 border-white/[0.1] bg-[#1a1a1a] shadow-xl"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = `https://mc-heads.net/avatar/${player.username}/128`;
+                  }}
+                />
+                {/* Rank badge */}
+                <div className="absolute -top-2 -right-2 w-9 h-9 bg-gradient-to-br from-[#ff9f43] to-[#ff7700] rounded-xl flex items-center justify-center shadow-lg shadow-[#ff9f43]/40 border border-[#ff9f43]/50">
+                  <span className="text-xs font-black text-black">#{rank}</span>
+                </div>
               </div>
             </div>
 
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <h1 className="text-lg sm:text-2xl font-black text-white truncate">{player.username}</h1>
+            <div className="flex-1 min-w-0 pt-1">
+              <div className="flex items-center gap-2 mb-2">
+                <h1 className="text-xl sm:text-2xl font-black text-white truncate">{player.username}</h1>
                 <button
                   onClick={() => handleCopy(player.username, 'Username')}
-                  className="p-1.5 hover:bg-white/[0.06] rounded-lg transition-all text-white/25 hover:text-[#ff9f43] shrink-0 active:bg-white/[0.1]"
+                  className="p-1.5 hover:bg-white/[0.08] rounded-lg transition-all text-white/25 hover:text-[#ff9f43] shrink-0"
                 >
                   <Copy size={14} />
                 </button>
               </div>
 
-              {/* UID */}
-              <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                <div className="flex items-center gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 bg-white/[0.04] border border-white/[0.06] rounded-lg">
-                  <Hash size={10} className="sm:w-[11px] sm:h-[11px] text-white/30" />
-                  <span className="text-[10px] sm:text-xs font-mono text-white/40">{player.uid}</span>
+              {/* Minecraft UUID with offline status */}
+              <div className="flex items-center gap-2 mb-3">
+                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border ${mcUUID?.isOffline 
+                  ? 'bg-white/[0.03] border-white/[0.08]' 
+                  : 'bg-[#ff9f43]/10 border-[#ff9f43]/20'}`}>
+                  {loadingUUID ? (
+                    <div className="w-3 h-3 border-2 border-white/20 border-t-[#ff9f43] rounded-full animate-spin" />
+                  ) : mcUUID?.isOffline ? (
+                    <WifiOff size={12} className="text-white/40" />
+                  ) : (
+                    <Wifi size={12} className="text-[#10b981]" />
+                  )}
+                  <span className="text-[10px] sm:text-xs font-mono text-white/50 truncate max-w-[140px] sm:max-w-[200px]">
+                    {loadingUUID ? 'Loading...' : mcUUID?.uuid}
+                  </span>
+                  {mcUUID?.isOffline && (
+                    <span className="text-[9px] font-bold text-white/30 bg-white/[0.08] px-1.5 py-0.5 rounded">OFFLINE</span>
+                  )}
                 </div>
-                <button
-                  onClick={() => handleCopy(player.uid, 'UID')}
-                  className="p-1 hover:bg-white/[0.06] rounded transition-all text-white/20 hover:text-[#ff9f43] active:bg-white/[0.1]"
-                >
-                  <Copy size={11} className="sm:w-[12px] sm:h-[12px]" />
-                </button>
+                {!loadingUUID && (
+                  <button
+                    onClick={() => handleCopy(mcUUID?.uuid || '', 'UUID')}
+                    className="p-1.5 hover:bg-white/[0.08] rounded-lg transition-all text-white/20 hover:text-[#ff9f43]"
+                  >
+                    <Copy size={12} />
+                  </button>
+                )}
               </div>
 
               {/* Stats row */}
               <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs">
-                <div className="flex items-center gap-1.5">
-                  <User size={11} className="sm:w-[12px] sm:h-[12px] text-[#ff9f43]/60" />
-                  <span className="text-white/40 text-[11px] sm:text-xs">{player.rank}</span>
+                <div className="flex items-center gap-1.5 px-2.5 py-1 bg-white/[0.04] rounded-lg border border-white/[0.06]">
+                  <User size={11} className="text-[#ff9f43]/70" />
+                  <span className="text-white/60 text-[11px] font-medium">{player.rank}</span>
                 </div>
-                <span className="text-white/10 hidden sm:inline">|</span>
-                <span className="text-[#ff9f43] font-bold text-[11px] sm:text-xs">{player.points} pts</span>
-                <span className="text-white/10 hidden sm:inline">|</span>
-                <div className={`px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold ${player.region === 'NA'
-                    ? 'bg-[#ef4444]/10 text-[#ef4444]/70'
-                    : 'bg-[#10b981]/10 text-[#10b981]/70'
+                <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#ff9f43]/10 rounded-lg border border-[#ff9f43]/20">
+                  <Trophy size={11} className="text-[#ff9f43]" />
+                  <span className="text-[#ff9f43] font-bold text-[11px]">{player.points} pts</span>
+                </div>
+                <div className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border ${player.region === 'NA'
+                    ? 'bg-[#ef4444]/10 text-[#ef4444] border-[#ef4444]/20'
+                    : player.region === 'EU'
+                    ? 'bg-[#3b82f6]/10 text-[#3b82f6] border-[#3b82f6]/20'
+                    : 'bg-[#10b981]/10 text-[#10b981] border-[#10b981]/20'
                   }`}>
                   {player.region}
                 </div>
@@ -163,36 +250,60 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
             </div>
           </div>
 
-          {/* Copy UID button */}
+          {/* Copy UUID button */}
           <button
-            onClick={() => handleCopy(player.uid, 'UID')}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 mb-4 sm:mb-6 bg-gradient-to-r from-[#ff9f43]/10 to-[#ff8c00]/10 border border-[#ff9f43]/15 rounded-xl text-[#ff9f43] text-sm font-semibold hover:from-[#ff9f43]/15 hover:to-[#ff8c00]/15 active:from-[#ff9f43]/20 active:to-[#ff8c00]/20 transition-all duration-300"
+            onClick={() => !loadingUUID && handleCopy(mcUUID?.uuid || '', 'UUID')}
+            disabled={loadingUUID}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 mb-6 bg-gradient-to-r from-[#ff9f43]/10 via-[#ff9f43]/5 to-[#ff8c00]/10 border border-[#ff9f43]/20 rounded-xl text-[#ff9f43] text-sm font-semibold hover:from-[#ff9f43]/15 hover:via-[#ff9f43]/10 hover:to-[#ff8c00]/15 hover:border-[#ff9f43]/30 active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Copy size={14} />
-            Copy UID
+            Copy Minecraft UUID
           </button>
 
-            {/* Gamemodes & Tiers */}
+          {/* Gamemodes & Tiers - Modern Grid */}
           <div>
-            <h3 className="text-[11px] sm:text-xs font-bold text-white/30 uppercase tracking-widest mb-2 sm:mb-3">Gamemodes</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-1 h-4 bg-gradient-to-b from-[#ff9f43] to-[#ff8c00] rounded-full" />
+              <h3 className="text-xs font-bold text-white/40 uppercase tracking-widest">Gamemodes</h3>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {(player.tiers || []).map((playerTier, index) => {
                 const gamemodeCode = playerTier.gamemode?.code ?? 'unknown';
                 const tierCode = playerTier.tier_definition?.code ?? 'N/A';
                 const iconPath = gamemodeIconPaths[gamemodeCode] || '/kits/global.svg';
-                const colors = getTierColor(tierCode);
+                const styles = getTierStyle(tierCode);
+                const gamemodeColor = gamemodeColors[gamemodeCode] || '#ffffff';
+                
                 return (
                   <div
                     key={index}
-                    className="tier-card group relative flex flex-col items-center gap-1 p-2 sm:p-3 bg-white/[0.02] border border-white/[0.05] rounded-xl hover:bg-white/[0.04] hover:border-white/[0.1] active:bg-white/[0.06] transition-all duration-300 cursor-default"
+                    className="group relative overflow-hidden bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] rounded-2xl p-3 hover:from-white/[0.08] hover:to-white/[0.04] hover:border-white/[0.15] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 cursor-pointer"
                     style={{ animationDelay: `${index * 0.05}s` }}
                   >
-                    <img src={iconPath} alt={gamemodeCode} className="w-3.5 h-3.5 sm:w-4 sm:h-4 opacity-30 group-hover:opacity-60 transition-opacity duration-300 mb-0.5" />
-                    <span className="gamemode-label text-[10px] sm:text-[11px] font-semibold text-white/50 group-hover:text-white/70 transition-all duration-300">
-                      {gamemodeLabels[gamemodeCode] || gamemodeCode}
-                    </span>
-                    <div className={`tier-label px-2 py-0.5 sm:px-2.5 rounded-md bg-gradient-to-r ${colors.bg} ${colors.border} border ${colors.text} text-[9px] sm:text-[10px] font-black tracking-wide`}>
-                      {tierCode}
+                    {/* Gamemode color glow */}
+                    <div 
+                      className="absolute top-0 right-0 w-16 h-16 opacity-0 group-hover:opacity-20 blur-2xl transition-opacity duration-500 rounded-full"
+                      style={{ backgroundColor: gamemodeColor }}
+                    />
+                    
+                    <div className="relative z-10 flex flex-col items-center gap-2">
+                      {/* Icon with colored background */}
+                      <div 
+                        className="w-10 h-10 rounded-xl flex items-center justify-center mb-1 transition-transform duration-300 group-hover:scale-110"
+                        style={{ backgroundColor: `${gamemodeColor}15`, border: `1px solid ${gamemodeColor}25` }}
+                      >
+                        <img src={iconPath} alt={gamemodeCode} className="w-5 h-5" style={{ filter: 'brightness(1.2)' }} />
+                      </div>
+                      
+                      {/* Gamemode name */}
+                      <span className="text-[11px] font-semibold text-white/60 group-hover:text-white/90 transition-colors">
+                        {gamemodeLabels[gamemodeCode] || gamemodeCode}
+                      </span>
+                      
+                      {/* Tier badge */}
+                      <div className={`px-2.5 py-0.5 rounded-lg ${styles.bg} ${styles.text} text-[9px] font-black tracking-wider shadow-lg ${styles.shadow}`}>
+                        {tierCode}
+                      </div>
                     </div>
                   </div>
                 );
@@ -202,9 +313,12 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
 
           {/* Achievements */}
           {(player.achievements || []).length > 0 && (
-            <div className="mt-4 sm:mt-6">
-              <h3 className="text-[11px] sm:text-xs font-bold text-white/30 uppercase tracking-widest mb-2 sm:mb-3">Achievements</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div className="mt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-1 h-4 bg-gradient-to-b from-[#fbbf24] to-[#f59e0b] rounded-full" />
+                <h3 className="text-xs font-bold text-white/40 uppercase tracking-widest">Achievements</h3>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {(player.achievements || []).map((playerAchievement: PlayerAchievement, index: number) => {
                   const achievement = playerAchievement.achievement;
                   if (!achievement) return null;
@@ -212,13 +326,18 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                   return (
                     <div
                       key={index}
-                      className="flex items-center gap-2 p-2 bg-white/[0.02] border border-white/[0.05] rounded-lg active:bg-white/[0.04]"
-                      style={{ borderColor: `${achievement.color_hex}20` }}
+                      className="flex items-center gap-3 p-3 bg-gradient-to-br from-white/[0.05] to-transparent border border-white/[0.06] rounded-xl hover:border-white/[0.12] hover:from-white/[0.08] transition-all duration-300"
+                      style={{ borderColor: `${achievement.color_hex}15` }}
                     >
-                      <Icon size={13} className="sm:w-[14px] sm:h-[14px]" style={{ color: achievement.color_hex }} />
+                      <div 
+                        className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                        style={{ backgroundColor: `${achievement.color_hex}15` }}
+                      >
+                        <Icon size={16} style={{ color: achievement.color_hex }} />
+                      </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-[10px] font-semibold text-white/70 truncate">{achievement.name}</div>
-                        <div className="text-[8px] text-white/40">+{achievement.points_bonus} pts</div>
+                        <div className="text-[11px] font-semibold text-white/70 truncate">{achievement.name}</div>
+                        <div className="text-[9px] text-white/40 font-medium">+{achievement.points_bonus} pts</div>
                       </div>
                     </div>
                   );
@@ -228,17 +347,20 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
           )}
 
           {/* Last Updated */}
-          <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-white/[0.04] flex items-center justify-between">
-            <span className="text-[10px] sm:text-[11px] text-white/20">Last updated 2 hours ago</span>
-            <div className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
+          <div className="mt-6 pt-4 border-t border-white/[0.05] flex items-center justify-between">
+            <span className="text-[10px] text-white/30 flex items-center gap-1.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
+              Last updated 2 hours ago
+            </span>
+            <span className="text-[9px] text-white/20 font-mono">FastTier System</span>
           </div>
         </div>
       </div>
 
       {/* Toast Notification */}
       {toast.visible && (
-        <div className={`fixed bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 z-[60] w-[calc(100%-2rem)] max-w-xs ${toast.exiting ? 'toast-exit' : 'toast-enter'}`}>
-          <div className="flex items-center justify-center gap-2.5 px-4 sm:px-5 py-3 bg-[#1a1a1a] border border-white/[0.1] rounded-xl shadow-2xl shadow-black/60">
+        <div className={`fixed bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 z-[110] w-[calc(100%-2rem)] max-w-xs ${toast.exiting ? 'toast-exit' : 'toast-enter'}`}>
+          <div className="flex items-center justify-center gap-2.5 px-5 py-3.5 bg-[#1a1a1a] border border-white/[0.1] rounded-xl shadow-2xl shadow-black/60">
             <CheckCircle size={16} className="text-[#10b981] flex-shrink-0" />
             <span className="text-sm font-medium text-white/80">{toast.message}</span>
           </div>
