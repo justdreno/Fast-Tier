@@ -9,7 +9,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
-      <Navigation searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      <Navigation />
       <main className="container mx-auto px-3 sm:px-4 py-6 sm:py-10">
         <div className="mb-6 sm:mb-8 animate-fadeInUp">
           <h1 className="text-2xl sm:text-3xl font-black text-white mb-1 tracking-tight">Rankings</h1>
