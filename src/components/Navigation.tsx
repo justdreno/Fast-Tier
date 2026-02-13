@@ -15,18 +15,22 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
 
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl">
-      <nav className="bg-gradient-to-r from-[#09090d] to-[#0f0509] border border-white/[0.08] rounded-2xl shadow-2xl shadow-black/50 relative overflow-hidden">
-        {/* Orange glow from right corner */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff9f43]/20 blur-3xl rounded-full pointer-events-none" />
-        <div className="flex items-center justify-between h-14 px-4 sm:px-6">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5">
-              <span className="text-xl font-black text-white tracking-tight">
-                Fast<span className="text-[#ff9f43]">Tier</span>
-              </span>
+        <nav className="bg-gradient-to-r from-[#0f0509] to-[#0f0509] border border-white/[0.08] rounded-2xl shadow-2xl shadow-black/50 relative overflow-hidden">
+          {/* Right corner border accents */}
+          <div className="absolute top-0 right-0 w-16 h-full border-r border-[#ff9f43]/30 pointer-events-none" />
+          <div className="absolute top-0 right-2 w-1 h-full bg-gradient-to-b from-[#ff9f43]/0 via-[#ff9f43]/20 to-[#ff9f43]/0 pointer-events-none" />
+          
+          {/* Orange glow from right corner */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff9f43]/20 blur-3xl rounded-full pointer-events-none" />
+          <div className="flex items-center justify-between h-14 px-4 sm:px-6">
+            {/* Logo */}
+            <div className="flex items-center gap-2">
+              <img 
+                src="/horizontal_logo.png" 
+                alt="FastTier" 
+                className="h-8 sm:h-9 w-auto object-contain"
+              />
             </div>
-          </div>
 
           {/* Right Side Actions */}
           <div className="relative flex items-center gap-2 sm:gap-3">
