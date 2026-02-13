@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Send, CheckCircle, AlertCircle, User, Mail, Globe } from 'lucide-react';
+import { Send, CheckCircle, AlertCircle, User, Mail, Globe, Gamepad2 } from 'lucide-react';
 
 interface ApplicationForm {
   username: string;
   email: string;
   region: string;
   discord_username: string;
+  gamemode: string;
 }
 
 interface ToastState {
@@ -15,12 +16,24 @@ interface ToastState {
   type: 'success' | 'error';
 }
 
+const gamemodes = [
+  { code: 'vanilla', name: 'Vanilla' },
+  { code: 'uhc', name: 'UHC' },
+  { code: 'pot', name: 'Pot' },
+  { code: 'nethop', name: 'NethOP' },
+  { code: 'smp', name: 'SMP' },
+  { code: 'sword', name: 'Sword' },
+  { code: 'axe', name: 'Axe' },
+  { code: 'mace', name: 'Mace' },
+];
+
 export default function ApplyPage() {
   const [form, setForm] = useState<ApplicationForm>({
     username: '',
     email: '',
     region: '',
-    discord_username: ''
+    discord_username: '',
+    gamemode: ''
   });
 
   const [toast, setToast] = useState<ToastState>({ message: '', visible: false, type: 'success' });
@@ -114,6 +127,27 @@ export default function ApplyPage() {
                 placeholder="username#0000 or @username"
                 className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9f43]/40 focus:ring-2 focus:ring-[#ff9f43]/10 transition-all"
               />
+            </div>
+
+            {/* Gamemode */}
+            <div>
+              <label className="flex items-center gap-2 text-xs font-bold text-white/50 uppercase tracking-wider mb-2">
+                <Gamepad2 size={14} className="text-[#ff9f43]" />
+                Gamemode to Test
+              </label>
+              <select
+                name="gamemode"
+                value={form.gamemode}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white focus:outline-none focus:border-[#ff9f43]/40 focus:ring-2 focus:ring-[#ff9f43]/10 transition-all appearance-none cursor-pointer"
+                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '16px' }}
+              >
+                <option value="" className="bg-[#1a1a1a]">Select Gamemode</option>
+                {gamemodes.map((g) => (
+                  <option key={g.code} value={g.code} className="bg-[#1a1a1a]">{g.name}</option>
+                ))}
+              </select>
             </div>
 
             {/* Email */}

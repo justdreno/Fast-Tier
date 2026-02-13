@@ -1,147 +1,167 @@
-# FastTier Discord Bot - Feature Plans
+# FastTier Discord Bot - Complete Tier Testing System
 
-## Plan A: Basic Tier Management Bot
+## Your Tier Testing Workflow (Main Feature)
 
-**Best for:** Small server, simple needs
+### 1. Tester Management (Admin)
+- `/tester add <user>` - Admin adds tester to bot
+- `/tester remove <user>` - Admin removes tester
+- `/tester list` - List all testers
 
-### Core Features
-- `/register <minecraft_username>` - Register player to FastTier
-- `/rank <username>` - Show player stats and tiers
-- `/leaderboard` - Top players by points
-- `/grant-tier <player> <gamemode> <tier>` - Grant tier to player
-- `/grant-achievement <player> <achievement>` - Give achievement
-- `/queue add <username>` - Add to queue
-- `/queue remove <username>` - Remove from queue
-- `/queue list` - Show current queue
-- `/tester add/remove <user>` - Toggle tester role
+### 2. Player Application
+Players apply for tier test:
+- **Via Website:** Apply page → `applications` table in DB
+- **Via Discord:** `/apply` command
+- Application includes: Minecraft username, Discord username, Discord ID, region
+- Status flow: `pending` → `invited` → `testing` → `completed` or `expired`
 
-### How It Works
-1. Player runs `/register Marlo` → Bot checks if username exists in DB, creates record
-2. Admin runs `/grant-tier Marlo vanilla HT1` → Bot updates DB tier
-3. Queue system stored in-memory (JSON file for persistence)
+### 3. Queue System
+- `/queue list` - View all pending applications
+- `/queue remove <player>` - Admin removes from queue
+- Players can only have 1 active application
+- Queue ordered by `created_at`
 
-**Tech Stack:** discord.js, Supabase
+### 4. Tester Flow
 
----
+```
+/available → Bot fetches queue → Filters players IN Discord server → Shows list
+     ↓
+Tester selects player number → Bot DMs player: "Accept invite for tier test?"
+     ↓
+Player has 3 minutes to respond
+     ↓
+[Accept] → Bot creates ticket channel → Tester + Player added → Grant tier
+         → [Decline/Timeout] → Player moved to end of queue → Tester notified to pick next
+```
 
-## Plan B: Advanced Queue & Matchmaking Bot (Recommended)
+### 5. Commands
 
-**Best for:** Active server with regular matches
+**Admin:**
+| Command | Description |
+|---------|-------------|
+| `/tester add <user>` | Add tester |
+| `/tester remove <user>` | Remove tester |
+| `/queue remove <player>` | Remove from queue |
 
-### Core Features
-- **Queue System**
-  - `/queue join` - Join matchmaking queue
-  - `/queue leave` - Leave queue
-  - `/queue status` - Show queue count and estimated wait
-  - Auto-match when 2 players in queue
-  - Region-based queue (NA/EU/ASIA/LKA)
+**Tester:**
+| Command | Description |
+|---------|-------------|
+| `/available` | Show players in queue who are in server |
+| `/invite <player>` | Send invite to specific player |
+| `/cancel-invite <player>` | Cancel pending invite |
+| `/tier grant <player> <gamemode> <tier>` | Grant tier after test |
+| `/ticket close` | Close testing ticket |
 
-- **Match System**
-  - `/match create` - Create a custom match
-  - `/match report <winner> <loser>` - Report match result
-  - Auto-calculate points after match
-  - Auto-update tier based on points
+**Player:**
+| Command | Description |
+|---------|-------------|
+| `/apply` | Apply for tier test |
+| `/my-application` | Check application status |
+| `/cancel-application` | Cancel pending application |
 
-- **Tester Management**
-  - `/tester status` - Check if you're a tester
-  - `/tester add <user>` - Grant tester (admin)
-  - `/tester remove <user>` - Remove tester (admin)
-  - Testers can access exclusive commands
-
-- **Player Management**
-  - All Plan A features
-  - `/profile <user>` - Full player profile
-  - `/stats <player>` - Detailed stats
-  - `/history <player>` - Recent matches
-
-- **Tier Management**
-  - `/tier check <player>` - Check current tier
-  - `/tier set <player> <gamemode> <tier>` - Set tier manually
-  - Auto tier promotion/demotion based on points
-
-### How It Works
-1. Player runs `/queue join` → Bot adds to queue with region
-2. When 2+ players queued → Bot creates match, DMs both players
-3. After match, winner runs `/match report @winner @loser`
-4. Bot calculates points, updates DB, announces result
-
-**Tech Stack:** discord.js, Supabase, Node-cron (scheduled tasks)
+### 6. Ticket System
+- Auto-create channel: `testing-{player}-{gamemode}`
+- Add tester + player to channel
+- Show player stats, current tier, target tier
+- Close ticket → Prompt to grant tier
 
 ---
 
-## Plan C: Full-Featured Ecosystem Bot
+## Flow Diagram
 
-**Best for:** Large server, tournaments, economy
-
-### Everything in Plan B plus:
-
-- **Tournament System**
-  - `/tournament create <name> <gamemode> <max_players>`
-  - `/tournament join` - Register for tournament
-  - `/tournament start` - Begin tournament
-  - `/tournament bracket` - Show bracket
-  - Auto elimination, final winner announced
-
-- **Economy & Rewards**
-  - Points earned from matches
-  - `/balance` - Check player points
-  - `/shop` - Redeem points for rewards
-  - Weekly point bonuses for top players
-
-- **Activity & Stats**
-  - `/activity` - Server activity stats
-  - `/most-active` - Most matches this week
-  - `/win-streak <player>` - Current win streak
-  - Leaderboards by gamemode, region
-
-- **Role Management**
-  - Auto-role based on tier (HT1, HT2, etc.)
-  - Region roles (NA, EU, ASIA, LKA)
-  - Achievement role badges
-
-- **Moderation**
-  - `/ban <player>` - Ban from system
-  - `/unban <player>` - Lift ban
-  - `/blacklist` - List banned players
-  - Match dispute system
-
-- **Web Dashboard Integration**
-  - Generate dashboard links
-  - View pending applications
-  - Approve/reject registrations
-
-### How It Works
-1. Full integration with website
-2. Tournament brackets generated automatically
-3. Points economy drives engagement
-4. Roles sync with tier changes
-
-**Tech Stack:** discord.js, Supabase, Express.js (dashboard API), Redis (caching)
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         ADMIN                                   │
+│   /tester add @user                                            │
+└─────────────────────┬───────────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                       PLAYER                                     │
+│   /apply or Website Apply                                       │
+│   → Added to queue (status: pending)                            │
+└─────────────────────┬───────────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      TESTER                                     │
+│   /available                                                    │
+│   → Bot filters: queue + in Discord server                    │
+│   → Shows: 1. Marlo (NA), 2. ProGamer (EU), 3. Slayer (ASIA)│
+│                                                                 │
+│   Tester selects: 1                                             │
+│   → Bot DMs Marlo: "Accept invite for vanilla tier test?"      │
+│                                                                 │
+│   [3 minutes timeout]                                           │
+│                                                                 │
+│   ✓ Accept → Create ticket → /tier grant Marlo vanilla HT1    │
+│   ✗ Decline/Timeout → Move to end of queue → Notify tester   │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## Quick Comparison
+## Database Schema
 
-| Feature | Plan A | Plan B | Plan C |
-|---------|--------|--------|--------|
-| Queue System | Basic | Advanced | Advanced |
-| Match Reporting | ✗ | ✓ | ✓ |
-| Tester Management | ✓ | ✓ | ✓ |
-| Tier Commands | ✓ | ✓ | ✓ |
-| Achievement Commands | ✓ | ✓ | ✓ |
-| Tournaments | ✗ | ✗ | ✓ |
-| Economy/Shop | ✗ | ✗ | ✓ |
-| Auto Roles | ✗ | ✗ | ✓ |
-| Moderation | ✗ | ✗ | ✓ |
+```sql
+-- Testers table
+CREATE TABLE testers (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  discord_user_id VARCHAR(20) UNIQUE NOT NULL,
+  discord_username VARCHAR(100) NOT NULL,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Test queue table
+CREATE TABLE test_queue (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  player_id UUID REFERENCES players(id),
+  discord_user_id VARCHAR(20) NOT NULL,
+  discord_username VARCHAR(100) NOT NULL,
+  gamemode_id UUID REFERENCES gamemodes(id),
+  status VARCHAR(20) DEFAULT 'pending', -- pending, invited, testing, completed, expired
+  invited_at TIMESTAMP WITH TIME ZONE,
+  expires_at TIMESTAMP WITH TIME ZONE,
+  tested_by UUID REFERENCES testers(id),
+  ticket_channel_id VARCHAR(20),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Index
+CREATE INDEX idx_test_queue_status ON test_queue(status);
+CREATE INDEX idx_test_queue_created ON test_queue(created_at);
+```
 
 ---
 
-## Recommended: Start with Plan B
+## Timeout Handling
 
-Plan B gives you everything you need without overcomplicating:
-- Queue + matchmaking
-- Match reporting with auto points
-- Tester system
-- Full tier/achievement management
+- 3-minute window for player response
+- `expires_at` column tracks invite deadline
+- Cron job runs every minute to check:
+  - Expired invites → set status to `expired`
+  - Move player to end of queue
+  - Notify tester: "Player didn't respond, pick next"
 
-You can always upgrade to Plan C later.
+---
+
+## Additional Features
+
+### Queue Priority
+- First come, first serve
+- Max 3 expired invites per player per day
+- After 3rd expire → remove from queue entirely
+
+### Ticket Permissions
+- Private channel (only tester + player)
+- Auto-delete ticket after tier granted
+- Log: player, tester, gamemode, result
+
+---
+
+## Tech Stack
+
+- **discord.js** - Bot framework
+- **Supabase** - Database
+- **node-cron** - Timeout checker
+- **discord-modals** - For accept/decline buttons
