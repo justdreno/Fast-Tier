@@ -24,7 +24,7 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer }: L
       try {
         setLoading(true);
         setError(null);
-        
+
         if (searchQuery) {
           const data = await searchPlayers(searchQuery);
           setPlayers(data);
@@ -99,19 +99,19 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer }: L
             <table className="w-full">
               <thead>
                 <tr className="border-b border-white/[0.04]">
-                  <th className="px-3 sm:px-5 py-3 sm:py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em]">
+                  <th className="w-24 px-3 sm:px-5 py-3 sm:py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em]">
                     Rank
                   </th>
-                  <th className="px-3 sm:px-5 py-3 sm:py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em]">
+                  <th className="min-w-[250px] px-3 sm:px-5 py-3 sm:py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em]">
                     Player
                   </th>
-                  <th 
-                    className="px-3 sm:px-5 py-3 sm:py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em] cursor-pointer hover:text-white/50 transition-colors"
+                  <th
+                    className="w-32 px-3 sm:px-5 py-3 sm:py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em] cursor-pointer hover:text-white/50 transition-colors"
                     onClick={() => handleSort('region')}
                   >
                     Region <SortIcon field="region" />
                   </th>
-                  <th 
+                  <th
                     className="px-3 sm:px-5 py-3 sm:py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em] cursor-pointer hover:text-white/50 transition-colors"
                     onClick={() => handleSort('points')}
                   >
@@ -160,11 +160,10 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer }: L
                       {/* Rank */}
                       <div className="flex-shrink-0 w-8 flex justify-center">
                         {index + 1 <= 3 ? (
-                          <span className={`text-base font-bold ${
-                            index + 1 === 1 ? 'text-[#ffd700]' :
-                            index + 1 === 2 ? 'text-[#c0c0c0]' :
-                            'text-[#cd7f32]'
-                          }`}>
+                          <span className={`text-base font-bold ${index + 1 === 1 ? 'text-[#ffd700]' :
+                              index + 1 === 2 ? 'text-[#c0c0c0]' :
+                                'text-[#cd7f32]'
+                            }`}>
                             {index + 1}
                           </span>
                         ) : (
@@ -189,21 +188,21 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer }: L
                         <div className="flex items-center justify-between mb-0.5">
                           <h3 className="font-bold text-white text-sm truncate">{player.username}</h3>
                           <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${player.region === 'NA'
-                              ? 'bg-[#ef4444]/10 text-[#ef4444]/80'
-                              : 'bg-[#10b981]/10 text-[#10b981]/80'
+                            ? 'bg-[#ef4444]/10 text-[#ef4444]/80'
+                            : 'bg-[#10b981]/10 text-[#10b981]/80'
                             }`}>
                             {player.region}
                           </span>
                         </div>
                         <div className="text-xs text-[#ff9f43]/80">{player.rank}</div>
-                        
+
                         {/* Tiers */}
                         <div className="flex flex-wrap gap-1 mt-1.5">
                           {gamemode === 'overall' ? (
                             (player.tiers || []).slice(0, 4).map((playerTier, tierIndex) => {
                               const tierCode = playerTier.tier_definition?.code ?? 'N/A';
                               return (
-                                <span 
+                                <span
                                   key={tierIndex}
                                   className="text-[9px] px-1.5 py-0.5 bg-white/[0.04] rounded text-white/50"
                                 >
@@ -217,7 +216,7 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer }: L
                               .map((playerTier, tierIndex) => {
                                 const tierCode = playerTier.tier_definition?.code ?? 'N/A';
                                 return (
-                                  <span 
+                                  <span
                                     key={tierIndex}
                                     className="text-[10px] font-bold px-2 py-0.5 bg-gradient-to-r from-[#ff9f43]/20 to-[#ff8c00]/20 rounded-lg text-[#ff9f43]"
                                   >

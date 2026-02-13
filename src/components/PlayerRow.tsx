@@ -44,12 +44,12 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
 
   return (
     <>
-      <td className="px-5 py-4">
+      <td className="w-24 px-5 py-4">
         <div className="relative w-20 h-14 flex items-center justify-center overflow-visible">
           {podiumBg ? (
             <>
               {/* Podium background */}
-              <div 
+              <div
                 className="absolute inset-y-0 left-0 w-[120px] -ml-6"
                 style={{
                   backgroundImage: `url(${podiumBg})`,
@@ -61,7 +61,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
               />
               {/* Rank number */}
               <span className="relative z-10 text-3xl font-black text-white drop-shadow-lg italic"
-                style={{ 
+                style={{
                   textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
                   fontFamily: 'system-ui, -apple-system, sans-serif'
                 }}
@@ -74,7 +74,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           )}
         </div>
       </td>
-      <td className="px-5 py-4">
+      <td className="min-w-[250px] px-5 py-4">
         <div className="flex items-center gap-4">
           {/* Avatar with rank badge overlay */}
           <div className="relative">
@@ -90,7 +90,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
               />
             </div>
           </div>
-          
+
           {/* Player info */}
           <div>
             {/* Username */}
@@ -99,8 +99,8 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
             </div>
             {/* Rank title with icon */}
             <div className="flex items-center gap-2 mt-1">
-              <img 
-                src={rankIcon} 
+              <img
+                src={rankIcon}
                 alt={player.rank}
                 className="w-4 h-4 object-contain"
               />
@@ -110,10 +110,10 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           </div>
         </div>
       </td>
-      <td className="px-5 py-4">
+      <td className="w-32 px-5 py-4">
         <div className={`inline-flex px-3 py-1.5 rounded-lg font-bold text-[11px] tracking-wider uppercase ${player.region === 'NA'
-            ? 'bg-[#ef4444]/15 text-[#ef4444] border border-[#ef4444]/25'
-            : 'bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/25'
+          ? 'bg-[#ef4444]/15 text-[#ef4444] border border-[#ef4444]/25'
+          : 'bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/25'
           }`}>
           {player.region}
         </div>
