@@ -1,4 +1,4 @@
-import { Home, Users, Wallet, Handshake, Settings, Menu, X } from 'lucide-react';
+import { Home, Menu, X, Search } from 'lucide-react';
 import { useState } from 'react';
 
 interface NavigationProps {
@@ -8,18 +8,15 @@ interface NavigationProps {
 
 const navItems = [
   { icon: Home, label: 'Home', active: true },
-  { icon: Users, label: 'Profiles', active: false },
-  { icon: Wallet, label: 'Accounts', active: false },
-  { icon: Handshake, label: 'Partners', active: false },
-  { icon: Settings, label: 'Settings', active: false },
 ];
 
-export default function Navigation({}: NavigationProps) {
+export default function Navigation({ searchQuery = '', setSearchQuery }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl">
-      <nav className="bg-[#1a1a1a]/95 backdrop-blur-xl border border-white/[0.08] rounded-2xl shadow-2xl shadow-black/50">
+      <nav className="bg-[#0d0d0d]/98 backdrop-blur-xl border border-white/[0.06] rounded-2xl shadow-2xl shadow-black/50">
         <div className="flex items-center justify-between h-14 px-4 sm:px-6">
           {/* Logo */}
           <div className="flex items-center gap-2">
@@ -68,17 +65,31 @@ export default function Navigation({}: NavigationProps) {
           </div>
 
           {/* Right Side Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Search Bar */}
+            <div className={`relative transition-all duration-300 ease-out ${isSearchFocused ? 'w-48 sm:w-56' : 'w-36 sm:w-44'}`}>
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white/30" size={14} />
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery?.(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setIsSearchFocused(false)}
+                className="w-full pl-8 pr-3 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9f43]/40 focus:ring-1 focus:ring-[#ff9f43]/20 focus:bg-white/[0.06] transition-all duration-300"
+              />
+            </div>
+
             {/* Discord Button */}
             <a
               href="https://discord.gg/fasttier"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center w-9 h-9 rounded-lg bg-white/[0.04] text-white/60 hover:text-white hover:bg-white/[0.08] transition-all duration-200"
+              className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white/[0.04] text-white/60 hover:text-white hover:bg-white/[0.08] transition-all duration-200"
             >
               <svg 
-                width="18" 
-                height="18" 
+                width="16" 
+                height="16" 
                 viewBox="0 0 24 24" 
                 fill="currentColor"
               >
@@ -87,16 +98,16 @@ export default function Navigation({}: NavigationProps) {
             </a>
 
             {/* Apply Button */}
-            <button className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#ff9f43] hover:bg-[#ff9f43]/90 text-black font-semibold text-sm rounded-lg transition-all duration-200">
+            <button className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#ff9f43] hover:bg-[#ff9f43]/90 text-black font-semibold text-sm rounded-lg transition-all duration-200">
               Apply
             </button>
 
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg bg-white/[0.04] text-white/60 hover:text-white hover:bg-white/[0.08] transition-all duration-200"
+              className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg bg-white/[0.04] text-white/60 hover:text-white hover:bg-white/[0.08] transition-all duration-200"
             >
-              {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              {isMobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
             </button>
           </div>
         </div>
