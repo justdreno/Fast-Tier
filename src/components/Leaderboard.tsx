@@ -1,6 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import PlayerRow from './PlayerRow';
 import { getPlayers, searchPlayers, type Player } from '../lib/supabase';
+import { ChevronUp, ChevronDown } from 'lucide-react';
+
+type SortField = 'points' | 'region';
+type SortDirection = 'asc' | 'desc';
 
 interface LeaderboardProps {
   gamemode: string;
@@ -12,6 +16,8 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer }: L
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sortField, setSortField] = useState<SortField>('points');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   useEffect(() => {
     async function fetchPlayers() {
@@ -36,6 +42,33 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer }: L
 
     fetchPlayers();
   }, [searchQuery]);
+
+  const sortedPlayers = useMemo(() => {
+    const sorted = [...players].sort((a, b) => {
+      if (sortField === 'region') {
+        const regionOrder = { 'NA': 1, 'EU': 2, 'ASIA': 3, 'LKA': 4, 'OTHER': 5 };
+        const aOrder = regionOrder[a.region as keyof typeof regionOrder] || 99;
+        const bOrder = regionOrder[b.region as keyof typeof regionOrder] || 99;
+        return sortDirection === 'asc' ? aOrder - bOrder : bOrder - aOrder;
+      }
+      return sortDirection === 'asc' ? a.points - b.points : b.points - a.points;
+    });
+    return sorted;
+  }, [players, sortField, sortDirection]);
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection(field === 'region' ? 'asc' : 'desc');
+    }
+  };
+
+  const SortIcon = ({ field }: { field: SortField }) => {
+    if (sortField !== field) return null;
+    return sortDirection === 'asc' ? <ChevronUp size={12} className="ml-1 inline" /> : <ChevronDown size={12} className="ml-1 inline" />;
+  };
 
   if (loading) {
     return (
@@ -72,17 +105,23 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer }: L
                   <th className="px-3 sm:px-5 py-3 sm:py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em]">
                     Player
                   </th>
-                  <th className="px-3 sm:px-5 py-3 sm:py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em]">
-                    Region
+                  <th 
+                    className="px-3 sm:px-5 py-3 sm:py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em] cursor-pointer hover:text-white/50 transition-colors"
+                    onClick={() => handleSort('region')}
+                  >
+                    Region <SortIcon field="region" />
                   </th>
-                  <th className="px-3 sm:px-5 py-3 sm:py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em]">
-                    {gamemode === 'overall' ? 'Tiers' : 'Tier'}
+                  <th 
+                    className="px-3 sm:px-5 py-3 sm:py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em] cursor-pointer hover:text-white/50 transition-colors"
+                    onClick={() => handleSort('points')}
+                  >
+                    {gamemode === 'overall' ? 'Tiers' : 'Tier'} <SortIcon field="points" />
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {players.length > 0 ? (
-                  players.map((player, index) => (
+                {sortedPlayers.length > 0 ? (
+                  sortedPlayers.map((player, index) => (
                     <tr
                       key={player.id}
                       onClick={() => onSelectPlayer({ player, rank: index + 1 })}
@@ -108,9 +147,9 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer }: L
 
           {/* Mobile Cards */}
           <div className="sm:hidden">
-            {players.length > 0 ? (
+            {sortedPlayers.length > 0 ? (
               <div className="divide-y divide-white/[0.03]">
-                {players.map((player, index) => (
+                {sortedPlayers.map((player, index) => (
                   <div
                     key={player.id}
                     onClick={() => onSelectPlayer({ player, rank: index + 1 })}
