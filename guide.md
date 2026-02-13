@@ -177,20 +177,24 @@ CREATE TABLE applications (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   username VARCHAR(50) NOT NULL,
   discord_username VARCHAR(100) NOT NULL,
+  discord_user_id VARCHAR(20) NOT NULL, -- Discord ID for DMs
   email VARCHAR(255) NOT NULL,
   region VARCHAR(10) NOT NULL,
   gamemode_id UUID REFERENCES gamemodes(id), -- Gamemode they want to test
-  status VARCHAR(20) DEFAULT 'pending', -- pending, invited, testing, completed, expired
+  status VARCHAR(20) DEFAULT 'pending', -- pending, invited, testing, completed, expired, cancelled
   reviewed_by UUID REFERENCES players(id),
   reviewed_at TIMESTAMP WITH TIME ZONE,
   invited_at TIMESTAMP WITH TIME ZONE,
   expires_at TIMESTAMP WITH TIME ZONE,
+  ticket_channel_id VARCHAR(20), -- Discord channel ID for testing
+  expire_count INTEGER DEFAULT 0, -- Track expired invites
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 CREATE INDEX idx_applications_status ON applications(status);
 CREATE INDEX idx_applications_gamemode ON applications(gamemode_id);
+CREATE INDEX idx_applications_discord_user ON applications(discord_user_id);
 CREATE INDEX idx_applications_created ON applications(created_at);
 ```
 

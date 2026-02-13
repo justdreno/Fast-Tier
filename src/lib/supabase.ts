@@ -352,3 +352,76 @@ export async function getPlayerByUsername(username: string): Promise<Player | nu
 
   return data;
 }
+
+// Application Types
+export interface Application {
+  id: string;
+  username: string;
+  discord_username: string;
+  discord_user_id: string;
+  email: string;
+  region: string;
+  gamemode_id?: string;
+  status: 'pending' | 'invited' | 'testing' | 'completed' | 'expired' | 'cancelled';
+  created_at: string;
+  updated_at: string;
+}
+
+// Application Functions
+export async function createApplication(applicationData: {
+  username: string;
+  discord_username: string;
+  discord_user_id: string;
+  email: string;
+  region: string;
+  gamemode_id: string;
+}): Promise<Application> {
+  if (!supabase) {
+    throw new Error('Supabase not configured');
+  }
+  
+  const { data, error } = await supabase
+    .from('applications')
+    .insert([applicationData])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating application:', error);
+    throw error;
+  }
+
+  return data;
+}
+
+export async function getApplicationByDiscordId(discordUserId: string): Promise<Application | null> {
+  if (!supabase) {
+    return null;
+  }
+  
+  const { data, error } = await supabase
+    .from('applications')
+    .select('*')
+    .eq('discord_user_id', discordUserId)
+    .in('status', ['pending', 'invited', 'testing'])
+    .single();
+
+  if (error) return null;
+  return data;
+}
+
+export async function getGamemodeByCode(code: string): Promise<Gamemode | null> {
+  if (!supabase) {
+    return mockGamemodes.find(g => g.code === code) || null;
+  }
+  
+  const { data, error } = await supabase
+    .from('gamemodes')
+    .select('*')
+    .eq('code', code)
+    .eq('is_active', true)
+    .single();
+
+  if (error) return null;
+  return data;
+}
