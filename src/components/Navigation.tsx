@@ -1,4 +1,4 @@
-import { Home, Menu, X, Search } from 'lucide-react';
+import { Menu, X, Search } from 'lucide-react';
 import { useState } from 'react';
 
 interface NavigationProps {
@@ -6,9 +6,7 @@ interface NavigationProps {
   setSearchQuery?: (query: string) => void;
 }
 
-const navItems = [
-  { icon: Home, label: 'Home', active: true },
-];
+const discordLink = import.meta.env.VITE_DISCORD_SERVER_LINK || 'https://discord.gg/fasttier';
 
 export default function Navigation({ searchQuery = '', setSearchQuery }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -44,26 +42,6 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
             </div>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => (
-              <button
-                key={item.label}
-                className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  item.active
-                    ? 'text-white'
-                    : 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
-                }`}
-              >
-                <item.icon size={16} strokeWidth={2} />
-                <span>{item.label}</span>
-                {item.active && (
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-[#ff9f43] rounded-full" />
-                )}
-              </button>
-            ))}
-          </div>
-
           {/* Right Side Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Search Bar */}
@@ -82,7 +60,7 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
 
             {/* Discord Button */}
             <a
-              href="https://discord.gg/fasttier"
+              href={discordLink}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white/[0.04] text-white/60 hover:text-white hover:bg-white/[0.08] transition-all duration-200"
@@ -114,25 +92,10 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-white/[0.06] p-4 space-y-2">
-            {navItems.map((item) => (
-              <button
-                key={item.label}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  item.active
-                    ? 'text-white bg-white/[0.06]'
-                    : 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
-                }`}
-              >
-                <item.icon size={18} strokeWidth={2} />
-                <span>{item.label}</span>
-              </button>
-            ))}
-            <div className="pt-2 border-t border-white/[0.06] mt-2">
-              <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#ff9f43] hover:bg-[#ff9f43]/90 text-black font-semibold text-sm rounded-lg transition-all duration-200">
-                Apply Now
-              </button>
-            </div>
+          <div className="md:hidden border-t border-white/[0.06] p-4">
+            <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#ff9f43] hover:bg-[#ff9f43]/90 text-black font-semibold text-sm rounded-lg transition-all duration-200">
+              Apply Now
+            </button>
           </div>
         )}
       </nav>
