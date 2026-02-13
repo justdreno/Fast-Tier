@@ -1,18 +1,17 @@
 import { useState, useEffect } from 'react';
 import PlayerRow from './PlayerRow';
-import PlayerProfile from './PlayerProfile';
 import { getPlayers, searchPlayers, type Player } from '../lib/supabase';
 
 interface LeaderboardProps {
   gamemode: string;
   searchQuery: string;
+  onSelectPlayer: (player: { player: Player; rank: number } | null) => void;
 }
 
-export default function Leaderboard({ gamemode, searchQuery }: LeaderboardProps) {
+export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer }: LeaderboardProps) {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedPlayer, setSelectedPlayer] = useState<{ player: Player; rank: number } | null>(null);
 
   useEffect(() => {
     async function fetchPlayers() {
@@ -86,7 +85,7 @@ export default function Leaderboard({ gamemode, searchQuery }: LeaderboardProps)
                   players.map((player, index) => (
                     <tr
                       key={player.id}
-                      onClick={() => setSelectedPlayer({ player, rank: index + 1 })}
+                      onClick={() => onSelectPlayer({ player, rank: index + 1 })}
                       className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-all duration-300 cursor-pointer group animate-fadeInUp"
                       style={{ animationDelay: `${0.25 + index * 0.05}s` }}
                     >
@@ -114,7 +113,7 @@ export default function Leaderboard({ gamemode, searchQuery }: LeaderboardProps)
                 {players.map((player, index) => (
                   <div
                     key={player.id}
-                    onClick={() => setSelectedPlayer({ player, rank: index + 1 })}
+                    onClick={() => onSelectPlayer({ player, rank: index + 1 })}
                     className="p-3 hover:bg-white/[0.02] active:bg-white/[0.04] transition-all duration-200 cursor-pointer animate-fadeInUp"
                     style={{ animationDelay: `${0.25 + index * 0.05}s` }}
                   >
@@ -207,13 +206,6 @@ export default function Leaderboard({ gamemode, searchQuery }: LeaderboardProps)
         </div>
       </div>
 
-      {selectedPlayer && (
-        <PlayerProfile
-          player={selectedPlayer.player}
-          rank={selectedPlayer.rank}
-          onClose={() => setSelectedPlayer(null)}
-        />
-      )}
     </>
   );
 }

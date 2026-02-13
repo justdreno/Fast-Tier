@@ -2,10 +2,13 @@ import { useState } from 'react';
 import Navigation from './components/Navigation';
 import GamemodeTabs from './components/GamemodeTabs';
 import Leaderboard from './components/Leaderboard';
+import PlayerProfile from './components/PlayerProfile';
+import type { Player } from './lib/supabase';
 
 function App() {
   const [selectedGamemode, setSelectedGamemode] = useState('overall');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedPlayer, setSelectedPlayer] = useState<{ player: Player; rank: number } | null>(null);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
@@ -30,8 +33,20 @@ function App() {
           selectedGamemode={selectedGamemode}
           setSelectedGamemode={setSelectedGamemode}
         />
-        <Leaderboard gamemode={selectedGamemode} searchQuery={searchQuery} />
+        <Leaderboard 
+          gamemode={selectedGamemode} 
+          searchQuery={searchQuery} 
+          onSelectPlayer={setSelectedPlayer}
+        />
       </main>
+
+      {selectedPlayer && (
+        <PlayerProfile
+          player={selectedPlayer.player}
+          rank={selectedPlayer.rank}
+          onClose={() => setSelectedPlayer(null)}
+        />
+      )}
     </div>
   );
 }
