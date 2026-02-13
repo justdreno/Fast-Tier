@@ -95,7 +95,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-3 sm:p-4 animate-backdropIn" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm !z-[99999] flex items-center justify-center p-3 sm:p-4 animate-backdropIn" onClick={onClose}>
       <div
         className="w-full max-w-xl max-h-[90vh] overflow-y-auto bg-gradient-to-b from-[#141414] to-[#0a0a0a] border border-white/[0.08] rounded-3xl shadow-2xl shadow-black/60 animate-scaleIn relative [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width-none]"
         onClick={(e) => e.stopPropagation()}
@@ -281,7 +281,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
 
       {/* Toast Notification */}
       {toast.visible && (
-        <div className={`fixed bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 z-[10000] w-[calc(100%-2rem)] max-w-xs ${toast.exiting ? 'toast-exit' : 'toast-enter'}`}>
+        <div className={`fixed bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 z-[999999] w-[calc(100%-2rem)] max-w-xs ${toast.exiting ? 'toast-exit' : 'toast-enter'}`}>
           <div className="flex items-center justify-center gap-2.5 px-5 py-3.5 bg-[#1a1a1a] border border-white/[0.1] rounded-xl shadow-2xl shadow-black/60">
             <CheckCircle size={16} className="text-[#10b981] flex-shrink-0" />
             <span className="text-sm font-medium text-white/80">{toast.message}</span>
