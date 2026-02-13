@@ -8,6 +8,7 @@ interface ApplicationForm {
   email: string;
   region: string;
   discord_username: string;
+  discord_id: string;
   gamemode: string;
 }
 
@@ -45,6 +46,7 @@ export default function ApplyPage() {
     email: '',
     region: '',
     discord_username: '',
+    discord_id: '',
     gamemode: ''
   }));
 
@@ -78,15 +80,17 @@ export default function ApplyPage() {
       return;
     }
 
+    // Validate Discord ID (should be 17-20 digits)
+    if (!/^\d{17,20}$/.test(form.discord_id)) {
+      showToast('Please enter a valid Discord User ID (17-20 digits). Enable Developer Mode in Discord to copy your ID.', 'error');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      // Check if user already has an active application
-      // Note: In a real app, you'd get the discord_user_id from auth or a previous step
-      // For now, we'll use a temporary ID based on email hash or session
-      const tempDiscordId = `web_${form.email.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
-      
-      const existingApp = await getApplicationByDiscordId(tempDiscordId);
+      // Check if user already has an active application using their actual Discord ID
+      const existingApp = await getApplicationByDiscordId(form.discord_id);
       if (existingApp) {
         showToast(`You already have an active application (Status: ${existingApp.status}). Please wait for it to be processed.`, 'error');
         setIsLoading(false);
@@ -101,11 +105,11 @@ export default function ApplyPage() {
         return;
       }
 
-      // Create application
+      // Create application with actual Discord ID
       await createApplication({
         username: form.username,
         discord_username: form.discord_username,
-        discord_user_id: tempDiscordId,
+        discord_user_id: form.discord_id,
         email: form.email,
         region: form.region.toUpperCase(),
         gamemode_id: gamemode.id,
@@ -175,7 +179,7 @@ export default function ApplyPage() {
                 <button
                   onClick={() => {
                     setIsSubmitted(false);
-                    setForm({ username: '', email: '', region: '', discord_username: '', gamemode: '' });
+                    setForm({ username: '', email: '', region: '', discord_username: '', discord_id: '', gamemode: '' });
                   }}
                   className="px-6 py-3 bg-white/[0.05] text-white font-bold rounded-xl hover:bg-white/[0.1] transition-all"
                 >
@@ -264,6 +268,27 @@ export default function ApplyPage() {
                 placeholder="username#0000 or @username"
                 className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9f43]/40 focus:ring-2 focus:ring-[#ff9f43]/10 transition-all disabled:opacity-50"
               />
+            </div>
+
+            {/* Discord ID */}
+            <div>
+              <label className="flex items-center gap-2 text-xs font-bold text-white/50 uppercase tracking-wider mb-2">
+                <span className="text-[#ff9f43] font-bold">ID</span>
+                Discord User ID
+              </label>
+              <input
+                type="text"
+                name="discord_id"
+                value={form.discord_id}
+                onChange={handleChange}
+                required
+                disabled={isLoading}
+                placeholder="123456789012345678"
+                className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9f43]/40 focus:ring-2 focus:ring-[#ff9f43]/10 transition-all disabled:opacity-50"
+              />
+              <p className="text-xs text-white/40 mt-1">
+                How to find: Discord Settings → Advanced → Developer Mode ON → Right-click your name → Copy User ID
+              </p>
             </div>
 
             {/* Gamemode */}
