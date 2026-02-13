@@ -74,7 +74,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           )}
         </div>
       </td>
-      <td className="min-w-[250px] px-5 py-4">
+      <td className="min-w-[300px] px-5 py-4">
         <div className="flex items-center gap-4">
           {/* Avatar with rank badge overlay */}
           <div className="relative">
@@ -98,7 +98,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
               {player.username}
             </div>
             {/* Rank title with icon */}
-            <div className="flex items-center gap-2 mt-1">
+            <div className="flex items-center gap-2 mt-1 whitespace-nowrap">
               <img
                 src={rankIcon}
                 alt={player.rank}

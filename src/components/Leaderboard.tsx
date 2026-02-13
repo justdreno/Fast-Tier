@@ -102,7 +102,7 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer }: L
                   <th className="w-24 px-3 sm:px-5 py-3 sm:py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em]">
                     Rank
                   </th>
-                  <th className="min-w-[250px] px-3 sm:px-5 py-3 sm:py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em]">
+                  <th className="min-w-[300px] px-3 sm:px-5 py-3 sm:py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em]">
                     Player
                   </th>
                   <th
@@ -115,7 +115,7 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer }: L
                     className="px-3 sm:px-5 py-3 sm:py-4 text-left text-[10px] font-bold text-white/25 uppercase tracking-[0.15em] cursor-pointer hover:text-white/50 transition-colors"
                     onClick={() => handleSort('points')}
                   >
-                    {gamemode === 'overall' ? 'Tiers' : 'Tier'} <SortIcon field="points" />
+                    Tiers <SortIcon field="points" />
                   </th>
                 </tr>
               </thead>
@@ -161,8 +161,8 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer }: L
                       <div className="flex-shrink-0 w-8 flex justify-center">
                         {index + 1 <= 3 ? (
                           <span className={`text-base font-bold ${index + 1 === 1 ? 'text-[#ffd700]' :
-                              index + 1 === 2 ? 'text-[#c0c0c0]' :
-                                'text-[#cd7f32]'
+                            index + 1 === 2 ? 'text-[#c0c0c0]' :
+                              'text-[#cd7f32]'
                             }`}>
                             {index + 1}
                           </span>
