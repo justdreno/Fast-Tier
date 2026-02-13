@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Copy, User, CheckCircle, Trophy, Target, Zap, Medal, Crown, Wifi, WifiOff } from 'lucide-react';
+import { X, Copy, User, CheckCircle, Trophy, Target, Zap, Medal, Crown } from 'lucide-react';
 import type { Player, PlayerAchievement } from '../lib/supabase';
 
 interface PlayerProfileProps {
@@ -73,56 +73,8 @@ const getAchievementIcon = (iconName: string): React.ElementType => {
   return achievementIcons[iconName] || Trophy;
 };
 
-const formatUUID = (uuid: string) => {
-  // Format UUID with dashes if it's not already formatted
-  if (uuid.length === 32) {
-    return `${uuid.slice(0, 8)}-${uuid.slice(8, 12)}-${uuid.slice(12, 16)}-${uuid.slice(16, 20)}-${uuid.slice(20)}`;
-  }
-  return uuid;
-};
-
-const getMCUUID = async (username: string): Promise<{ uuid: string; isOffline: boolean }> => {
-  try {
-    // Try to get online UUID from Mojang
-    const response = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`);
-    if (response.ok) {
-      const data = await response.json();
-      return { uuid: formatUUID(data.id), isOffline: false };
-    }
-  } catch {
-    // Continue to offline generation
-  }
-  
-  // Generate offline UUID (based on username hash)
-  const offlineUUID = generateOfflineUUID(username);
-  return { uuid: offlineUUID, isOffline: true };
-};
-
-const generateOfflineUUID = (username: string): string => {
-  // Simple offline UUID generation (version 3 style)
-  let hash = 0;
-  for (let i = 0; i < username.length; i++) {
-    const char = username.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  const hex = Math.abs(hash).toString(16).padStart(32, '0');
-  return formatUUID(hex);
-};
-
 export default function PlayerProfile({ player, rank, onClose }: PlayerProfileProps) {
   const [toast, setToast] = useState<ToastState>({ message: '', visible: false, exiting: false });
-  const [mcUUID, setMcUUID] = useState<{ uuid: string; isOffline: boolean } | null>(null);
-  const [loadingUUID, setLoadingUUID] = useState(true);
-
-  useEffect(() => {
-    const fetchUUID = async () => {
-      const result = await getMCUUID(player.username);
-      setMcUUID(result);
-      setLoadingUUID(false);
-    };
-    fetchUUID();
-  }, [player.username]);
 
   const showToast = (message: string) => {
     setToast({ message, visible: true, exiting: false });
@@ -143,9 +95,9 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-3 sm:p-4 animate-backdropIn" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-3 sm:p-4 animate-backdropIn" onClick={onClose}>
       <div
-        className="w-full max-w-xl max-h-[90vh] overflow-y-auto scrollbar-thin bg-gradient-to-b from-[#141414] to-[#0a0a0a] border border-white/[0.08] rounded-3xl shadow-2xl shadow-black/60 animate-scaleIn relative"
+        className="w-full max-w-xl max-h-[90vh] overflow-y-auto bg-gradient-to-b from-[#141414] to-[#0a0a0a] border border-white/[0.08] rounded-3xl shadow-2xl shadow-black/60 animate-scaleIn relative [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width-none]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Orange glow from corner */}
@@ -189,7 +141,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
             </div>
 
             <div className="flex-1 min-w-0 pt-1">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-3">
                 <h1 className="text-xl sm:text-2xl font-black text-white truncate">{player.username}</h1>
                 <button
                   onClick={() => handleCopy(player.username, 'Username')}
@@ -197,35 +149,6 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                 >
                   <Copy size={14} />
                 </button>
-              </div>
-
-              {/* Minecraft UUID with offline status */}
-              <div className="flex items-center gap-2 mb-3">
-                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border ${mcUUID?.isOffline 
-                  ? 'bg-white/[0.03] border-white/[0.08]' 
-                  : 'bg-[#ff9f43]/10 border-[#ff9f43]/20'}`}>
-                  {loadingUUID ? (
-                    <div className="w-3 h-3 border-2 border-white/20 border-t-[#ff9f43] rounded-full animate-spin" />
-                  ) : mcUUID?.isOffline ? (
-                    <WifiOff size={12} className="text-white/40" />
-                  ) : (
-                    <Wifi size={12} className="text-[#10b981]" />
-                  )}
-                  <span className="text-[10px] sm:text-xs font-mono text-white/50 truncate max-w-[140px] sm:max-w-[200px]">
-                    {loadingUUID ? 'Loading...' : mcUUID?.uuid}
-                  </span>
-                  {mcUUID?.isOffline && (
-                    <span className="text-[9px] font-bold text-white/30 bg-white/[0.08] px-1.5 py-0.5 rounded">OFFLINE</span>
-                  )}
-                </div>
-                {!loadingUUID && (
-                  <button
-                    onClick={() => handleCopy(mcUUID?.uuid || '', 'UUID')}
-                    className="p-1.5 hover:bg-white/[0.08] rounded-lg transition-all text-white/20 hover:text-[#ff9f43]"
-                  >
-                    <Copy size={12} />
-                  </button>
-                )}
               </div>
 
               {/* Stats row */}
@@ -250,14 +173,13 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
             </div>
           </div>
 
-          {/* Copy UUID button */}
+          {/* Copy Username button */}
           <button
-            onClick={() => !loadingUUID && handleCopy(mcUUID?.uuid || '', 'UUID')}
-            disabled={loadingUUID}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 mb-6 bg-gradient-to-r from-[#ff9f43]/10 via-[#ff9f43]/5 to-[#ff8c00]/10 border border-[#ff9f43]/20 rounded-xl text-[#ff9f43] text-sm font-semibold hover:from-[#ff9f43]/15 hover:via-[#ff9f43]/10 hover:to-[#ff8c00]/15 hover:border-[#ff9f43]/30 active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={() => handleCopy(player.username, 'Username')}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 mb-6 bg-gradient-to-r from-[#ff9f43]/10 via-[#ff9f43]/5 to-[#ff8c00]/10 border border-[#ff9f43]/20 rounded-xl text-[#ff9f43] text-sm font-semibold hover:from-[#ff9f43]/15 hover:via-[#ff9f43]/10 hover:to-[#ff8c00]/15 hover:border-[#ff9f43]/30 active:scale-[0.98] transition-all duration-300"
           >
             <Copy size={14} />
-            Copy Minecraft UUID
+            Copy Username
           </button>
 
           {/* Gamemodes & Tiers - Modern Grid */}
@@ -359,7 +281,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
 
       {/* Toast Notification */}
       {toast.visible && (
-        <div className={`fixed bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 z-[110] w-[calc(100%-2rem)] max-w-xs ${toast.exiting ? 'toast-exit' : 'toast-enter'}`}>
+        <div className={`fixed bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 z-[10000] w-[calc(100%-2rem)] max-w-xs ${toast.exiting ? 'toast-exit' : 'toast-enter'}`}>
           <div className="flex items-center justify-center gap-2.5 px-5 py-3.5 bg-[#1a1a1a] border border-white/[0.1] rounded-xl shadow-2xl shadow-black/60">
             <CheckCircle size={16} className="text-[#10b981] flex-shrink-0" />
             <span className="text-sm font-medium text-white/80">{toast.message}</span>
