@@ -61,7 +61,8 @@ CREATE TABLE gamemodes (
   name VARCHAR(50) NOT NULL,
   display_name VARCHAR(50) NOT NULL,
   description TEXT,
-  icon_name VARCHAR(50), -- For UI icons
+  icon_name VARCHAR(50), -- References image file name in public/kits/
+  icon_url TEXT, -- Full path to icon image (e.g., /kits/vanilla.svg)
   color_hex VARCHAR(7) DEFAULT '#ffffff', -- Brand color
   is_active BOOLEAN DEFAULT true,
   sort_order INTEGER DEFAULT 0,
@@ -69,16 +70,15 @@ CREATE TABLE gamemodes (
 );
 
 -- Insert default gamemodes
-INSERT INTO gamemodes (code, name, display_name, description, icon_name, color_hex, sort_order) VALUES
-('vanilla', 'Vanilla', 'Vanilla', 'Classic PvP', 'Heart', '#ef4444', 1),
-('uhc', 'UHC', 'UHC', 'Ultra Hardcore', 'Heart', '#dc2626', 2),
-('pot', 'Pot', 'Pot', 'Potion PvP', 'Flame', '#f97316', 3),
-('nethop', 'NethOP', 'NethOP', 'Nether OP', 'Flame', '#ea580c', 4),
-('smp', 'SMP', 'SMP', 'Survival Multiplayer', 'Users', '#22c55e', 5),
-('sword', 'Sword', 'Sword', 'Sword Combat', 'Sword', '#3b82f6', 6),
-('axe', 'Axe', 'Axe', 'Axe Combat', 'Axe', '#8b5cf6', 7),
-('mace', 'Mace', 'Mace', 'Mace Combat', 'Hammer', '#a855f7', 8),
-('ltms', 'LTMs', 'LTMs', 'Limited Time Modes', 'Swords', '#ec4899', 9);
+INSERT INTO gamemodes (code, name, display_name, description, icon_name, icon_url, color_hex, sort_order) VALUES
+('vanilla', 'Vanilla', 'Vanilla', 'Classic Minecraft PvP with standard mechanics', 'vanilla', '/kits/vanilla.svg', '#ef4444', 1),
+('uhc', 'UHC', 'UHC', 'Ultra Hardcore - No natural regeneration', 'uhc', '/kits/uhc.svg', '#dc2626', 2),
+('pot', 'Pot', 'Pot', 'Potion PvP with speed and strength pots', 'pot', '/kits/pot.svg', '#f97316', 3),
+('nethop', 'NethOP', 'NethOP', 'Nether OP - Powerful nether gear combat', 'nethop', '/kits/nethop.svg', '#ea580c', 4),
+('smp', 'SMP', 'SMP', 'Survival Multiplayer PvP scenarios', 'smp', '/kits/smp.svg', '#22c55e', 5),
+('sword', 'Sword', 'Sword', 'Sword-focused combat mode', 'sword', '/kits/sword.svg', '#3b82f6', 6),
+('axe', 'Axe', 'Axe', 'Axe and shield combat techniques', 'axe', '/kits/axe.svg', '#8b5cf6', 7),
+('mace', 'Mace', 'Mace', 'Mace combat with new mechanics', 'mace', '/kits/mace.svg', '#a855f7', 8);
 ```
 
 ### 3. Tier Definitions Table
@@ -135,18 +135,22 @@ CREATE TABLE achievements (
   code VARCHAR(50) UNIQUE NOT NULL,
   name VARCHAR(100) NOT NULL,
   description TEXT,
-  icon_name VARCHAR(50) DEFAULT 'Trophy',
+  icon_name VARCHAR(50),
+  icon_url TEXT, -- Path to achievement image if available
   color_hex VARCHAR(7) DEFAULT '#ffd700',
   points_bonus INTEGER DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Insert example achievements
+-- Insert achievements
 INSERT INTO achievements (code, name, description, icon_name, color_hex, points_bonus) VALUES
-('first_win', 'First Blood', 'Win your first match', 'Target', '#ef4444', 10),
-('win_streak_5', 'On Fire', 'Win 5 matches in a row', 'Zap', '#f97316', 25),
-('master', 'Combat Master', 'Reach 300+ points', 'Trophy', '#ffd700', 50),
-('legend', 'Combat Legend', 'Reach 500+ points', 'Crown', '#8b5cf6', 100);
+('first_blood', 'First Blood', 'Win your first ranked match', 'Target', '#ef4444', 10),
+('win_streak_3', 'Winning Streak', 'Win 3 matches in a row', 'Flame', '#f97316', 25),
+('win_streak_5', 'On Fire', 'Win 5 matches in a row', 'Zap', '#eab308', 50),
+('tier_climber', 'Tier Climber', 'Advance to a higher tier', 'TrendingUp', '#3b82f6', 30),
+('ht1_reached', 'Elite Status', 'Reach High Tier 1 in any gamemode', 'Crown', '#10b981', 100),
+('veteran', 'Veteran', 'Play 50 ranked matches', 'Shield', '#8b5cf6', 75),
+('undefeated', 'Undefeated', 'Win 10 matches without losing', 'Star', '#ffd700', 150);
 ```
 
 ### 6. Player Achievements Table (Junction)
@@ -161,6 +165,26 @@ CREATE TABLE player_achievements (
 );
 
 CREATE INDEX idx_player_achievements_player ON player_achievements(player_id);
+```
+
+### 7. Applications Table
+
+```sql
+CREATE TABLE applications (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  username VARCHAR(50) NOT NULL,
+  discord_username VARCHAR(100) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  region VARCHAR(10) NOT NULL,
+  status VARCHAR(20) DEFAULT 'pending', -- pending, approved, rejected
+  reviewed_by UUID REFERENCES players(id),
+  reviewed_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_applications_status ON applications(status);
+CREATE INDEX idx_applications_username ON applications(username);
 ```
 
 ---
