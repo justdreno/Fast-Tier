@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 html,
 body {
@@ -169,7 +169,7 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
-  
+
   .tier-card .gamemode-label {
     transform: translateY(-2px);
   }

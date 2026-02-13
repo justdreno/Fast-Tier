@@ -1,71 +1,92 @@
-import { Heart, Flame, Sword, Axe, Hammer, Users, Swords } from 'lucide-react';
-
 interface TierBadgeProps {
   gamemode: string;
   tier: string;
-  showGamemode?: boolean;
 }
 
-const gamemodeLabels: Record<string, string> = {
-  vanilla: 'Vanilla',
-  uhc: 'UHC',
-  pot: 'Pot',
-  nethop: 'NethOP',
-  smp: 'SMP',
-  sword: 'Sword',
-  axe: 'Axe',
-  mace: 'Mace',
-  ltms: 'LTMs',
+const gamemodeIcons: Record<string, string> = {
+  vanilla: '/kits/vanilla.svg',
+  uhc: '/kits/uhc.svg',
+  pot: '/kits/pot.svg',
+  nethop: '/kits/nethop.svg',
+  smp: '/kits/smp.svg',
+  sword: '/kits/sword.svg',
+  axe: '/kits/axe.svg',
+  mace: '/kits/mace.svg',
+  ltms: '/kits/global.svg',
 };
 
-export default function TierBadge({ gamemode, tier, showGamemode = false }: TierBadgeProps) {
-  const getIcon = () => {
-    switch (gamemode) {
-      case 'vanilla':
-      case 'uhc':
-        return Heart;
-      case 'pot':
-      case 'nethop':
-        return Flame;
-      case 'sword':
-        return Sword;
-      case 'axe':
-        return Axe;
-      case 'mace':
-        return Hammer;
-      case 'smp':
-        return Users;
-      default:
-        return Swords;
-    }
-  };
+const gamemodeColors: Record<string, { bg: string; border: string }> = {
+  vanilla: { bg: 'bg-[#7a50e0]', border: 'border-[#7a50e0]' },
+  uhc: { bg: 'bg-[#10b981]', border: 'border-[#10b981]' },
+  pot: { bg: 'bg-[#f97316]', border: 'border-[#f97316]' },
+  nethop: { bg: 'bg-[#ef4444]', border: 'border-[#ef4444]' },
+  smp: { bg: 'bg-[#22c55e]', border: 'border-[#22c55e]' },
+  sword: { bg: 'bg-[#4055a4]', border: 'border-[#4055a4]' },
+  axe: { bg: 'bg-[#a855f7]', border: 'border-[#a855f7]' },
+  mace: { bg: 'bg-[#ec4899]', border: 'border-[#ec4899]' },
+  ltms: { bg: 'bg-[#f59e0b]', border: 'border-[#f59e0b]' },
+};
 
-  const getTierColor = () => {
+export default function TierBadge({ gamemode, tier }: TierBadgeProps) {
+  const colors = gamemodeColors[gamemode] || { bg: 'bg-[#6b7280]', border: 'border-[#6b7280]' };
+  
+  const getTierBadgeStyle = () => {
     if (tier.startsWith('HT')) {
-      const tierNum = parseInt(tier.replace('HT', ''));
-      if (tierNum === 1) return 'bg-gradient-to-br from-[#10b981] to-[#059669] border-[#10b981]/30 text-white shadow-[#10b981]/20';
-      if (tierNum === 2) return 'bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] border-[#8b5cf6]/30 text-white shadow-[#8b5cf6]/20';
-      if (tierNum === 3) return 'bg-gradient-to-br from-[#ff9f43] to-[#ff8c00] border-[#ff9f43]/30 text-white shadow-[#ff9f43]/20';
-      return 'bg-gradient-to-br from-[#ff9f43] to-[#ff7700] border-[#ff9f43]/30 text-white shadow-[#ff9f43]/20';
+      // High tier - vibrant colors
+      return {
+        iconBg: colors.bg,
+        labelBg: 'bg-[#3d3d1f]',
+        labelText: 'text-[#eab308]',
+        border: colors.border,
+      };
+    } else if (tier.startsWith('LT')) {
+      // Low tier - muted colors
+      return {
+        iconBg: colors.bg,
+        labelBg: 'bg-[#2a2a2a]',
+        labelText: 'text-[#9ca3af]',
+        border: colors.border,
+      };
     }
-    if (tier.startsWith('LT')) {
-      return 'bg-white/[0.04] border-white/[0.08] text-white/70 shadow-transparent';
-    }
-    return 'bg-white/[0.02] border-white/[0.05] text-white/50 shadow-transparent';
+    return {
+      iconBg: 'bg-[#4b5563]',
+      labelBg: 'bg-[#1f2937]',
+      labelText: 'text-[#6b7280]',
+      border: 'border-[#4b5563]',
+    };
   };
 
-  const Icon = getIcon();
+  const style = getTierBadgeStyle();
 
   return (
-    <div className={`
-      inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-bold text-xs tracking-wide
-      ${getTierColor()}
-      hover:scale-110 transition-all duration-200 cursor-default
-      shadow-lg
-    `}>
-      <Icon size={12} strokeWidth={2.5} />
-      {showGamemode && <span className="opacity-60 font-medium">{gamemodeLabels[gamemode] || gamemode}</span>}
-      <span>{tier}</span>
+    <div className="flex items-center">
+      {/* Icon circle */}
+      <div className={`
+        w-9 h-9 rounded-full flex items-center justify-center
+        ${style.iconBg} bg-opacity-80
+        border-2 ${style.border}
+        shadow-lg
+        relative z-10
+        p-1.5
+      `}>
+        <img 
+          src={gamemodeIcons[gamemode] || '/kits/global.svg'} 
+          alt={gamemode}
+          className="w-full h-full object-contain"
+        />
+      </div>
+      
+      {/* Tier label pill */}
+      <div className={`
+        -ml-1 px-3 py-1 rounded-r-lg rounded-l-none
+        ${style.labelBg}
+        border ${style.border} border-l-0
+        ${style.labelText}
+        text-xs font-bold tracking-wider
+        min-w-[36px] text-center
+      `}>
+        {tier}
+      </div>
     </div>
   );
 }

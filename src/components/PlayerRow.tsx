@@ -7,85 +7,113 @@ interface PlayerRowProps {
   gamemode: string;
 }
 
-export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
-  const getRankDisplay = (rank: number) => {
-    if (rank === 1) {
-      return (
-        <div className="relative w-11 h-11 flex items-center justify-center">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#ffd700] to-[#ffb800] rounded-xl opacity-20 blur-sm" />
-          <div className="relative w-11 h-11 bg-gradient-to-br from-[#ffd700]/20 to-[#ffb800]/10 border border-[#ffd700]/30 rounded-xl flex items-center justify-center">
-            <span className="text-lg font-bold text-[#ffd700]">1</span>
-          </div>
-        </div>
-      );
-    }
-    if (rank === 2) {
-      return (
-        <div className="relative w-11 h-11 flex items-center justify-center">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#c0c0c0] to-[#a8a8a8] rounded-xl opacity-15 blur-sm" />
-          <div className="relative w-11 h-11 bg-gradient-to-br from-[#c0c0c0]/15 to-[#a8a8a8]/10 border border-[#c0c0c0]/25 rounded-xl flex items-center justify-center">
-            <span className="text-lg font-bold text-[#c0c0c0]">2</span>
-          </div>
-        </div>
-      );
-    }
-    if (rank === 3) {
-      return (
-        <div className="relative w-11 h-11 flex items-center justify-center">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#cd7f32] to-[#b8620e] rounded-xl opacity-15 blur-sm" />
-          <div className="relative w-11 h-11 bg-gradient-to-br from-[#cd7f32]/15 to-[#b8620e]/10 border border-[#cd7f32]/25 rounded-xl flex items-center justify-center">
-            <span className="text-lg font-bold text-[#cd7f32]">3</span>
-          </div>
-        </div>
-      );
-    }
-    return (
-      <div className="w-11 h-11 bg-white/[0.03] border border-white/[0.06] rounded-xl flex items-center justify-center">
-        <span className="text-sm font-bold text-white/30">{rank}</span>
-      </div>
-    );
-  };
+// Function to get rank icon based on player rank title
+const getRankIcon = (rankTitle: string): string => {
+  const rankLower = rankTitle.toLowerCase();
+  if (rankLower.includes('grandmaster')) return '/ranks/combat_ace.webp';
+  if (rankLower.includes('master')) return '/ranks/combat_master.webp';
+  if (rankLower.includes('specialist')) return '/ranks/combat_specialist.webp';
+  if (rankLower.includes('cadet')) return '/ranks/combat_cadet.webp';
+  if (rankLower.includes('novice')) return '/ranks/combat_novice.webp';
+  return '/ranks/rookie.webp';
+};
 
+// Function to get podium background for top 3 ranks
+const getPodiumBackground = (rank: number): string | null => {
+  switch (rank) {
+    case 1:
+      return '/podeum/gold.svg';
+    case 2:
+      return '/podeum/silver.svg';
+    case 3:
+      return '/podeum/bronze.svg';
+    default:
+      return null;
+  }
+};
+
+export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
   // Filter tiers by gamemode
   const playerTiers = player.tiers || [];
   const displayTiers = gamemode === 'overall'
     ? playerTiers
     : playerTiers.filter(t => t.gamemode?.code === gamemode);
 
+  const podiumBg = getPodiumBackground(rank);
+  const rankIcon = getRankIcon(player.rank);
+
   return (
     <>
       <td className="px-5 py-4">
-        {getRankDisplay(rank)}
+        <div className="relative w-20 h-14 flex items-center justify-center overflow-visible">
+          {podiumBg ? (
+            <>
+              {/* Podium background */}
+              <div 
+                className="absolute inset-y-0 left-0 w-[120px] -ml-6"
+                style={{
+                  backgroundImage: `url(${podiumBg})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  clipPath: 'polygon(0 0, 85% 0, 100% 100%, 0 100%)',
+                }}
+              />
+              {/* Rank number */}
+              <span className="relative z-10 text-3xl font-black text-white drop-shadow-lg italic"
+                style={{ 
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                  fontFamily: 'system-ui, -apple-system, sans-serif'
+                }}
+              >
+                {rank}.
+              </span>
+            </>
+          ) : (
+            <span className="text-xl font-bold text-white/40">{rank}.</span>
+          )}
+        </div>
       </td>
       <td className="px-5 py-4">
-        <div className="flex items-center gap-3">
-          <div className="relative group/avatar">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#ff9f43] to-[#ff8c00] rounded-xl opacity-0 group-hover/avatar:opacity-30 blur-md transition-opacity duration-300" />
-            <img
-              src={`https://render.crafty.gg/3d/bust/${player.username}`}
-              alt={player.username}
-              className="relative w-14 h-14 object-cover rounded-xl border border-white/[0.06] group-hover:border-[#ff9f43]/30 transition-all duration-300"
-              onError={(e) => {
-                e.currentTarget.src = 'https://render.crafty.gg/3d/bust/MHF_Alex';
-              }}
-            />
+        <div className="flex items-center gap-4">
+          {/* Avatar with rank badge overlay */}
+          <div className="relative">
+            <div className="relative group/avatar">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#ff9f43] to-[#ff8c00] rounded-lg opacity-0 group-hover/avatar:opacity-30 blur-md transition-opacity duration-300" />
+              <img
+                src={`https://render.crafty.gg/3d/bust/${player.username}`}
+                alt={player.username}
+                className="relative w-14 h-14 object-cover rounded-lg border border-white/[0.06] group-hover:border-[#ff9f43]/30 transition-all duration-300"
+                onError={(e) => {
+                  e.currentTarget.src = 'https://render.crafty.gg/3d/bust/MHF_Alex';
+                }}
+              />
+            </div>
           </div>
+          
+          {/* Player info */}
           <div>
-            <div className="text-white font-bold text-sm group-hover:text-[#ff9f43] transition-colors duration-300">
+            {/* Username */}
+            <div className="text-white font-bold text-base group-hover:text-[#ff9f43] transition-colors duration-300">
               {player.username}
             </div>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-[#ff9f43]/80 font-medium text-xs">{player.rank}</span>
-              <span className="text-white/20">·</span>
-              <span className="text-white/30 text-xs">{player.points} pts</span>
+            {/* Rank title with icon */}
+            <div className="flex items-center gap-2 mt-1">
+              <img 
+                src={rankIcon} 
+                alt={player.rank}
+                className="w-4 h-4 object-contain"
+              />
+              <span className="text-[#ff9f43] font-semibold text-sm">{player.rank}</span>
+              <span className="text-white/40 text-sm">({player.points} points)</span>
             </div>
           </div>
         </div>
       </td>
       <td className="px-5 py-4">
-        <div className={`inline-flex px-2.5 py-1 rounded-lg font-bold text-[11px] tracking-wider uppercase ${player.region === 'NA'
-            ? 'bg-[#ef4444]/10 text-[#ef4444]/80 border border-[#ef4444]/15'
-            : 'bg-[#10b981]/10 text-[#10b981]/80 border border-[#10b981]/15'
+        <div className={`inline-flex px-3 py-1.5 rounded-lg font-bold text-[11px] tracking-wider uppercase ${player.region === 'NA'
+            ? 'bg-[#ef4444]/15 text-[#ef4444] border border-[#ef4444]/25'
+            : 'bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/25'
           }`}>
           {player.region}
         </div>
@@ -101,7 +129,6 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
                   key={index}
                   gamemode={gamemodeCode}
                   tier={tierCode}
-                  showGamemode={gamemode === 'overall'}
                 />
               );
             })

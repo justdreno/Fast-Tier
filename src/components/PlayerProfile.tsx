@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LucideIcon, X, Copy, Hash, User, CheckCircle, Trophy, Target, Zap, Medal, Crown } from 'lucide-react';
-import { Heart, Flame, Sword, Axe, Hammer, Users, Swords } from 'lucide-react';
+import { X, Copy, Hash, User, CheckCircle, Trophy, Target, Zap, Medal, Crown } from 'lucide-react';
 import type { Player, PlayerAchievement } from '../lib/supabase';
 
 interface PlayerProfileProps {
@@ -27,19 +26,19 @@ const gamemodeLabels: Record<string, string> = {
   ltms: 'LTMs',
 };
 
-const gamemodeIcons: Record<string, LucideIcon> = {
-  vanilla: Heart,
-  uhc: Heart,
-  pot: Flame,
-  nethop: Flame,
-  smp: Users,
-  sword: Sword,
-  axe: Axe,
-  mace: Hammer,
-  ltms: Swords,
+const gamemodeIconPaths: Record<string, string> = {
+  vanilla: '/kits/vanilla.svg',
+  uhc: '/kits/uhc.svg',
+  pot: '/kits/pot.svg',
+  nethop: '/kits/nethop.svg',
+  smp: '/kits/smp.svg',
+  sword: '/kits/sword.svg',
+  axe: '/kits/axe.svg',
+  mace: '/kits/mace.svg',
+  ltms: '/kits/global.svg',
 };
 
-const achievementIcons: Record<string, LucideIcon> = {
+const achievementIcons: Record<string, React.ElementType> = {
   Target,
   Zap,
   Trophy,
@@ -58,7 +57,7 @@ const getTierColor = (tier: string) => {
   return { bg: 'from-white/[0.06] to-white/[0.03]', border: 'border-white/[0.08]', text: 'text-white/60' };
 };
 
-const getAchievementIcon = (iconName: string): LucideIcon => {
+const getAchievementIcon = (iconName: string): React.ElementType => {
   return achievementIcons[iconName] || Trophy;
 };
 
@@ -180,7 +179,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
               {(player.tiers || []).map((playerTier, index) => {
                 const gamemodeCode = playerTier.gamemode?.code ?? 'unknown';
                 const tierCode = playerTier.tier_definition?.code ?? 'N/A';
-                const Icon = gamemodeIcons[gamemodeCode] || Swords;
+                const iconPath = gamemodeIconPaths[gamemodeCode] || '/kits/global.svg';
                 const colors = getTierColor(tierCode);
                 return (
                   <div
@@ -188,7 +187,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                     className="tier-card group relative flex flex-col items-center gap-1 p-2 sm:p-3 bg-white/[0.02] border border-white/[0.05] rounded-xl hover:bg-white/[0.04] hover:border-white/[0.1] active:bg-white/[0.06] transition-all duration-300 cursor-default"
                     style={{ animationDelay: `${index * 0.05}s` }}
                   >
-                    <Icon size={14} className="sm:w-4 sm:h-4 text-white/30 group-hover:text-white/60 transition-colors duration-300 mb-0.5" strokeWidth={2} />
+                    <img src={iconPath} alt={gamemodeCode} className="w-3.5 h-3.5 sm:w-4 sm:h-4 opacity-30 group-hover:opacity-60 transition-opacity duration-300 mb-0.5" />
                     <span className="gamemode-label text-[10px] sm:text-[11px] font-semibold text-white/50 group-hover:text-white/70 transition-all duration-300">
                       {gamemodeLabels[gamemodeCode] || gamemodeCode}
                     </span>

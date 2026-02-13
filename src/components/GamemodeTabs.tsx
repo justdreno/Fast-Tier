@@ -1,4 +1,4 @@
-import { Trophy, Swords, Heart, Flame, Users, Sword, Axe, Hammer } from 'lucide-react';
+import { Trophy } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { getGamemodes, type Gamemode } from '../lib/supabase';
 
@@ -7,19 +7,20 @@ interface GamemodeTabsProps {
   setSelectedGamemode: (gamemode: string) => void;
 }
 
-const iconMap: Record<string, React.ElementType> = {
-  Trophy,
-  Swords,
-  Heart,
-  Flame,
-  Users,
-  Sword,
-  Axe,
-  Hammer,
+const gamemodeIconPaths: Record<string, string> = {
+  vanilla: '/kits/vanilla.svg',
+  uhc: '/kits/uhc.svg',
+  pot: '/kits/pot.svg',
+  nethop: '/kits/nethop.svg',
+  smp: '/kits/smp.svg',
+  sword: '/kits/sword.svg',
+  axe: '/kits/axe.svg',
+  mace: '/kits/mace.svg',
+  ltms: '/kits/global.svg',
 };
 
-const getIcon = (iconName: string) => {
-  return iconMap[iconName] || Swords;
+const getIconPath = (gamemodeCode: string) => {
+  return gamemodeIconPaths[gamemodeCode] || '/kits/global.svg';
 };
 
 export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: GamemodeTabsProps) {
@@ -72,7 +73,7 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
 
         {/* Gamemode tabs */}
         {gamemodes.map((gamemode) => {
-          const Icon = getIcon(gamemode.icon_name || 'Swords');
+          const iconPath = getIconPath(gamemode.code);
           const isSelected = selectedGamemode === gamemode.code;
 
           return (
@@ -87,7 +88,7 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
                 }
               `}
             >
-              <Icon size={12} className="sm:w-3.5 sm:h-3.5" strokeWidth={2.5} />
+              <img src={iconPath} alt={gamemode.code} className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               <span className="hidden sm:inline">{gamemode.display_name}</span>
               <span className="sm:hidden">{gamemode.code}</span>
             </button>
