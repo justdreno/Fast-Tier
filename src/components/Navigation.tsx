@@ -14,7 +14,7 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
 
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl">
-      <nav className="bg-[#0d0d0d]/98 backdrop-blur-xl border border-white/[0.06] rounded-2xl shadow-2xl shadow-black/50">
+      <nav className="bg-[#0a0a0a] border border-white/[0.06] rounded-2xl shadow-2xl shadow-black/50">
         <div className="flex items-center justify-between h-14 px-4 sm:px-6">
           {/* Logo */}
           <div className="flex items-center gap-2">
