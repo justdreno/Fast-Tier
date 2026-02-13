@@ -1,5 +1,6 @@
 import { Menu, X, Search } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 interface NavigationProps {
   searchQuery?: string;
@@ -61,9 +62,9 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
             </a>
 
             {/* Apply Button */}
-            <button className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#ff9f43] hover:bg-[#ff9f43]/90 text-black font-semibold text-sm rounded-lg transition-all duration-200">
+            <Link to="/apply" className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#ff9f43] hover:bg-[#ff9f43]/90 text-black font-semibold text-sm rounded-lg transition-all duration-200">
               Apply
-            </button>
+            </Link>
 
             {/* Mobile Menu Button */}
             <button
@@ -78,9 +79,9 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-white/[0.06] p-4">
-            <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#ff9f43] hover:bg-[#ff9f43]/90 text-black font-semibold text-sm rounded-lg transition-all duration-200">
+            <Link to="/apply" className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#ff9f43] hover:bg-[#ff9f43]/90 text-black font-semibold text-sm rounded-lg transition-all duration-200">
               Apply Now
-            </button>
+            </Link>
           </div>
         )}
       </nav>

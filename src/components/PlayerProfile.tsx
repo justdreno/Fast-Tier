@@ -70,7 +70,10 @@ const getTierStyle = (tier: string) => {
 };
 
 const getAchievementIcon = (iconName: string): React.ElementType => {
-  return achievementIcons[iconName] || Trophy;
+  // Normalize icon name (handle null/undefined and make case-insensitive)
+  if (!iconName) return Trophy;
+  const normalizedName = iconName.charAt(0).toUpperCase() + iconName.slice(1).toLowerCase();
+  return achievementIcons[normalizedName] || Trophy;
 };
 
 export default function PlayerProfile({ player, rank, onClose }: PlayerProfileProps) {

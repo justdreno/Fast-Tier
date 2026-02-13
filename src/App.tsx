@@ -1,11 +1,13 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
 import Navigation from './components/Navigation';
 import GamemodeTabs from './components/GamemodeTabs';
 import Leaderboard from './components/Leaderboard';
 import PlayerProfile from './components/PlayerProfile';
+import ApplyPage from './pages/ApplyPage';
 import type { Player } from './lib/supabase';
 
-function App() {
+function HomePage() {
   const [selectedGamemode, setSelectedGamemode] = useState('overall');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState<{ player: Player; rank: number } | null>(null);
@@ -48,6 +50,17 @@ function App() {
         />
       )}
     </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/apply" element={<ApplyPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
