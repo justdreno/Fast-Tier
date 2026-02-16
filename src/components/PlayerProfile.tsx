@@ -76,6 +76,21 @@ const getAchievementIcon = (iconName: string): React.ElementType => {
   return achievementIcons[normalizedName] || Trophy;
 };
 
+// Helper function to format relative time
+const formatRelativeTime = (dateString: string): string => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  
+  if (diffInSeconds < 60) return 'just now';
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+  if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+  if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 604800)}w ago`;
+  if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)}mo ago`;
+  return `${Math.floor(diffInSeconds / 31536000)}y ago`;
+};
+
 export default function PlayerProfile({ player, rank, onClose }: PlayerProfileProps) {
   const [toast, setToast] = useState<ToastState>({ message: '', visible: false, exiting: false });
 
@@ -271,11 +286,13 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
             </div>
           )}
 
-          {/* Last Updated */}
+          {/* Last Tier Update */}
           <div className="mt-6 pt-4 border-t border-white/[0.05] flex items-center justify-between">
             <span className="text-[10px] text-white/30 flex items-center gap-1.5">
               <div className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
-              Last updated 2 hours ago
+              {player.last_tier_update 
+                ? `Last tier update: ${formatRelativeTime(player.last_tier_update)}`
+                : 'No tier updates yet'}
             </span>
             <span className="text-[9px] text-white/20 font-mono">FastTier System</span>
           </div>

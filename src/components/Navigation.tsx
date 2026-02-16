@@ -20,12 +20,14 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
           <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff9f43]/20 blur-3xl rounded-full pointer-events-none" />
           <div className="flex items-center justify-between h-14 px-4 sm:px-6">
             {/* Logo */}
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xl font-black text-white tracking-tight">
-                  Fast<span className="text-[#ff9f43]">Tier</span>
-                </span>
-              </div>
+            <div className="flex items-center">
+              <Link to="/" className="flex items-center">
+                <img 
+                  src="/fast-tier.png" 
+                  alt="FastTier" 
+                  className="h-7 sm:h-8 w-auto object-contain hover:opacity-90 transition-opacity duration-200"
+                />
+              </Link>
             </div>
 
           {/* Right Side Actions */}
