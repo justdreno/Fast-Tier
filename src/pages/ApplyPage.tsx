@@ -154,7 +154,7 @@ export default function ApplyPage() {
                 <img 
                   src="/fast-tier.png" 
                   alt="FastTier" 
-                  className="h-8 w-auto object-contain hover:opacity-90 transition-opacity duration-200"
+                  className="h-10 sm:h-11 w-auto object-contain hover:opacity-90 transition-opacity duration-200"
                 />
               </Link>
               <Link 
@@ -218,7 +218,7 @@ export default function ApplyPage() {
               <img 
                 src="/fast-tier.png" 
                 alt="FastTier" 
-                className="h-8 w-auto object-contain hover:opacity-90 transition-opacity duration-200"
+                className="h-10 sm:h-11 w-auto object-contain hover:opacity-90 transition-opacity duration-200"
               />
             </Link>
             <Link 
