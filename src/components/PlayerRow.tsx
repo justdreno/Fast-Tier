@@ -45,18 +45,17 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
   return (
     <>
       <td className="px-3 sm:px-4 py-3 sm:py-4">
-        <div className="relative w-full h-12 sm:h-14 flex items-center justify-center overflow-visible">
+        <div className="relative w-full h-12 sm:h-14 flex items-center justify-center">
           {podiumBg ? (
             <>
-              {/* Podium background */}
+              {/* Podium background - contained within the cell */}
               <div
-                className="absolute inset-y-0 left-0 w-[100px] sm:w-[120px] -ml-3 sm:-ml-4"
+                className="absolute inset-0 left-1/2 -translate-x-1/2 w-[90%] sm:w-[85%]"
                 style={{
                   backgroundImage: `url(${podiumBg})`,
-                  backgroundSize: 'cover',
+                  backgroundSize: 'contain',
                   backgroundPosition: 'center',
                   backgroundRepeat: 'no-repeat',
-                  clipPath: 'polygon(0 0, 85% 0, 100% 100%, 0 100%)',
                 }}
               />
               {/* Rank number */}
