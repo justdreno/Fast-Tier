@@ -75,14 +75,6 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
         </div>
       </td>
       <td className="px-3 sm:px-4 py-3 sm:py-4">
-        <div className={`inline-flex px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg font-bold text-[10px] sm:text-[11px] tracking-wider uppercase ${player.region === 'NA'
-          ? 'bg-[#ef4444]/15 text-[#ef4444] border border-[#ef4444]/25'
-          : 'bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/25'
-          }`}>
-          {player.region}
-        </div>
-      </td>
-      <td className="px-3 sm:px-4 py-3 sm:py-4">
         <div className="flex items-center gap-3 sm:gap-4">
           {/* Avatar with rank badge overlay */}
           <div className="relative">
@@ -101,12 +93,20 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
 
           {/* Player info */}
           <div className="min-w-0 flex-1">
-            {/* Username */}
-            <div className="text-white font-bold text-sm sm:text-base group-hover:text-[#ff9f43] transition-colors duration-300 truncate">
-              {player.username}
+            {/* Username with Region */}
+            <div className="flex items-center gap-2 mb-0.5">
+              <div className="text-white font-bold text-sm sm:text-base group-hover:text-[#ff9f43] transition-colors duration-300 truncate">
+                {player.username}
+              </div>
+              <span className={`flex-shrink-0 px-1.5 sm:px-2 py-0.5 rounded font-bold text-[9px] sm:text-[10px] tracking-wider uppercase ${player.region === 'NA'
+                ? 'bg-[#ef4444]/15 text-[#ef4444] border border-[#ef4444]/25'
+                : 'bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/25'
+                }`}>
+                {player.region}
+              </span>
             </div>
             {/* Rank title with icon */}
-            <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5 sm:mt-1 whitespace-nowrap">
+            <div className="flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">
               <img
                 src={rankIcon}
                 alt={player.rank}

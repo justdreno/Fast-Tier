@@ -2,10 +2,6 @@ import { useState, useEffect, useMemo } from 'react';
 import PlayerRow from './PlayerRow';
 import GamemodeTabs from './GamemodeTabs';
 import { getPlayers, searchPlayers, type Player } from '../lib/supabase';
-import { ChevronUp, ChevronDown } from 'lucide-react';
-
-type SortField = 'points' | 'region';
-type SortDirection = 'asc' | 'desc';
 
 interface LeaderboardProps {
   gamemode: string;
@@ -18,8 +14,10 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sortField, setSortField] = useState<SortField>('points');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  
+  // Sorting state (kept for future use)
+  const [sortField] = useState<'points' | 'region'>('points');
+  const [sortDirection] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
     async function fetchPlayers() {
@@ -57,20 +55,6 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
     });
     return sorted;
   }, [players, sortField, sortDirection]);
-
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection(field === 'region' ? 'asc' : 'desc');
-    }
-  };
-
-  const SortIcon = ({ field }: { field: SortField }) => {
-    if (sortField !== field) return null;
-    return sortDirection === 'asc' ? <ChevronUp size={12} className="ml-1 inline text-[#ff9f43]" /> : <ChevronDown size={12} className="ml-1 inline text-[#ff9f43]" />;
-  };
 
   if (loading) {
     return (
@@ -135,15 +119,6 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
                 <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-[11px] font-bold text-white/30 uppercase tracking-wider w-16 sm:w-20">
                   Rank
                 </th>
-                <th 
-                  className="px-3 sm:px-4 py-3 sm:py-4 text-left text-[11px] font-bold text-white/30 uppercase tracking-wider cursor-pointer hover:text-white/50 transition-colors select-none w-16 sm:w-20"
-                  onClick={() => handleSort('region')}
-                >
-                  <span className="flex items-center">
-                    Region
-                    <SortIcon field="region" />
-                  </span>
-                </th>
                 <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-[11px] font-bold text-white/30 uppercase tracking-wider w-auto">
                   Player
                 </th>
@@ -166,7 +141,7 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="px-4 py-16 sm:py-20 text-center">
+                  <td colSpan={3} className="px-4 py-16 sm:py-20 text-center">
                     <div className="space-y-2">
                       <div className="text-base font-semibold text-white/25">No players found</div>
                       <div className="text-sm text-white/15">Try a different search</div>
