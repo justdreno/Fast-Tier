@@ -54,21 +54,24 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
 
   return (
     <div className="mb-6 sm:mb-10 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-      {/* Mobile: Horizontal scroll container */}
-      <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-thin -mx-3 px-3 sm:mx-0 sm:px-0">
+      {/* Tab Container with rounded corners */}
+      <div className="flex gap-1 overflow-x-auto pb-0 scrollbar-thin -mx-3 px-3 sm:mx-0 sm:px-0 bg-[#1a1d29] rounded-2xl p-1.5 border border-white/[0.06]">
         {/* Overall tab */}
         <button
           onClick={() => setSelectedGamemode('overall')}
           className={`
-            flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold transition-all duration-300 whitespace-nowrap text-xs sm:text-[13px]
+            flex-shrink-0 flex flex-col items-center justify-center gap-1 px-4 sm:px-6 py-2.5 rounded-xl font-medium transition-all duration-200 min-w-[70px] sm:min-w-[90px]
             ${selectedGamemode === 'overall'
-              ? 'bg-[#ff9f43] text-black shadow-lg shadow-[#ff9f43]/25'
-              : 'bg-[#141414] text-white/60 hover:text-white hover:bg-[#1a1a1a] border border-white/[0.08]'
+              ? 'text-white'
+              : 'text-white/40 hover:text-white/70'
             }
           `}
         >
-          <Trophy size={14} className="sm:w-4 sm:h-4" strokeWidth={2.5} />
-          <span>Overall</span>
+          <Trophy size={20} className="sm:w-5 sm:h-5" strokeWidth={2} />
+          <span className="text-[10px] sm:text-xs">Overall</span>
+          {selectedGamemode === 'overall' && (
+            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-white rounded-full" />
+          )}
         </button>
 
         {/* Gamemode tabs */}
@@ -81,16 +84,18 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
               key={gamemode.id}
               onClick={() => setSelectedGamemode(gamemode.code)}
               className={`
-                flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold transition-all duration-300 whitespace-nowrap text-xs sm:text-[13px]
+                flex-shrink-0 flex flex-col items-center justify-center gap-1 px-3 sm:px-5 py-2.5 rounded-xl font-medium transition-all duration-200 relative min-w-[60px] sm:min-w-[80px]
                 ${isSelected
-                  ? 'bg-[#ff9f43] text-black shadow-lg shadow-[#ff9f43]/25'
-                  : 'bg-[#141414] text-white/60 hover:text-white hover:bg-[#1a1a1a] border border-white/[0.08]'
+                  ? 'text-white'
+                  : 'text-white/40 hover:text-white/70'
                 }
               `}
             >
-              <img src={iconPath} alt={gamemode.code} className="w-4 h-4 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">{gamemode.display_name}</span>
-              <span className="sm:hidden">{gamemode.code}</span>
+              <img src={iconPath} alt={gamemode.code} className="w-5 h-5 sm:w-5 sm:h-5 opacity-80" />
+              <span className="text-[10px] sm:text-xs">{gamemode.display_name}</span>
+              {isSelected && (
+                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-white rounded-full" />
+              )}
             </button>
           );
         })}
