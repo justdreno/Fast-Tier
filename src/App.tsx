@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
 import Navigation from './components/Navigation';
-import GamemodeTabs from './components/GamemodeTabs';
 import Leaderboard from './components/Leaderboard';
 import PlayerProfile from './components/PlayerProfile';
 import ApplyPage from './pages/ApplyPage';
@@ -31,14 +30,11 @@ function HomePage() {
           <h1 className="text-2xl sm:text-3xl font-black text-white mb-1 tracking-tight">Rankings</h1>
           <p className="text-xs sm:text-sm text-white/30">View the latest tier rankings across all gamemodes</p>
         </div>
-        <GamemodeTabs
-          selectedGamemode={selectedGamemode}
-          setSelectedGamemode={setSelectedGamemode}
-        />
         <Leaderboard 
           gamemode={selectedGamemode} 
           searchQuery={searchQuery} 
           onSelectPlayer={setSelectedPlayer}
+          onGamemodeChange={setSelectedGamemode}
         />
       </main>
 

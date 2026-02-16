@@ -44,33 +44,31 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
 
   if (loading) {
     return (
-      <div className="mb-6 sm:mb-10 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="px-4 py-2 bg-white/[0.04] rounded-full text-white/40 text-[13px]">Loading...</div>
-        </div>
+      <div className="flex items-center justify-center py-4">
+        <div className="px-4 py-2 bg-white/[0.04] rounded-full text-white/40 text-[13px]">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="mb-6 sm:mb-10 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-      {/* Tab Container with rounded corners */}
-      <div className="flex gap-1 overflow-x-auto pb-0 scrollbar-thin -mx-3 px-3 sm:mx-0 sm:px-0 bg-[#1a1d29] rounded-2xl p-1.5 border border-white/[0.06]">
+    <div className="flex items-center justify-between w-full">
+      {/* Gamemode Tabs Container */}
+      <div className="flex items-center gap-1 overflow-x-auto scrollbar-thin">
         {/* Overall tab */}
         <button
           onClick={() => setSelectedGamemode('overall')}
           className={`
-            flex-shrink-0 flex flex-col items-center justify-center gap-1 px-4 sm:px-6 py-2.5 rounded-xl font-medium transition-all duration-200 min-w-[70px] sm:min-w-[90px]
+            flex-shrink-0 flex flex-col items-center justify-center gap-1.5 px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 relative min-w-[70px] sm:min-w-[85px]
             ${selectedGamemode === 'overall'
-              ? 'text-white'
-              : 'text-white/40 hover:text-white/70'
+              ? 'bg-[#ff9f43]/15 text-[#ff9f43]'
+              : 'text-white/40 hover:text-white/70 hover:bg-white/[0.03]'
             }
           `}
         >
-          <Trophy size={20} className="sm:w-5 sm:h-5" strokeWidth={2} />
-          <span className="text-[10px] sm:text-xs">Overall</span>
+          <Trophy size={22} className="sm:w-6 sm:h-6" strokeWidth={2} />
+          <span className="text-[11px] sm:text-xs font-semibold">Overall</span>
           {selectedGamemode === 'overall' && (
-            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-white rounded-full" />
+            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-10 h-[2px] bg-[#ff9f43] rounded-full" />
           )}
         </button>
 
@@ -84,17 +82,17 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
               key={gamemode.id}
               onClick={() => setSelectedGamemode(gamemode.code)}
               className={`
-                flex-shrink-0 flex flex-col items-center justify-center gap-1 px-3 sm:px-5 py-2.5 rounded-xl font-medium transition-all duration-200 relative min-w-[60px] sm:min-w-[80px]
+                flex-shrink-0 flex flex-col items-center justify-center gap-1.5 px-3 sm:px-5 py-3 rounded-xl font-medium transition-all duration-200 relative min-w-[60px] sm:min-w-[80px]
                 ${isSelected
-                  ? 'text-white'
-                  : 'text-white/40 hover:text-white/70'
+                  ? 'bg-[#ff9f43]/15 text-[#ff9f43]'
+                  : 'text-white/40 hover:text-white/70 hover:bg-white/[0.03]'
                 }
               `}
             >
-              <img src={iconPath} alt={gamemode.code} className="w-5 h-5 sm:w-5 sm:h-5 opacity-80" />
-              <span className="text-[10px] sm:text-xs">{gamemode.display_name}</span>
+              <img src={iconPath} alt={gamemode.code} className="w-6 h-6 sm:w-6 sm:h-6 opacity-90" />
+              <span className="text-[11px] sm:text-xs font-semibold">{gamemode.display_name}</span>
               {isSelected && (
-                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-white rounded-full" />
+                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-10 h-[2px] bg-[#ff9f43] rounded-full" />
               )}
             </button>
           );

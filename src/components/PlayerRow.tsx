@@ -44,8 +44,8 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
 
   return (
     <>
-      <td className="w-24 px-5 py-4">
-        <div className="relative w-20 h-14 flex items-center justify-center overflow-visible">
+      <td className="w-20 px-4 py-4">
+        <div className="relative w-full h-14 flex items-center justify-center overflow-visible">
           {podiumBg ? (
             <>
               {/* Podium background */}
@@ -74,7 +74,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           )}
         </div>
       </td>
-      <td className="min-w-[300px] px-5 py-4">
+      <td className="w-[340px] px-4 py-4">
         <div className="flex items-center gap-4">
           {/* Avatar with rank badge overlay */}
           <div className="relative">
@@ -92,9 +92,9 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           </div>
 
           {/* Player info */}
-          <div>
+          <div className="min-w-0 flex-1">
             {/* Username */}
-            <div className="text-white font-bold text-base group-hover:text-[#ff9f43] transition-colors duration-300">
+            <div className="text-white font-bold text-base group-hover:text-[#ff9f43] transition-colors duration-300 truncate">
               {player.username}
             </div>
             {/* Rank title with icon */}
@@ -105,12 +105,12 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
                 className="w-4 h-4 object-contain"
               />
               <span className="text-[#ff9f43] font-semibold text-sm">{player.rank}</span>
-              <span className="text-white/40 text-sm">({player.points} points)</span>
+              <span className="text-white/40 text-sm">({player.points} pts)</span>
             </div>
           </div>
         </div>
       </td>
-      <td className="w-32 px-5 py-4">
+      <td className="w-28 px-4 py-4">
         <div className={`inline-flex px-3 py-1.5 rounded-lg font-bold text-[11px] tracking-wider uppercase ${player.region === 'NA'
           ? 'bg-[#ef4444]/15 text-[#ef4444] border border-[#ef4444]/25'
           : 'bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/25'
@@ -118,7 +118,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           {player.region}
         </div>
       </td>
-      <td className="px-5 py-4">
+      <td className="flex-1 px-4 py-4">
         <div className="flex flex-wrap gap-1.5">
           {displayTiers.length > 0 ? (
             displayTiers.map((playerTier, index) => {
