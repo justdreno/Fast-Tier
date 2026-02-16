@@ -25,7 +25,7 @@ function HomePage() {
       </div>
 
       <Navigation searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      <main className="container mx-auto px-3 sm:px-4 mt-12 sm:-mt-28 pb-6 sm:pb-10 relative z-10">
+      <main className="w-[95%] max-w-6xl mx-auto px-4 sm:px-6 mt-12 sm:-mt-28 pb-6 sm:pb-10 relative z-10">
         <div className="mb-4 sm:mb-5 animate-fadeInUp">
           <h1 className="text-2xl sm:text-3xl font-black text-white mb-1 tracking-tight">Rankings</h1>
           <p className="text-xs sm:text-sm text-white/30">View the latest tier rankings across all gamemodes</p>

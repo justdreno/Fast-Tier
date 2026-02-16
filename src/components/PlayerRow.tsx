@@ -44,13 +44,13 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
 
   return (
     <>
-      <td className="px-4 sm:px-6 py-3 sm:py-4">
+      <td className="px-3 sm:px-4 py-3 sm:py-4">
         <div className="relative w-full h-12 sm:h-14 flex items-center justify-center overflow-visible">
           {podiumBg ? (
             <>
               {/* Podium background */}
               <div
-                className="absolute inset-y-0 left-0 w-[100px] sm:w-[120px] -ml-4 sm:-ml-6"
+                className="absolute inset-y-0 left-0 w-[100px] sm:w-[120px] -ml-3 sm:-ml-4"
                 style={{
                   backgroundImage: `url(${podiumBg})`,
                   backgroundSize: 'cover',
@@ -74,7 +74,15 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           )}
         </div>
       </td>
-      <td className="px-4 sm:px-6 py-3 sm:py-4">
+      <td className="px-3 sm:px-4 py-3 sm:py-4">
+        <div className={`inline-flex px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg font-bold text-[10px] sm:text-[11px] tracking-wider uppercase ${player.region === 'NA'
+          ? 'bg-[#ef4444]/15 text-[#ef4444] border border-[#ef4444]/25'
+          : 'bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/25'
+          }`}>
+          {player.region}
+        </div>
+      </td>
+      <td className="px-3 sm:px-4 py-3 sm:py-4">
         <div className="flex items-center gap-3 sm:gap-4">
           {/* Avatar with rank badge overlay */}
           <div className="relative">
@@ -110,15 +118,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           </div>
         </div>
       </td>
-      <td className="px-4 sm:px-6 py-3 sm:py-4">
-        <div className={`inline-flex px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg font-bold text-[10px] sm:text-[11px] tracking-wider uppercase ${player.region === 'NA'
-          ? 'bg-[#ef4444]/15 text-[#ef4444] border border-[#ef4444]/25'
-          : 'bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/25'
-          }`}>
-          {player.region}
-        </div>
-      </td>
-      <td className="px-4 sm:px-6 py-3 sm:py-4">
+      <td className="px-3 sm:px-4 py-3 sm:py-4">
         <div className="flex flex-wrap gap-1 sm:gap-1.5 justify-end">
           {displayTiers.length > 0 ? (
             displayTiers.map((playerTier, index) => {
