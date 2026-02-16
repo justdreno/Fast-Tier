@@ -44,7 +44,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
 
   return (
     <>
-      <td className="w-20 px-4 py-4">
+      <td className="px-6 py-4">
         <div className="relative w-full h-14 flex items-center justify-center overflow-visible">
           {podiumBg ? (
             <>
@@ -74,7 +74,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           )}
         </div>
       </td>
-      <td className="w-[340px] px-4 py-4">
+      <td className="px-6 py-4">
         <div className="flex items-center gap-4">
           {/* Avatar with rank badge overlay */}
           <div className="relative">
@@ -110,7 +110,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           </div>
         </div>
       </td>
-      <td className="w-28 px-4 py-4">
+      <td className="px-6 py-4">
         <div className={`inline-flex px-3 py-1.5 rounded-lg font-bold text-[11px] tracking-wider uppercase ${player.region === 'NA'
           ? 'bg-[#ef4444]/15 text-[#ef4444] border border-[#ef4444]/25'
           : 'bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/25'
@@ -118,8 +118,8 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           {player.region}
         </div>
       </td>
-      <td className="flex-1 px-4 py-4">
-        <div className="flex flex-wrap gap-1.5">
+      <td className="px-6 py-4">
+        <div className="flex flex-wrap gap-1.5 justify-end">
           {displayTiers.length > 0 ? (
             displayTiers.map((playerTier, index) => {
               const gamemodeCode = playerTier.gamemode?.code ?? 'unknown';

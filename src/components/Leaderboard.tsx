@@ -129,17 +129,17 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
 
         {/* Desktop Table */}
         <div className="hidden sm:block overflow-x-auto scrollbar-thin">
-          <table className="w-full table-fixed">
+          <table className="w-full">
             <thead>
               <tr className="border-b border-white/[0.04] bg-[#0f0f0f]/60">
-                <th className="w-20 px-4 py-4 text-left text-[11px] font-bold text-white/30 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-[11px] font-bold text-white/30 uppercase tracking-wider w-24">
                   Rank
                 </th>
-                <th className="w-[340px] px-4 py-4 text-left text-[11px] font-bold text-white/30 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-[11px] font-bold text-white/30 uppercase tracking-wider">
                   Player
                 </th>
                 <th 
-                  className="w-28 px-4 py-4 text-left text-[11px] font-bold text-white/30 uppercase tracking-wider cursor-pointer hover:text-white/50 transition-colors select-none"
+                  className="px-6 py-4 text-left text-[11px] font-bold text-white/30 uppercase tracking-wider cursor-pointer hover:text-white/50 transition-colors select-none w-32"
                   onClick={() => handleSort('region')}
                 >
                   <span className="flex items-center">
@@ -147,7 +147,7 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
                     <SortIcon field="region" />
                   </span>
                 </th>
-                <th className="flex-1 px-4 py-4 text-left text-[11px] font-bold text-white/30 uppercase tracking-wider">
+                <th className="px-6 py-4 text-right text-[11px] font-bold text-white/30 uppercase tracking-wider w-auto">
                   Tiers
                 </th>
               </tr>
