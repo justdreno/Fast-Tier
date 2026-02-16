@@ -44,13 +44,13 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
 
   return (
     <>
-      <td className="px-6 py-4">
-        <div className="relative w-full h-14 flex items-center justify-center overflow-visible">
+      <td className="px-4 sm:px-6 py-3 sm:py-4">
+        <div className="relative w-full h-12 sm:h-14 flex items-center justify-center overflow-visible">
           {podiumBg ? (
             <>
               {/* Podium background */}
               <div
-                className="absolute inset-y-0 left-0 w-[120px] -ml-6"
+                className="absolute inset-y-0 left-0 w-[100px] sm:w-[120px] -ml-4 sm:-ml-6"
                 style={{
                   backgroundImage: `url(${podiumBg})`,
                   backgroundSize: 'cover',
@@ -60,7 +60,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
                 }}
               />
               {/* Rank number */}
-              <span className="relative z-10 text-3xl font-black text-white drop-shadow-lg italic"
+              <span className="relative z-10 text-2xl sm:text-3xl font-black text-white drop-shadow-lg italic"
                 style={{
                   textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
                   fontFamily: 'system-ui, -apple-system, sans-serif'
@@ -70,12 +70,12 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
               </span>
             </>
           ) : (
-            <span className="text-xl font-bold text-white/40">{rank}.</span>
+            <span className="text-lg sm:text-xl font-bold text-white/40">{rank}.</span>
           )}
         </div>
       </td>
-      <td className="px-6 py-4">
-        <div className="flex items-center gap-4">
+      <td className="px-4 sm:px-6 py-3 sm:py-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           {/* Avatar with rank badge overlay */}
           <div className="relative">
             <div className="relative group/avatar">
@@ -83,7 +83,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
               <img
                 src={`https://render.crafty.gg/3d/bust/${player.username}`}
                 alt={player.username}
-                className="relative w-14 h-14 object-cover rounded-lg border border-white/[0.06] group-hover:border-[#ff9f43]/30 transition-all duration-300"
+                className="relative w-11 h-11 sm:w-14 sm:h-14 object-cover rounded-lg border border-white/[0.06] group-hover:border-[#ff9f43]/30 transition-all duration-300"
                 onError={(e) => {
                   e.currentTarget.src = 'https://render.crafty.gg/3d/bust/MHF_Alex';
                 }}
@@ -94,32 +94,32 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           {/* Player info */}
           <div className="min-w-0 flex-1">
             {/* Username */}
-            <div className="text-white font-bold text-base group-hover:text-[#ff9f43] transition-colors duration-300 truncate">
+            <div className="text-white font-bold text-sm sm:text-base group-hover:text-[#ff9f43] transition-colors duration-300 truncate">
               {player.username}
             </div>
             {/* Rank title with icon */}
-            <div className="flex items-center gap-2 mt-1 whitespace-nowrap">
+            <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5 sm:mt-1 whitespace-nowrap">
               <img
                 src={rankIcon}
                 alt={player.rank}
-                className="w-4 h-4 object-contain"
+                className="w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain"
               />
-              <span className="text-[#ff9f43] font-semibold text-sm">{player.rank}</span>
-              <span className="text-white/40 text-sm">({player.points} pts)</span>
+              <span className="text-[#ff9f43] font-semibold text-xs sm:text-sm">{player.rank}</span>
+              <span className="text-white/40 text-xs sm:text-sm">({player.points} pts)</span>
             </div>
           </div>
         </div>
       </td>
-      <td className="px-6 py-4">
-        <div className={`inline-flex px-3 py-1.5 rounded-lg font-bold text-[11px] tracking-wider uppercase ${player.region === 'NA'
+      <td className="px-4 sm:px-6 py-3 sm:py-4">
+        <div className={`inline-flex px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg font-bold text-[10px] sm:text-[11px] tracking-wider uppercase ${player.region === 'NA'
           ? 'bg-[#ef4444]/15 text-[#ef4444] border border-[#ef4444]/25'
           : 'bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/25'
           }`}>
           {player.region}
         </div>
       </td>
-      <td className="px-6 py-4">
-        <div className="flex flex-wrap gap-1.5 justify-end">
+      <td className="px-4 sm:px-6 py-3 sm:py-4">
+        <div className="flex flex-wrap gap-1 sm:gap-1.5 justify-end">
           {displayTiers.length > 0 ? (
             displayTiers.map((playerTier, index) => {
               const gamemodeCode = playerTier.gamemode?.code ?? 'unknown';

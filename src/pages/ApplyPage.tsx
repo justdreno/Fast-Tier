@@ -150,8 +150,12 @@ export default function ApplyPage() {
         <nav className="fixed top-0 left-0 right-0 z-50 px-4 pt-4">
           <div className="max-w-6xl mx-auto">
             <div className="bg-[#141414] border border-white/[0.08] rounded-2xl shadow-2xl shadow-black/50 px-4 sm:px-6 py-3 flex items-center justify-between">
-              <Link to="/" className="text-xl font-black text-white tracking-tight">
-                Fast<span className="text-[#ff9f43]">Tier</span>
+              <Link to="/" className="flex items-center">
+                <img 
+                  src="/fast-tier.png" 
+                  alt="FastTier" 
+                  className="h-8 w-auto object-contain hover:opacity-90 transition-opacity duration-200"
+                />
               </Link>
               <Link 
                 to="/" 
@@ -210,8 +214,12 @@ export default function ApplyPage() {
       <nav className="fixed top-0 left-0 right-0 z-50 px-4 pt-4">
         <div className="max-w-6xl mx-auto">
           <div className="bg-[#141414] border border-white/[0.08] rounded-2xl shadow-2xl shadow-black/50 px-4 sm:px-6 py-3 flex items-center justify-between">
-            <Link to="/" className="text-xl font-black text-white tracking-tight">
-              Fast<span className="text-[#ff9f43]">Tier</span>
+            <Link to="/" className="flex items-center">
+              <img 
+                src="/fast-tier.png" 
+                alt="FastTier" 
+                className="h-8 w-auto object-contain hover:opacity-90 transition-opacity duration-200"
+              />
             </Link>
             <Link 
               to="/" 
