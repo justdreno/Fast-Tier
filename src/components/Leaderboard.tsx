@@ -62,7 +62,7 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
         <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20">
           {/* Header with Gamemode Tabs */}
           <div className="border-b border-white/[0.06] bg-[#141414]/50">
-            <div className="px-4 sm:px-6 py-2">
+            <div className="px-3 sm:px-4 py-2">
               <GamemodeTabs 
                 selectedGamemode={gamemode} 
                 setSelectedGamemode={onGamemodeChange}
@@ -83,7 +83,7 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
         <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20">
           {/* Header with Gamemode Tabs */}
           <div className="border-b border-white/[0.06] bg-[#141414]/50">
-            <div className="px-4 sm:px-6 py-2">
+            <div className="px-3 sm:px-4 py-2">
               <GamemodeTabs 
                 selectedGamemode={gamemode} 
                 setSelectedGamemode={onGamemodeChange}
@@ -103,7 +103,7 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
       <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20">
         {/* Header with Gamemode Tabs */}
         <div className="border-b border-white/[0.06] bg-[#141414]/50">
-          <div className="px-4 sm:px-6 py-2">
+          <div className="px-3 sm:px-4 py-2">
             <GamemodeTabs 
               selectedGamemode={gamemode} 
               setSelectedGamemode={onGamemodeChange}
@@ -116,13 +116,13 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
           <table className="w-full">
             <thead>
               <tr className="border-b border-white/[0.04] bg-[#0f0f0f]/60">
-                <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-[11px] font-bold text-white/30 uppercase tracking-wider w-24 sm:w-32">
+                <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-[11px] font-bold text-white/30 uppercase tracking-wider w-28 sm:w-36">
                   Rank
                 </th>
-                <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-[11px] font-bold text-white/30 uppercase tracking-wider w-auto">
+                <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-[11px] font-bold text-white/30 uppercase tracking-wider w-auto">
                   Player
                 </th>
-                <th className="px-4 sm:px-6 py-3 sm:py-4 text-right text-[11px] font-bold text-white/30 uppercase tracking-wider w-32 sm:w-40">
+                <th className="px-3 sm:px-4 py-3 sm:py-4 text-right text-[11px] font-bold text-white/30 uppercase tracking-wider w-28 sm:w-36">
                   Tiers
                 </th>
               </tr>
@@ -141,7 +141,7 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
                 ))
               ) : (
                 <tr>
-                  <td colSpan={3} className="px-6 py-16 sm:py-20 text-center">
+                  <td colSpan={3} className="px-3 py-16 sm:py-20 text-center">
                     <div className="space-y-2">
                       <div className="text-base font-semibold text-white/25">No players found</div>
                       <div className="text-sm text-white/15">Try a different search</div>

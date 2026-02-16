@@ -44,7 +44,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
 
   return (
     <>
-      <td className="px-4 sm:px-6 py-3 sm:py-4">
+      <td className="px-3 sm:px-4 py-3 sm:py-4">
         <div className="relative w-full h-12 sm:h-14 flex items-center justify-center">
           {podiumBg ? (
             <>
@@ -73,7 +73,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           )}
         </div>
       </td>
-      <td className="pl-[10px] pr-4 sm:pl-[10px] sm:pr-6 py-3 sm:py-4">
+      <td className="pl-5 pr-3 sm:pl-6 sm:pr-4 py-3 sm:py-4">
         <div className="flex items-center gap-3 sm:gap-4">
           {/* Avatar with rank badge overlay */}
           <div className="relative">
@@ -117,7 +117,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           </div>
         </div>
       </td>
-      <td className="px-4 sm:px-6 py-3 sm:py-4">
+      <td className="px-3 sm:px-4 py-3 sm:py-4">
         <div className="flex flex-wrap gap-1 sm:gap-1.5 justify-end">
           {displayTiers.length > 0 ? (
             displayTiers.map((playerTier, index) => {
