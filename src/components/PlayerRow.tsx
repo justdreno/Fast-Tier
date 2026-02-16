@@ -1,4 +1,3 @@
-import TierBadge from './TierBadge';
 import type { Player } from '../lib/supabase';
 
 interface PlayerRowProps {
@@ -6,6 +5,20 @@ interface PlayerRowProps {
   rank: number;
   gamemode: string;
 }
+
+const allGamemodes = ['vanilla', 'uhc', 'pot', 'nethop', 'smp', 'sword', 'axe', 'mace', 'ltms'];
+
+const gamemodeIconPaths: Record<string, string> = {
+  vanilla: '/kits/vanilla.svg',
+  uhc: '/kits/uhc.svg',
+  pot: '/kits/pot.svg',
+  nethop: '/kits/nethop.svg',
+  smp: '/kits/smp.svg',
+  sword: '/kits/sword.svg',
+  axe: '/kits/axe.svg',
+  mace: '/kits/mace.svg',
+  ltms: '/kits/global.svg',
+};
 
 // Function to get rank icon based on player rank title
 const getRankIcon = (rankTitle: string): string => {
@@ -118,22 +131,33 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
         </div>
       </td>
       <td className="px-3 sm:px-4 py-3 sm:py-4">
-        <div className="flex flex-wrap gap-1 sm:gap-1.5 justify-end">
-          {displayTiers.length > 0 ? (
-            displayTiers.map((playerTier, index) => {
-              const gamemodeCode = playerTier.gamemode?.code ?? 'unknown';
+        <div className="flex flex-wrap gap-2 sm:gap-3 justify-end">
+          {allGamemodes.map((gmCode) => {
+            const playerTier = displayTiers.find(t => t.gamemode?.code === gmCode);
+            const iconPath = gamemodeIconPaths[gmCode] || '/kits/global.svg';
+            
+            if (playerTier) {
               const tierCode = playerTier.tier_definition?.code ?? 'N/A';
               return (
-                <TierBadge
-                  key={index}
-                  gamemode={gamemodeCode}
-                  tier={tierCode}
-                />
+                <div key={gmCode} className="flex flex-col items-center gap-1">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/[0.08] border border-white/[0.12] flex items-center justify-center overflow-hidden">
+                    <img src={iconPath} alt={gmCode} className="w-5 h-5 sm:w-6 sm:h-6" />
+                  </div>
+                  <span className="text-[10px] sm:text-xs font-bold text-[#ff9f43]">{tierCode}</span>
+                </div>
               );
-            })
-          ) : (
-            <span className="text-white/20 text-xs italic">No tier</span>
-          )}
+            }
+            
+            // Empty slot
+            return (
+              <div key={gmCode} className="flex flex-col items-center gap-1">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-dashed border-white/20 flex items-center justify-center">
+                  <span className="text-white/30 text-xs">-</span>
+                </div>
+                <span className="text-[10px] sm:text-xs font-bold text-white/20">-</span>
+              </div>
+            );
+          })}
         </div>
       </td>
     </>
