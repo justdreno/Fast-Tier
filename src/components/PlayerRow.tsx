@@ -131,34 +131,61 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
         </div>
       </td>
       <td className="px-3 sm:px-4 py-3 sm:py-4">
-        <div className="flex gap-3 sm:gap-4 justify-end overflow-x-auto scrollbar-thin">
-          {allGamemodes.slice(0, 9).map((gmCode) => {
-            const playerTier = displayTiers.find(t => t.gamemode?.code === gmCode);
-            const iconPath = gamemodeIconPaths[gmCode] || '/kits/global.svg';
-            
-            if (playerTier) {
-              const tierCode = playerTier.tier_definition?.code ?? 'N/A';
+        {gamemode === 'overall' ? (
+          <div className="flex gap-3 sm:gap-4 justify-end overflow-x-auto scrollbar-thin">
+            {allGamemodes.slice(0, 9).map((gmCode) => {
+              const playerTier = displayTiers.find(t => t.gamemode?.code === gmCode);
+              const iconPath = gamemodeIconPaths[gmCode] || '/kits/global.svg';
+              
+              if (playerTier) {
+                const tierCode = playerTier.tier_definition?.code ?? 'N/A';
+                return (
+                  <div key={gmCode} className="flex flex-col items-center gap-1 flex-shrink-0">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/[0.08] border border-white/[0.15] flex items-center justify-center">
+                      <img src={iconPath} alt={gmCode} className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </div>
+                    <span className="text-[9px] sm:text-[10px] font-bold text-[#ff9f43]">{tierCode}</span>
+                  </div>
+                );
+              }
+              
+              // Empty slot
               return (
                 <div key={gmCode} className="flex flex-col items-center gap-1 flex-shrink-0">
-                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/[0.08] border border-white/[0.15] flex items-center justify-center">
-                    <img src={iconPath} alt={gmCode} className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-dashed border-white/20 flex items-center justify-center">
+                    <span className="text-white/30 text-xs">-</span>
                   </div>
-                  <span className="text-[9px] sm:text-[10px] font-bold text-[#ff9f43]">{tierCode}</span>
+                  <span className="text-[9px] sm:text-[10px] font-bold text-white/20">-</span>
                 </div>
               );
-            }
-            
-            // Empty slot
-            return (
-              <div key={gmCode} className="flex flex-col items-center gap-1 flex-shrink-0">
+            })}
+          </div>
+        ) : (
+          <div className="flex gap-2 justify-end">
+            {displayTiers.length > 0 ? (
+              displayTiers.map((playerTier, index) => {
+                const gamemodeCode = playerTier.gamemode?.code ?? 'unknown';
+                const tierCode = playerTier.tier_definition?.code ?? 'N/A';
+                const iconPath = gamemodeIconPaths[gamemodeCode] || '/kits/global.svg';
+                return (
+                  <div key={index} className="flex flex-col items-center gap-1">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/[0.08] border border-white/[0.15] flex items-center justify-center">
+                      <img src={iconPath} alt={gamemodeCode} className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </div>
+                    <span className="text-[9px] sm:text-[10px] font-bold text-[#ff9f43]">{tierCode}</span>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="flex flex-col items-center gap-1">
                 <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-dashed border-white/20 flex items-center justify-center">
                   <span className="text-white/30 text-xs">-</span>
                 </div>
                 <span className="text-[9px] sm:text-[10px] font-bold text-white/20">-</span>
               </div>
-            );
-          })}
-        </div>
+            )}
+          </div>
+        )}
       </td>
     </>
   );
