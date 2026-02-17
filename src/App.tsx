@@ -55,15 +55,13 @@ function HomePage() {
         </div>
       </main>
 
-      {/* Player Profile Modal with animation */}
+      {/* Player Profile Modal */}
       {selectedPlayer && (
-        <div className="animate-scale-in">
-          <PlayerProfile
-            player={selectedPlayer.player}
-            rank={selectedPlayer.rank}
-            onClose={() => setSelectedPlayer(null)}
-          />
-        </div>
+        <PlayerProfile
+          player={selectedPlayer.player}
+          rank={selectedPlayer.rank}
+          onClose={() => setSelectedPlayer(null)}
+        />
       )}
     </div>
   );
