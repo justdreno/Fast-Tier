@@ -75,8 +75,8 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           animation: rowSlideIn 0.5s ease-out forwards;
         }
       `}</style>
-      <td className="px-2 sm:px-3 py-2 sm:py-3 animate-row-in" style={{ animationDelay: `${animationDelay}s` }}>
-        <div className="relative w-full h-14 sm:h-16 flex items-center justify-center pr-2 sm:pr-3">
+      <td className="px-2 sm:px-3 py-2 sm:py-3 pr-4 sm:pr-6 animate-row-in" style={{ animationDelay: `${animationDelay}s` }}>
+        <div className="relative w-full h-14 sm:h-16 flex items-center justify-center pr-4 sm:pr-6">
           {podiumBg ? (
             <>
               {/* Podium background - show full image */}
