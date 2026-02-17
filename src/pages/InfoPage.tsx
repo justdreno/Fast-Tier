@@ -1,15 +1,16 @@
 import { Trophy, Target, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Navigation from '../components/Navigation';
+import { useState } from 'react';
 
 const rankData = [
-  { name: 'Combat Grandmaster', minPoints: 400, color: '#f59e0b', icon: '👑', description: 'Obtained 400+ total points' },
-  { name: 'Combat Master', minPoints: 250, color: '#fbbf24', icon: '🏆', description: 'Obtained 250+ total points' },
-  { name: 'Combat Ace', minPoints: 100, color: '#f472b6', icon: '🥇', description: 'Obtained 100+ total points' },
-  { name: 'Combat Specialist', minPoints: 50, color: '#c084fc', icon: '⚡', description: 'Obtained 50+ total points' },
-  { name: 'Combat Cadet', minPoints: 20, color: '#a78bfa', icon: '🛡️', description: 'Obtained 20+ total points' },
-  { name: 'Combat Novice', minPoints: 10, color: '#60a5fa', icon: '🎯', description: 'Obtained 10+ total points' },
-  { name: 'Rookie', minPoints: 0, color: '#9ca3af', icon: '🥉', description: 'Starting rank for players with less than 10 points' },
+  { name: 'Combat Grandmaster', minPoints: 400, color: '#f59e0b', icon: '/ranks/combat_master.webp', description: 'Obtained 400+ total points' },
+  { name: 'Combat Master', minPoints: 250, color: '#fbbf24', icon: '/ranks/combat_master.webp', description: 'Obtained 250+ total points' },
+  { name: 'Combat Ace', minPoints: 100, color: '#f472b6', icon: '/ranks/combat_ace.webp', description: 'Obtained 100+ total points' },
+  { name: 'Combat Specialist', minPoints: 50, color: '#c084fc', icon: '/ranks/combat_specialist.webp', description: 'Obtained 50+ total points' },
+  { name: 'Combat Cadet', minPoints: 20, color: '#a78bfa', icon: '/ranks/combat_cadet.webp', description: 'Obtained 20+ total points' },
+  { name: 'Combat Novice', minPoints: 10, color: '#60a5fa', icon: '/ranks/combat_novice.webp', description: 'Obtained 10+ total points' },
+  { name: 'Rookie', minPoints: 0, color: '#9ca3af', icon: '/ranks/rookie.webp', description: 'Starting rank for players with less than 10 points' },
 ];
 
 const tierPointsData = [
@@ -21,6 +22,16 @@ const tierPointsData = [
 ];
 
 export default function InfoPage() {
+  const [activeTab, setActiveTab] = useState<'ranks' | 'points'>('ranks');
+
+  const scrollToSection = (section: 'ranks' | 'points') => {
+    setActiveTab(section);
+    const element = document.getElementById(section);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] pb-12">
       <Navigation />
@@ -44,20 +55,31 @@ export default function InfoPage() {
           <div className="bg-gradient-to-b from-[#141414] to-[#0f0f0f] border border-white/[0.08] rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/50">
             
             {/* Tabs */}
-            <div className="flex gap-2 mb-8 border-b border-white/[0.08] pb-4">
-              <div className="px-4 py-2 bg-[#ff9f43]/10 text-[#ff9f43] rounded-lg font-semibold text-sm">
+            <div className="flex gap-2 mb-8 border-b border-white/[0.08] pb-4 sticky top-20 bg-[#141414] z-10 -mx-6 px-6 sm:-mx-8 sm:px-8">
+              <button 
+                onClick={() => scrollToSection('ranks')}
+                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+                  activeTab === 'ranks' 
+                    ? 'bg-[#ff9f43]/10 text-[#ff9f43]' 
+                    : 'text-white/40 hover:text-white/70 hover:bg-white/[0.03]'
+                }`}
+              >
                 Rank Titles
-              </div>
-              <Link 
-                to="#points" 
-                className="px-4 py-2 text-white/40 hover:text-white/70 hover:bg-white/[0.03] rounded-lg font-semibold text-sm transition-colors"
+              </button>
+              <button 
+                onClick={() => scrollToSection('points')}
+                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+                  activeTab === 'points' 
+                    ? 'bg-[#ff9f43]/10 text-[#ff9f43]' 
+                    : 'text-white/40 hover:text-white/70 hover:bg-white/[0.03]'
+                }`}
               >
                 Points System
-              </Link>
+              </button>
             </div>
 
             {/* Rank Titles Section */}
-            <div className="mb-10">
+            <div id="ranks" className="mb-10">
               <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
                 <Trophy size={20} className="text-[#ff9f43]" />
                 How to obtain Achievement Titles
@@ -72,7 +94,17 @@ export default function InfoPage() {
                     key={rank.name}
                     className="flex items-center gap-4 p-4 bg-white/[0.03] border border-white/[0.06] rounded-xl hover:bg-white/[0.05] transition-colors"
                   >
-                    <div className="text-2xl">{rank.icon}</div>
+                    <div className="w-12 h-12 flex-shrink-0">
+                      <img 
+                        src={rank.icon} 
+                        alt={rank.name}
+                        className="w-full h-full object-contain"
+                        onError={(e) => {
+                          // Fallback if image fails to load
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    </div>
                     <div className="flex-1">
                       <div 
                         className="font-bold text-base mb-0.5"
