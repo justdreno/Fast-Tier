@@ -273,7 +273,7 @@ export default function ApplyPage() {
                 required
                 disabled={isLoading}
                 placeholder="Enter your Minecraft username"
-                className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9f43]/40 focus:ring-2 focus:ring-[#ff9f43]/10 transition-all disabled:opacity-50"
+                className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9f43]/50 focus:ring-2 focus:ring-[#ff9f43]/20 focus:bg-white/[0.06] focus:scale-[1.01] transition-all duration-300 disabled:opacity-50"
               />
               <p className="text-xs text-white/30 mt-1">3-16 characters, alphanumeric and underscores only</p>
             </div>
@@ -292,7 +292,7 @@ export default function ApplyPage() {
                 required
                 disabled={isLoading}
                 placeholder="username#0000 or @username"
-                className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9f43]/40 focus:ring-2 focus:ring-[#ff9f43]/10 transition-all disabled:opacity-50"
+                className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9f43]/50 focus:ring-2 focus:ring-[#ff9f43]/20 focus:bg-white/[0.06] focus:scale-[1.01] transition-all duration-300 disabled:opacity-50"
               />
             </div>
 
@@ -310,7 +310,7 @@ export default function ApplyPage() {
                 required
                 disabled={isLoading}
                 placeholder="123456789012345678"
-                className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9f43]/40 focus:ring-2 focus:ring-[#ff9f43]/10 transition-all disabled:opacity-50"
+                className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9f43]/50 focus:ring-2 focus:ring-[#ff9f43]/20 focus:bg-white/[0.06] focus:scale-[1.01] transition-all duration-300 disabled:opacity-50"
               />
               <p className="text-xs text-white/40 mt-1">
                 How to find: Discord Settings → Advanced → Developer Mode ON → Right-click your name → Copy User ID
@@ -353,7 +353,7 @@ export default function ApplyPage() {
                 required
                 disabled={isLoading}
                 placeholder="your@email.com"
-                className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9f43]/40 focus:ring-2 focus:ring-[#ff9f43]/10 transition-all disabled:opacity-50"
+                className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9f43]/50 focus:ring-2 focus:ring-[#ff9f43]/20 focus:bg-white/[0.06] focus:scale-[1.01] transition-all duration-300 disabled:opacity-50"
               />
             </div>
 
