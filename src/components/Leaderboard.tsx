@@ -9,6 +9,7 @@ interface LeaderboardProps {
   searchQuery: string;
   onSelectPlayer: (player: { player: Player; rank: number } | null) => void;
   onGamemodeChange: (gamemode: string) => void;
+  isInitialLoad?: boolean;
 }
 
 // Tier colors for 5 tiers (combining HT and LT)
@@ -62,7 +63,7 @@ const groupPlayersByTierLevel = (players: Player[], gamemode: string) => {
   return groups;
 };
 
-export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onGamemodeChange }: LeaderboardProps) {
+export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onGamemodeChange, isInitialLoad = false }: LeaderboardProps) {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -98,7 +99,8 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
   const tierGroups = groupPlayersByTierLevel(players, gamemode);
   const isOverall = gamemode === 'overall';
 
-  if (loading) {
+  // Don't show loading state on initial load (handled by PremiumLoader in App.tsx)
+  if (loading && !isInitialLoad) {
     return (
       <div className="animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
         <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20">
