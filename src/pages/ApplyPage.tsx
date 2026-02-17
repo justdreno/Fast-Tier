@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Send, CheckCircle, AlertCircle, User, Mail, Globe, Gamepad2, Loader2 } from 'lucide-react';
 import { createApplication, getApplicationByDiscordId, getGamemodeByCode, supabase } from '../lib/supabase';
+import Navigation from '../components/Navigation';
 
 interface ApplicationForm {
   username: string;
@@ -154,25 +155,7 @@ export default function ApplyPage() {
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] pb-12">
-        <nav className="fixed top-0 left-0 right-0 z-50 px-4 pt-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="bg-[#141414] border border-white/[0.08] rounded-2xl shadow-2xl shadow-black/50 px-4 sm:px-6 py-3 flex items-center justify-between">
-              <Link to="/" className="flex items-center">
-                <img 
-                  src="/fast-tier.png" 
-                  alt="FastTier" 
-                  className="h-10 sm:h-11 w-auto object-contain hover:opacity-90 transition-opacity duration-200"
-                />
-              </Link>
-              <Link 
-                to="/" 
-                className="text-sm text-white/60 hover:text-white transition-colors"
-              >
-                ← Back to Rankings
-              </Link>
-            </div>
-          </div>
-        </nav>
+        <Navigation />
 
         <div className="pt-24 flex items-center justify-center min-h-[80vh]">
           <div className="container mx-auto px-4 max-w-2xl">
@@ -217,26 +200,7 @@ export default function ApplyPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] pb-12">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-4 pt-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-[#141414] border border-white/[0.08] rounded-2xl shadow-2xl shadow-black/50 px-4 sm:px-6 py-3 flex items-center justify-between">
-            <Link to="/" className="flex items-center">
-              <img 
-                src="/fast-tier.png" 
-                alt="FastTier" 
-                className="h-10 sm:h-11 w-auto object-contain hover:opacity-90 transition-opacity duration-200"
-              />
-            </Link>
-            <Link 
-              to="/" 
-              className="text-sm text-white/60 hover:text-white transition-colors"
-            >
-              ← Back to Rankings
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navigation />
 
       <div className="pt-24">
       {/* Orange glow from corner */}
