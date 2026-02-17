@@ -57,22 +57,22 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
 
   return (
     <>
-      <td className="px-3 sm:px-4 py-3 sm:py-4">
-        <div className="relative w-full h-12 sm:h-14 flex items-center justify-center">
+      <td className="px-2 sm:px-3 py-2 sm:py-3">
+        <div className="relative w-full aspect-[4/3] flex items-center justify-center">
           {podiumBg ? (
             <>
-              {/* Podium background - full width of cell */}
+              {/* Podium background - show full image */}
               <div
-                className="absolute inset-0 w-full h-full"
-                style={{
-                  backgroundImage: `url(${podiumBg})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'no-repeat',
-                }}
-              />
-              {/* Rank number */}
-              <span className="relative z-10 text-2xl sm:text-3xl font-black text-white drop-shadow-lg italic"
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <img 
+                  src={podiumBg} 
+                  alt="" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              {/* Rank number - centered on top */}
+              <span className="relative z-10 text-xl sm:text-2xl font-black text-white drop-shadow-lg italic"
                 style={{
                   textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
                   fontFamily: 'system-ui, -apple-system, sans-serif'
@@ -82,7 +82,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
               </span>
             </>
           ) : (
-            <span className="text-lg sm:text-xl font-bold text-white/40">{rank}.</span>
+            <span className="text-base sm:text-lg font-bold text-white/40">{rank}.</span>
           )}
         </div>
       </td>

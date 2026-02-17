@@ -35,7 +35,8 @@ const getTierLevel = (tierCode: string): number => {
   return tierOrder[tierCode] || 10;
 };
 
-// Group players by their tier level (1-10, where 1 = HT1 best, 10 = LT3 worst)
+// Group players by their tier level (1-10, where 1 = HT1 best, 10 = LT5 worst)
+// Players with no tier in this gamemode are NOT shown
 const groupPlayersByTier = (players: Player[], gamemode: string) => {
   const groups: { [key: number]: Player[] } = { 
     1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [] 
@@ -44,22 +45,21 @@ const groupPlayersByTier = (players: Player[], gamemode: string) => {
   players.forEach(player => {
     const relevantTiers = player.tiers?.filter(t => t.gamemode?.code === gamemode);
     
+    // Only add player if they have a tier in this gamemode
     if (relevantTiers && relevantTiers.length > 0) {
       // Get best tier (lowest level number = best)
       const bestTier = relevantTiers.reduce((best, current) => {
-        const bestLevel = getTierLevel(best.tier_definition?.code || 'LT3');
-        const currentLevel = getTierLevel(current.tier_definition?.code || 'LT3');
+        const bestLevel = getTierLevel(best.tier_definition?.code || 'LT5');
+        const currentLevel = getTierLevel(current.tier_definition?.code || 'LT5');
         return currentLevel < bestLevel ? current : best;
       });
       
-      const tierLevel = getTierLevel(bestTier.tier_definition?.code || 'LT3');
+      const tierLevel = getTierLevel(bestTier.tier_definition?.code || 'LT5');
       if (groups[tierLevel]) {
         groups[tierLevel].push(player);
       }
-    } else {
-      // No tier = Tier 10 (LT3 equivalent)
-      groups[10].push(player);
     }
+    // If no tier, player is NOT added to any group (won't show in list)
   });
   
   return groups;
