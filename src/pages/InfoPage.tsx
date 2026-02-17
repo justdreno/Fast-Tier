@@ -46,8 +46,8 @@ export default function InfoPage() {
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Header */}
           <div className={`text-center mb-10 transition-all duration-600 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-            <h1 className="text-3xl sm:text-4xl font-black text-white mb-3">
-              <span className="text-[#ff9f43]">Information</span>
+            <h1 className="text-3xl sm:text-4xl font-black text-[#ff9f43] mb-3">
+              Information
             </h1>
             <p className="text-white/40 text-sm sm:text-base max-w-2xl mx-auto">
               Understanding the FastTier ranking system and how points are calculated
@@ -60,31 +60,42 @@ export default function InfoPage() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff9f43]/10 blur-3xl rounded-full pointer-events-none" />
             
             {/* Tabs */}
-            <div className={`flex gap-2 mb-8 border-b border-white/[0.08] pb-4 sticky top-20 bg-[#141414] z-10 -mx-6 px-6 sm:-mx-8 sm:px-8 transition-all duration-500 ease-out delay-150 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
-              <button 
-                onClick={() => scrollToSection('ranks')}
-                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${activeTab === 'ranks' 
-                    ? 'bg-[#ff9f43]/10 text-[#ff9f43]' 
-                    : 'text-white/40 hover:text-white/70 hover:bg-white/[0.03]'
-                  }`}
-              >
-                Rank Titles
-              </button>
-              <button 
-                onClick={() => scrollToSection('points')}
-                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${activeTab === 'points' 
-                    ? 'bg-[#ff9f43]/10 text-[#ff9f43]' 
-                    : 'text-white/40 hover:text-white/70 hover:bg-white/[0.03]'
-                  }`}
-              >
-                Points System
-              </button>
+            <div className={`flex justify-center gap-2 mb-8 border-b border-white/[0.08] pb-4 sticky top-20 bg-[#141414] z-10 -mx-6 px-6 sm:-mx-8 sm:px-8 transition-all duration-500 ease-out delay-150 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
+              <div className="relative flex gap-2">
+                <button 
+                  onClick={() => scrollToSection('ranks')}
+                  className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all relative z-10 ${activeTab === 'ranks' 
+                      ? 'text-[#ff9f43]' 
+                      : 'text-white/40 hover:text-white/70'
+                    }`}
+                >
+                  Rank Titles
+                </button>
+                <button 
+                  onClick={() => scrollToSection('points')}
+                  className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all relative z-10 ${activeTab === 'points' 
+                      ? 'text-[#ff9f43]' 
+                      : 'text-white/40 hover:text-white/70'
+                    }`}
+                >
+                  Points System
+                </button>
+                {/* Sliding indicator */}
+                <div 
+                  className="absolute bottom-0 h-0.5 bg-[#ff9f43] rounded-full transition-all duration-300 ease-out"
+                  style={{
+                    width: activeTab === 'ranks' ? '85px' : '100px',
+                    left: activeTab === 'ranks' ? '8px' : '101px',
+                    bottom: '-16px'
+                  }}
+                />
+              </div>
             </div>
 
             {/* Rank Titles Section */}
             <div id="ranks" className="mb-10">
-              <div className={`transition-all duration-500 ease-out delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+              <div className={`text-center transition-all duration-500 ease-out delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <h2 className="text-xl font-bold text-white mb-2 flex items-center justify-center gap-2">
                   <Trophy size={20} className="text-[#ff9f43]" />
                   How to obtain Achievement Titles
                 </h2>
@@ -135,8 +146,8 @@ export default function InfoPage() {
 
             {/* Points System Section */}
             <div id="points">
-              <div className={`transition-all duration-500 ease-out delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+              <div className={`text-center transition-all duration-500 ease-out delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <h2 className="text-xl font-bold text-white mb-2 flex items-center justify-center gap-2">
                   <Target size={20} className="text-[#ff9f43]" />
                   How ranking points are calculated
                 </h2>
@@ -190,10 +201,10 @@ export default function InfoPage() {
 
               {/* Example Section */}
               <div className={`mt-8 p-5 bg-gradient-to-r from-[#ff9f43]/10 to-transparent border border-[#ff9f43]/20 rounded-xl hover:border-[#ff9f43]/30 transition-all duration-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: `${isVisible ? 600 : 0}ms` }}>
-                <h3 className="text-sm font-bold text-[#ff9f43] mb-3 uppercase tracking-wider">
+                <h3 className="text-sm font-bold text-[#ff9f43] mb-3 uppercase tracking-wider text-center">
                   Example Calculation
                 </h3>
-                <p className="text-white/70 text-sm mb-3">
+                <p className="text-white/70 text-sm mb-3 text-center">
                   If you have these tiers across different gamemodes:
                 </p>
                 <div className="space-y-2 text-sm">
@@ -226,13 +237,13 @@ export default function InfoPage() {
 
             {/* Additional Info */}
             <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 transition-all duration-700 ease-out delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <div className="p-4 bg-white/[0.03] border border-white/[0.06] rounded-xl hover:bg-white/[0.05] hover:border-white/[0.1] hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 ease-out group">
+              <div className="p-4 bg-white/[0.03] border border-white/[0.06] rounded-xl hover:bg-white/[0.05] hover:border-white/[0.1] hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 ease-out group text-center">
                 <h3 className="font-bold text-white mb-2">How to Rank Up</h3>
                 <p className="text-white/50 text-sm">
                   Improve your tier in any gamemode by getting tested. Higher tiers give more points, which increases your overall rank.
                 </p>
               </div>
-              <div className="p-4 bg-white/[0.03] border border-white/[0.06] rounded-xl hover:bg-white/[0.05] hover:border-white/[0.1] hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 ease-out group">
+              <div className="p-4 bg-white/[0.03] border border-white/[0.06] rounded-xl hover:bg-white/[0.05] hover:border-white/[0.1] hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 ease-out group text-center">
                 <h3 className="font-bold text-white mb-2">Multiple Gamemodes</h3>
                 <p className="text-white/50 text-sm">
                   Points are additive across all gamemodes. Being good in multiple gamemodes helps you achieve higher ranks faster.
