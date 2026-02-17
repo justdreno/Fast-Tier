@@ -1,5 +1,5 @@
 import { Trophy } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getGamemodes, type Gamemode } from '../lib/supabase';
 
 interface GamemodeTabsProps {
@@ -27,6 +27,12 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
   const [gamemodes, setGamemodes] = useState<Gamemode[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // State for the sliding indicator
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
+
+  // Refs for the buttons to calculate positions
+  const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
+
   useEffect(() => {
     async function fetchGamemodes() {
       try {
@@ -38,72 +44,107 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
         setLoading(false);
       }
     }
-
     fetchGamemodes();
   }, []);
 
+  // Combine "Overall" with fetched gamemodes for unified rendering logic
+  const allTabs = [
+    { code: 'overall', display_name: 'Overall', isStatic: true },
+    ...gamemodes
+  ];
+
+  // Calculate position of the sliding pill whenever selection or data changes
+  useEffect(() => {
+    const activeIndex = allTabs.findIndex(tab => tab.code === selectedGamemode);
+    const activeTabElement = tabsRef.current[activeIndex];
+
+    if (activeTabElement) {
+      setIndicatorStyle({
+        left: activeTabElement.offsetLeft,
+        width: activeTabElement.offsetWidth,
+        opacity: 1
+      });
+    }
+  }, [selectedGamemode, allTabs.length, loading]);
+
+  // Handle window resize to adjust the pill position
+  useEffect(() => {
+    const handleResize = () => {
+      const activeIndex = allTabs.findIndex(tab => tab.code === selectedGamemode);
+      const activeTabElement = tabsRef.current[activeIndex];
+      if (activeTabElement) {
+        setIndicatorStyle({
+          left: activeTabElement.offsetLeft,
+          width: activeTabElement.offsetWidth,
+          opacity: 1
+        });
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [selectedGamemode, allTabs]);
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-4 animate-pulse">
-        <div className="px-4 py-2 bg-white/[0.04] rounded-full text-white/40 text-[13px]">Loading...</div>
+      <div className="flex items-center gap-2 overflow-hidden py-4 animate-pulse">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="h-12 w-24 bg-white/[0.04] rounded-xl"></div>
+        ))}
       </div>
     );
   }
 
   return (
-    <div className="flex items-center justify-between w-full">
-      {/* Gamemode Tabs Container */}
-      <div className="flex items-center gap-1 overflow-x-auto scrollbar-thin">
-        {/* Overall tab */}
-        <button
-          onClick={() => setSelectedGamemode('overall')}
-          className={`
-            flex-shrink-0 flex flex-col items-center justify-center gap-1.5 px-4 sm:px-6 py-3 rounded-xl font-medium 
-            transition-all duration-300 relative min-w-[70px] sm:min-w-[85px]
-            ${selectedGamemode === 'overall'
-              ? 'bg-[#ff9f43]/15 text-[#ff9f43] shadow-[0_0_20px_rgba(255,159,67,0.2)]'
-              : 'text-white/40 hover:text-white/70 hover:bg-white/[0.03]'
-            }
-          `}
-        >
-          <Trophy 
-            size={22} 
-            className="sm:w-6 sm:h-6" 
-            strokeWidth={2} 
-          />
-          <span className="text-[11px] sm:text-xs font-semibold">Overall</span>
-          {selectedGamemode === 'overall' && (
-            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-10 h-[2px] bg-[#ff9f43] rounded-full" />
-          )}
-        </button>
+    <div className="w-full">
+      {/* Container for the tabs */}
+      <div className="relative flex items-center bg-[#0a0a0a]/50 border border-white/[0.08] backdrop-blur-md rounded-2xl p-1.5 overflow-x-auto scrollbar-hide no-scrollbar">
 
-        {/* Gamemode tabs with staggered animation */}
-        {gamemodes.map((gamemode) => {
-          const iconPath = getIconPath(gamemode.code);
-          const isSelected = selectedGamemode === gamemode.code;
+        {/* THE SLIDING ANIMATED PILL */}
+        <div
+          className="absolute top-1.5 bottom-1.5 rounded-xl bg-[#ff9f43] shadow-[0_0_15px_rgba(255,159,67,0.4)] transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] z-0"
+          style={{
+            left: `${indicatorStyle.left}px`,
+            width: `${indicatorStyle.width}px`,
+            opacity: indicatorStyle.opacity,
+          }}
+        />
+
+        {/* Tab Buttons */}
+        {allTabs.map((tab, index) => {
+          const isSelected = selectedGamemode === tab.code;
+          const isOverall = tab.code === 'overall';
+          const iconPath = !isOverall ? getIconPath(tab.code) : '';
 
           return (
             <button
-              key={gamemode.id}
-              onClick={() => setSelectedGamemode(gamemode.code)}
+              key={tab.code}
+              ref={(el) => (tabsRef.current[index] = el)}
+              onClick={() => setSelectedGamemode(tab.code)}
               className={`
-                flex-shrink-0 flex flex-col items-center justify-center gap-1.5 px-3 sm:px-5 py-3 rounded-xl font-medium 
-                transition-all duration-300 relative min-w-[60px] sm:min-w-[80px]
-                ${isSelected
-                  ? 'bg-[#ff9f43]/15 text-[#ff9f43] shadow-[0_0_20px_rgba(255,159,67,0.2)]'
-                  : 'text-white/40 hover:text-white/70 hover:bg-white/[0.03]'
-                }
+                relative z-10 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm
+                transition-colors duration-300 whitespace-nowrap flex-shrink-0 select-none
+                ${isSelected ? 'text-black' : 'text-white/40 hover:text-white'}
               `}
             >
-              <img 
-                src={iconPath} 
-                alt={gamemode.code} 
-                className={`w-6 h-6 sm:w-6 sm:h-6 ${isSelected ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`} 
-              />
-              <span className="text-[11px] sm:text-xs font-semibold">{gamemode.display_name}</span>
-              {isSelected && (
-                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-10 h-[2px] bg-[#ff9f43] rounded-full" />
-              )}
+              {/* Icon Logic */}
+              <div className={`transition-transform duration-300 ${isSelected ? 'scale-110' : 'scale-100 group-hover:scale-105'}`}>
+                {isOverall ? (
+                  <Trophy
+                    size={16}
+                    strokeWidth={2.5}
+                    className={isSelected ? 'text-black' : 'text-white/40'}
+                  />
+                ) : (
+                  <img
+                    src={iconPath}
+                    alt={tab.code}
+                    className={`w-4 h-4 object-contain ${isSelected ? 'brightness-0 contrast-200' : 'opacity-50 grayscale'}`}
+                  />
+                )}
+              </div>
+
+              <span>{tab.display_name}</span>
             </button>
           );
         })}
