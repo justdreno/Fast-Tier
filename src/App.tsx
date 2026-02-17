@@ -4,6 +4,7 @@ import Navigation from './components/Navigation';
 import Leaderboard from './components/Leaderboard';
 import PlayerProfile from './components/PlayerProfile';
 import ApplyPage from './pages/ApplyPage';
+import InfoPage from './pages/InfoPage';
 import type { Player } from './lib/supabase';
 
 function HomePage() {
@@ -74,6 +75,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/apply" element={<ApplyPage />} />
+        <Route path="/info" element={<InfoPage />} />
       </Routes>
     </BrowserRouter>
   );

@@ -105,9 +105,20 @@ export interface TierDefinition {
   name: string;
   tier_type: 'HT' | 'LT';
   tier_level: number;
-  min_points: number;
-  max_points: number;
+  points_value: number;
   color_hex: string;
+  created_at: string;
+}
+
+export interface RankDefinition {
+  id: string;
+  code: string;
+  name: string;
+  min_points: number;
+  max_points: number | null;
+  color_hex: string;
+  icon_name: string;
+  description: string;
   created_at: string;
 }
 
