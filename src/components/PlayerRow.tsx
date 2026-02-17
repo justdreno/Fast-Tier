@@ -6,7 +6,7 @@ interface PlayerRowProps {
   gamemode: string;
 }
 
-const allGamemodes = ['vanilla', 'uhc', 'pot', 'nethop', 'smp', 'sword', 'axe', 'mace', 'ltms'];
+const allGamemodes = ['vanilla', 'uhc', 'pot', 'nethop', 'smp', 'sword', 'axe', 'mace'];
 
 const gamemodeIconPaths: Record<string, string> = {
   vanilla: '/kits/vanilla.svg',
@@ -133,7 +133,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
       <td className="px-3 sm:px-4 py-3 sm:py-4">
         {gamemode === 'overall' ? (
           <div className="flex gap-3 sm:gap-4 justify-end overflow-x-auto scrollbar-thin">
-            {allGamemodes.slice(0, 9).map((gmCode) => {
+            {allGamemodes.map((gmCode) => {
               const playerTier = displayTiers.find(t => t.gamemode?.code === gmCode);
               const iconPath = gamemodeIconPaths[gmCode] || '/kits/global.svg';
               
