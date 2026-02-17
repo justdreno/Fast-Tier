@@ -14,7 +14,7 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-[1200px] animate-fade-in-down">
+    <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] w-[95%] max-w-[1200px]">
         <nav className="bg-gradient-to-r from-[#09090d] to-[#0f0509] border border-white/[0.08] rounded-2xl shadow-2xl shadow-black/50 relative overflow-hidden backdrop-blur-md">
           {/* Animated orange glow from right corner */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff9f43]/20 blur-3xl rounded-full pointer-events-none animate-pulse-slow" />
