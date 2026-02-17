@@ -13,7 +13,7 @@ function HomePage() {
   const [selectedPlayer, setSelectedPlayer] = useState<{ player: Player; rank: number } | null>(null);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] overflow-x-hidden">
+    <div className="min-h-screen bg-[#0a0a0a] overflow-hidden">
       {/* Banner Header with parallax effect */}
       <div
         className="hidden sm:block w-full h-64 sm:h-80 bg-cover bg-center bg-no-repeat relative animate-fade-in"
