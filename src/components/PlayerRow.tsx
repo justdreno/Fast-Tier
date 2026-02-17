@@ -76,7 +76,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
         }
       `}</style>
       <td className="px-2 sm:px-3 py-2 sm:py-3 animate-row-in" style={{ animationDelay: `${animationDelay}s` }}>
-        <div className="relative w-full aspect-[4/3] flex items-center justify-center">
+        <div className="relative w-full h-14 sm:h-16 flex items-center justify-center">
           {podiumBg ? (
             <>
               {/* Podium background - show full image */}
@@ -86,11 +86,11 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
                 <img 
                   src={podiumBg} 
                   alt="" 
-                  className="w-full h-full object-contain"
+                  className="h-full w-auto max-w-none object-contain"
                 />
               </div>
               {/* Rank number - centered on top */}
-              <span className="relative z-10 text-xl sm:text-2xl font-black text-white drop-shadow-lg italic"
+              <span className="relative z-10 text-2xl sm:text-3xl font-black text-white drop-shadow-lg italic"
                 style={{
                   textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
                   fontFamily: 'system-ui, -apple-system, sans-serif'
