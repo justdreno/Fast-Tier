@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Send, CheckCircle, AlertCircle, User, Mail, Globe, Gamepad2, Loader2 } from 'lucide-react';
 import { createApplication, getApplicationByDiscordId, getGamemodeByCode, supabase } from '../lib/supabase';

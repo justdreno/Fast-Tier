@@ -93,6 +93,13 @@ const formatRelativeTime = (dateString: string): string => {
 
 export default function PlayerProfile({ player, rank, onClose }: PlayerProfileProps) {
   const [toast, setToast] = useState<ToastState>({ message: '', visible: false, exiting: false });
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    // Trigger entrance animation
+    const timer = setTimeout(() => setIsVisible(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   const showToast = (message: string) => {
     setToast({ message, visible: true, exiting: false });
@@ -113,9 +120,12 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm !z-[99999] flex items-center justify-center p-3 sm:p-4 animate-backdropIn" onClick={onClose}>
+    <div 
+      className={`fixed inset-0 bg-black/80 backdrop-blur-sm !z-[99999] flex items-center justify-center p-3 sm:p-4 transition-all duration-300 ease-out ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+      onClick={onClose}
+    >
       <div
-        className="w-full max-w-xl max-h-[90vh] overflow-y-auto bg-gradient-to-b from-[#141414] to-[#0a0a0a] border border-white/[0.08] rounded-3xl shadow-2xl shadow-black/60 animate-scaleIn relative [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width-none]"
+        className={`w-full max-w-xl max-h-[90vh] overflow-y-auto bg-gradient-to-b from-[#141414] to-[#0a0a0a] border border-white/[0.08] rounded-3xl shadow-2xl shadow-black/60 relative [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width-none] transition-all duration-500 ease-out ${isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Orange glow from corner */}
@@ -138,7 +148,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
         {/* Profile Content */}
         <div className="p-5 sm:p-6 relative z-10">
           {/* Player Info */}
-          <div className="flex items-start gap-4 sm:gap-5 mb-6">
+          <div className={`flex items-start gap-4 sm:gap-5 mb-6 transition-all duration-500 ease-out delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             <div className="relative flex-shrink-0">
               {/* Avatar glow */}
               <div className="absolute inset-0 bg-gradient-to-br from-[#ff9f43] to-[#ff8c00] rounded-3xl opacity-20 blur-xl scale-110" />
@@ -201,7 +211,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
           </button>
 
           {/* Gamemodes & Tiers - Modern Grid */}
-          <div>
+          <div className={`transition-all duration-500 ease-out delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-1 h-4 bg-gradient-to-b from-[#ff9f43] to-[#ff8c00] rounded-full" />
               <h3 className="text-xs font-bold text-white/40 uppercase tracking-widest">Gamemodes</h3>
@@ -217,8 +227,13 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                 return (
                   <div
                     key={index}
-                    className="group relative overflow-hidden bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] rounded-2xl p-3 hover:from-white/[0.08] hover:to-white/[0.04] hover:border-white/[0.15] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 cursor-pointer"
-                    style={{ animationDelay: `${index * 0.05}s` }}
+                    className="group relative overflow-hidden bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] rounded-2xl p-3 hover:from-white/[0.1] hover:to-white/[0.05] hover:border-white/[0.2] hover:scale-[1.03] hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 ease-out cursor-pointer"
+                    style={{ 
+                      animationDelay: `${index * 0.05}s`,
+                      opacity: isVisible ? 1 : 0,
+                      transform: isVisible ? 'translateY(0)' : 'translateY(10px)',
+                      transition: `all 0.4s ease-out ${index * 0.05}s`
+                    }}
                   >
                     {/* Gamemode color glow */}
                     <div 
@@ -253,7 +268,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
 
           {/* Achievements */}
           {(player.achievements || []).length > 0 && (
-            <div className="mt-6">
+            <div className={`mt-6 transition-all duration-500 ease-out delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-1 h-4 bg-gradient-to-b from-[#fbbf24] to-[#f59e0b] rounded-full" />
                 <h3 className="text-xs font-bold text-white/40 uppercase tracking-widest">Achievements</h3>
@@ -266,14 +281,19 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                   return (
                     <div
                       key={index}
-                      className="flex items-center gap-3 p-3 bg-gradient-to-br from-white/[0.05] to-transparent border border-white/[0.06] rounded-xl hover:border-white/[0.12] hover:from-white/[0.08] transition-all duration-300"
-                      style={{ borderColor: `${achievement.color_hex}15` }}
+                      className="flex items-center gap-3 p-3 bg-gradient-to-br from-white/[0.05] to-transparent border border-white/[0.06] rounded-xl hover:border-white/[0.15] hover:from-white/[0.1] hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-300 ease-out group/achievement"
+                      style={{ 
+                        borderColor: `${achievement.color_hex}15`,
+                        opacity: isVisible ? 1 : 0,
+                        transform: isVisible ? 'translateY(0)' : 'translateY(10px)',
+                        transition: `all 0.4s ease-out ${(index + 5) * 0.05}s`
+                      }}
                     >
                       <div 
-                        className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                        className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 group-hover/achievement:scale-110 group-hover/achievement:rotate-3 transition-transform duration-300"
                         style={{ backgroundColor: `${achievement.color_hex}15` }}
                       >
-                        <Icon size={16} style={{ color: achievement.color_hex }} />
+                        <Icon size={16} style={{ color: achievement.color_hex }} className="group-hover/achievement:scale-110 transition-transform duration-300" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-[11px] font-semibold text-white/70 truncate">{achievement.name}</div>
@@ -287,7 +307,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
           )}
 
           {/* Last Tier Update */}
-          <div className="mt-6 pt-4 border-t border-white/[0.05] flex items-center justify-between">
+          <div className={`mt-6 pt-4 border-t border-white/[0.05] flex items-center justify-between transition-all duration-500 ease-out delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             <span className="text-[10px] text-white/30 flex items-center gap-1.5">
               <div className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
               {player.last_tier_update 

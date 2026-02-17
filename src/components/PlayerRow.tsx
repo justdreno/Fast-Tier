@@ -55,9 +55,27 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
   const podiumBg = getPodiumBackground(rank);
   const rankIcon = getRankIcon(player.rank);
 
+  // Calculate animation delay based on rank for staggered effect
+  const animationDelay = Math.min((rank - 1) * 0.05, 0.5);
+
   return (
     <>
-      <td className="px-2 sm:px-3 py-2 sm:py-3">
+      <style>{`
+        @keyframes rowSlideIn {
+          0% {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        .animate-row-in {
+          animation: rowSlideIn 0.5s ease-out forwards;
+        }
+      `}</style>
+      <td className="px-2 sm:px-3 py-2 sm:py-3 animate-row-in" style={{ animationDelay: `${animationDelay}s` }}>
         <div className="relative w-full aspect-[4/3] flex items-center justify-center">
           {podiumBg ? (
             <>
@@ -86,16 +104,16 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           )}
         </div>
       </td>
-      <td className="pl-5 pr-3 sm:pl-6 sm:pr-4 py-3 sm:py-4">
+      <td className="pl-5 pr-3 sm:pl-6 sm:pr-4 py-3 sm:py-4 animate-row-in" style={{ animationDelay: `${animationDelay + 0.05}s` }}>
         <div className="flex items-center gap-3 sm:gap-4">
           {/* Avatar with rank badge overlay */}
           <div className="relative">
             <div className="relative group/avatar">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#ff9f43] to-[#ff8c00] rounded-lg opacity-0 group-hover/avatar:opacity-30 blur-md transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-br from-[#ff9f43] to-[#ff8c00] rounded-lg opacity-0 group-hover/avatar:opacity-40 blur-md transition-all duration-500 ease-out group-hover/avatar:scale-110" />
               <img
                 src={`https://render.crafty.gg/3d/bust/${player.username}`}
                 alt={player.username}
-                className="relative w-11 h-11 sm:w-14 sm:h-14 object-cover rounded-lg border border-white/[0.06] group-hover:border-[#ff9f43]/30 transition-all duration-300"
+                className="relative w-11 h-11 sm:w-14 sm:h-14 object-cover rounded-lg border border-white/[0.06] group-hover/avatar:border-[#ff9f43]/50 group-hover/avatar:scale-105 transition-all duration-300 ease-out group-hover/avatar:shadow-lg group-hover/avatar:shadow-[#ff9f43]/20"
                 onError={(e) => {
                   e.currentTarget.src = 'https://render.crafty.gg/3d/bust/MHF_Alex';
                 }}
@@ -130,7 +148,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           </div>
         </div>
       </td>
-      <td className="px-3 sm:px-4 py-3 sm:py-4">
+      <td className="px-3 sm:px-4 py-3 sm:py-4 animate-row-in" style={{ animationDelay: `${animationDelay + 0.1}s` }}>
         {gamemode === 'overall' ? (
           <div className="flex gap-3 sm:gap-4 justify-end overflow-x-auto scrollbar-thin">
             {allGamemodes.map((gmCode) => {
@@ -140,11 +158,11 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
               if (playerTier) {
                 const tierCode = playerTier.tier_definition?.code ?? 'N/A';
                 return (
-                  <div key={gmCode} className="flex flex-col items-center gap-1 flex-shrink-0">
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/[0.08] border border-white/[0.15] flex items-center justify-center">
-                      <img src={iconPath} alt={gmCode} className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <div key={gmCode} className="flex flex-col items-center gap-1 flex-shrink-0 group/tier">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/[0.08] border border-white/[0.15] flex items-center justify-center group-hover/tier:bg-[#ff9f43]/20 group-hover/tier:border-[#ff9f43]/40 group-hover/tier:scale-110 transition-all duration-300 ease-out">
+                      <img src={iconPath} alt={gmCode} className="w-4 h-4 sm:w-5 sm:h-5 group-hover/tier:scale-110 transition-transform duration-300" />
                     </div>
-                    <span className="text-[9px] sm:text-[10px] font-bold text-[#ff9f43]">{tierCode}</span>
+                    <span className="text-[9px] sm:text-[10px] font-bold text-[#ff9f43] group-hover/tier:scale-105 transition-transform duration-300">{tierCode}</span>
                   </div>
                 );
               }
