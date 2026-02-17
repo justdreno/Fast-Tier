@@ -1,17 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Trophy, Target, ChevronRight, Info, Crown, Shield, Medal, Sword, Zap } from 'lucide-react';
+import { Trophy, Target, ChevronRight, Info } from 'lucide-react';
 import Navigation from '../components/Navigation';
-
-// Helper to get icon based on rank name (if images fail or as placeholder)
-const getRankIcon = (name: string) => {
-  if (name.includes('Grandmaster')) return <Crown size={32} />;
-  if (name.includes('Master')) return <Shield size={32} />;
-  if (name.includes('Ace')) return <Medal size={32} />;
-  if (name.includes('Specialist')) return <Sword size={32} />;
-  if (name.includes('Cadet')) return <Target size={32} />;
-  return <Zap size={32} />;
-};
 
 const rankData = [
   { name: 'Combat Grandmaster', minPoints: 400, color: '#f59e0b', glow: 'shadow-[#f59e0b]/20', icon: '/ranks/combat_master.webp', description: 'The absolute peak of performance.' },
@@ -108,11 +98,15 @@ export default function InfoPage() {
 
                       {/* Left: Icon */}
                       <div className="flex-shrink-0">
-                        <div className="w-16 h-16 rounded-xl bg-black/40 border border-white/[0.05] flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                          {/* Using Lucide icon as fallback, replace with <img src={rank.icon} ... /> if images are reliable */}
-                          <div style={{ color: rank.color }}>
-                            {getRankIcon(rank.name)}
-                          </div>
+                        <div className="w-16 h-16 rounded-xl bg-black/40 border border-white/[0.05] flex items-center justify-center group-hover:scale-110 transition-transform duration-500 overflow-hidden">
+                          <img 
+                            src={rank.icon} 
+                            alt={rank.name}
+                            className="w-12 h-12 object-contain"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
                         </div>
                       </div>
 
@@ -166,7 +160,7 @@ export default function InfoPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-white/[0.04]">
-                        {tierPointsData.map((row, idx) => (
+                        {tierPointsData.map((row) => (
                           <tr key={row.tier} className="hover:bg-white/[0.02] transition-colors">
                             <td className="py-5 px-6 font-bold text-white">{row.tier}</td>
                             <td className="py-5 px-6 text-center">
