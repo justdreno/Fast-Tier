@@ -59,27 +59,26 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
           onClick={() => setSelectedGamemode('overall')}
           className={`
             flex-shrink-0 flex flex-col items-center justify-center gap-1.5 px-4 sm:px-6 py-3 rounded-xl font-medium 
-            transition-all duration-300 ease-bounce relative min-w-[70px] sm:min-w-[85px]
-            hover:scale-105 active:scale-95
+            transition-all duration-300 relative min-w-[70px] sm:min-w-[85px]
             ${selectedGamemode === 'overall'
               ? 'bg-[#ff9f43]/15 text-[#ff9f43] shadow-[0_0_20px_rgba(255,159,67,0.2)]'
-              : 'text-white/40 hover:text-white/70 hover:bg-white/[0.03] hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]'
+              : 'text-white/40 hover:text-white/70 hover:bg-white/[0.03]'
             }
           `}
         >
           <Trophy 
             size={22} 
-            className={`sm:w-6 sm:h-6 transition-transform duration-300 ${selectedGamemode === 'overall' ? 'scale-110' : 'group-hover:scale-105'}`} 
+            className="sm:w-6 sm:h-6" 
             strokeWidth={2} 
           />
           <span className="text-[11px] sm:text-xs font-semibold">Overall</span>
           {selectedGamemode === 'overall' && (
-            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-10 h-[2px] bg-[#ff9f43] rounded-full animate-fade-in" />
+            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-10 h-[2px] bg-[#ff9f43] rounded-full" />
           )}
         </button>
 
         {/* Gamemode tabs with staggered animation */}
-        {gamemodes.map((gamemode, index) => {
+        {gamemodes.map((gamemode) => {
           const iconPath = getIconPath(gamemode.code);
           const isSelected = selectedGamemode === gamemode.code;
 
@@ -89,24 +88,21 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
               onClick={() => setSelectedGamemode(gamemode.code)}
               className={`
                 flex-shrink-0 flex flex-col items-center justify-center gap-1.5 px-3 sm:px-5 py-3 rounded-xl font-medium 
-                transition-all duration-300 ease-bounce relative min-w-[60px] sm:min-w-[80px]
-                animate-fade-in-up
-                hover:scale-105 active:scale-95
+                transition-all duration-300 relative min-w-[60px] sm:min-w-[80px]
                 ${isSelected
                   ? 'bg-[#ff9f43]/15 text-[#ff9f43] shadow-[0_0_20px_rgba(255,159,67,0.2)]'
-                  : 'text-white/40 hover:text-white/70 hover:bg-white/[0.03] hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]'
+                  : 'text-white/40 hover:text-white/70 hover:bg-white/[0.03]'
                 }
               `}
-              style={{ animationDelay: `${0.05 * (index + 1)}s` }}
             >
               <img 
                 src={iconPath} 
                 alt={gamemode.code} 
-                className={`w-6 h-6 sm:w-6 sm:h-6 transition-all duration-300 ${isSelected ? 'opacity-100 scale-110' : 'opacity-70 hover:opacity-100'}`} 
+                className={`w-6 h-6 sm:w-6 sm:h-6 ${isSelected ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`} 
               />
               <span className="text-[11px] sm:text-xs font-semibold">{gamemode.display_name}</span>
               {isSelected && (
-                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-10 h-[2px] bg-[#ff9f43] rounded-full animate-fade-in" />
+                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-10 h-[2px] bg-[#ff9f43] rounded-full" />
               )}
             </button>
           );
