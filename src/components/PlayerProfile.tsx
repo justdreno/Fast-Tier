@@ -1,26 +1,12 @@
 import { useState, useEffect } from 'react';
 import {
   X, Copy, Hash, User, CheckCircle, Trophy, Globe, Activity,
-  Heart, Flame, Sword, Axe, Hammer, Users, Swords, Crown
+  Heart, Flame, Sword, Axe, Hammer, Users, Swords
 } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
+import type { Player, PlayerTier } from '../lib/supabase';
 
 // --- Interfaces ---
-interface Tier {
-  gamemode: string;
-  tier: string;
-}
-
-interface Player {
-  id: string;
-  uid: string;
-  username: string;
-  rank: string;
-  points: number;
-  region: string;
-  tiers: Tier[];
-}
-
 interface PlayerProfileProps {
   player: Player;
   rank: number;
@@ -37,7 +23,7 @@ interface ToastState {
 const gamemodeLabels: Record<string, string> = {
   vanilla: 'Vanilla',
   uhc: 'UHC',
-  pot: 'PotPvP',
+  pot: 'Pot',
   nethop: 'NethOP',
   smp: 'SMP',
   sword: 'Sword',
@@ -59,10 +45,10 @@ const gamemodeIcons: Record<string, LucideIcon> = {
 };
 
 // Enhanced tier styling logic
-const getTierStyle = (tier: string) => {
-  const t = tier.toUpperCase();
+const getTierStyle = (tierCode: string) => {
+  const t = tierCode?.toUpperCase() || '';
 
-  if (t === 'HT1') return {
+  if (t === 'HT1' || t === 'LT1') return {
     gradient: 'from-amber-400/20 to-orange-600/20',
     border: 'border-amber-500/50',
     text: 'text-amber-400',
@@ -71,7 +57,7 @@ const getTierStyle = (tier: string) => {
     badge: 'bg-gradient-to-r from-amber-500 to-orange-600 text-black'
   };
 
-  if (t === 'HT2') return {
+  if (t === 'HT2' || t === 'LT2') return {
     gradient: 'from-purple-400/20 to-indigo-600/20',
     border: 'border-purple-500/50',
     text: 'text-purple-400',
@@ -80,13 +66,31 @@ const getTierStyle = (tier: string) => {
     badge: 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white'
   };
 
-  if (t === 'HT3') return {
+  if (t === 'HT3' || t === 'LT3') return {
     gradient: 'from-emerald-400/20 to-teal-600/20',
     border: 'border-emerald-500/50',
     text: 'text-emerald-400',
     iconBg: 'bg-emerald-500/20',
     glow: 'shadow-[0_0_15px_-3px_rgba(16,185,129,0.3)]',
     badge: 'bg-gradient-to-r from-emerald-500 to-teal-600 text-black'
+  };
+
+  if (t === 'HT4' || t === 'LT4') return {
+    gradient: 'from-blue-400/20 to-cyan-600/20',
+    border: 'border-blue-500/50',
+    text: 'text-blue-400',
+    iconBg: 'bg-blue-500/20',
+    glow: 'shadow-[0_0_15px_-3px_rgba(59,130,246,0.3)]',
+    badge: 'bg-gradient-to-r from-blue-500 to-cyan-600 text-white'
+  };
+
+  if (t === 'HT5' || t === 'LT5') return {
+    gradient: 'from-rose-400/20 to-pink-600/20',
+    border: 'border-rose-500/50',
+    text: 'text-rose-400',
+    iconBg: 'bg-rose-500/20',
+    glow: 'shadow-[0_0_15px_-3px_rgba(244,63,94,0.3)]',
+    badge: 'bg-gradient-to-r from-rose-500 to-pink-600 text-white'
   };
 
   // Default / Low Tier
@@ -102,10 +106,13 @@ const getTierStyle = (tier: string) => {
 
 export default function PlayerProfile({ player, rank, onClose }: PlayerProfileProps) {
   const [toast, setToast] = useState<ToastState>({ message: '', visible: false, exiting: false });
-  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    setIsLoaded(true);
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, []);
 
   const showToast = (message: string) => {
@@ -124,6 +131,16 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     showToast(`${label} copied to clipboard`);
+  };
+
+  // Get tier display name from tier_definition
+  const getTierCode = (tier: PlayerTier): string => {
+    return tier.tier_definition?.code || 'N/A';
+  };
+
+  // Get gamemode code
+  const getGamemodeCode = (tier: PlayerTier): string => {
+    return tier.gamemode?.code || 'unknown';
   };
 
   return (
@@ -146,12 +163,16 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
         .animate-item { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
       `}</style>
 
+      {/* Backdrop - Darker and no blur to avoid transparency issues */}
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-overlay"
+        className="fixed inset-0 z-[100] bg-black/90 animate-overlay"
         onClick={onClose}
-      >
+      />
+
+      {/* Modal Container - Centered and scrollable */}
+      <div className="fixed inset-0 z-[101] flex items-start justify-center p-4 overflow-y-auto">
         <div
-          className="w-full max-w-2xl bg-[#09090b] border border-white/[0.08] rounded-3xl shadow-2xl overflow-hidden animate-content relative"
+          className="w-full max-w-2xl bg-[#09090b] border border-white/[0.08] rounded-3xl shadow-2xl overflow-hidden animate-content relative my-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Decorative Top Gradient */}
@@ -210,8 +231,8 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                       </div>
                       <div className="w-px h-3 bg-white/10" />
                       <div className="flex items-center gap-1.5 text-[#ff9f43]">
-                        <Crown size={13} fill="currentColor" className="opacity-60" />
-                        <span className="text-xs font-bold">{player.points.toLocaleString()} pts</span>
+                        <Trophy size={13} className="opacity-60" />
+                        <span className="text-xs font-bold">{player.points?.toLocaleString() || 0} pts</span>
                       </div>
                       <div className="w-px h-3 bg-white/10" />
                       <div className="flex items-center gap-1.5 text-zinc-400">
@@ -250,39 +271,48 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                   Performance Tiers
                 </h3>
                 <span className="text-[10px] bg-white/[0.05] text-white/40 px-2 py-1 rounded border border-white/[0.05]">
-                  {player.tiers.length} Modes
+                  {(player.tiers || []).length} Modes
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {player.tiers.map((tierData, index) => {
-                  const Icon = gamemodeIcons[tierData.gamemode] || Swords;
-                  const style = getTierStyle(tierData.tier);
+              {(player.tiers || []).length === 0 ? (
+                <div className="text-center py-8 text-zinc-500">
+                  <Swords size={32} className="mx-auto mb-2 opacity-30" />
+                  <p className="text-sm">No tier data available</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {(player.tiers || []).map((tierData, index) => {
+                    const gamemodeCode = getGamemodeCode(tierData);
+                    const tierCode = getTierCode(tierData);
+                    const Icon = gamemodeIcons[gamemodeCode] || Swords;
+                    const style = getTierStyle(tierCode);
 
-                  return (
-                    <div
-                      key={index}
-                      className={`relative group p-3 rounded-xl border ${style.border} bg-gradient-to-br ${style.gradient} transition-all duration-300 hover:scale-[1.02] ${style.glow} cursor-default animate-item`}
-                      style={{ animationDelay: `${index * 50}ms` }}
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <div className={`p-1.5 rounded-lg ${style.iconBg}`}>
-                          <Icon size={16} className={style.text} />
+                    return (
+                      <div
+                        key={index}
+                        className={`relative group p-3 rounded-xl border ${style.border} bg-gradient-to-br ${style.gradient} transition-all duration-300 hover:scale-[1.02] ${style.glow} cursor-default animate-item`}
+                        style={{ animationDelay: `${index * 50}ms` }}
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div className={`p-1.5 rounded-lg ${style.iconBg}`}>
+                            <Icon size={16} className={style.text} />
+                          </div>
+                          <div className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider shadow-sm ${style.badge}`}>
+                            {tierCode}
+                          </div>
                         </div>
-                        <div className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider shadow-sm ${style.badge}`}>
-                          {tierData.tier}
+
+                        <div>
+                          <span className="text-xs font-medium text-white/60 uppercase tracking-wide group-hover:text-white/90 transition-colors">
+                            {gamemodeLabels[gamemodeCode] || gamemodeCode}
+                          </span>
                         </div>
                       </div>
-
-                      <div>
-                        <span className="text-xs font-medium text-white/60 uppercase tracking-wide group-hover:text-white/90 transition-colors">
-                          {gamemodeLabels[tierData.gamemode] || tierData.gamemode}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Footer */}
@@ -299,14 +329,14 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
 
       {/* Modern Toast Notification */}
       <div
-        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] transition-all duration-300 ${toast.visible
+        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[102] transition-all duration-300 ${toast.visible
             ? toast.exiting
               ? 'opacity-0 translate-y-2'
               : 'opacity-100 translate-y-0'
             : 'opacity-0 translate-y-4 pointer-events-none'
           }`}
       >
-        <div className="flex items-center gap-3 px-4 py-3 bg-[#18181b]/90 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl shadow-black/50">
+        <div className="flex items-center gap-3 px-4 py-3 bg-[#18181b] border border-white/10 rounded-xl shadow-2xl shadow-black/50">
           <div className="p-1 rounded-full bg-emerald-500/10">
             <CheckCircle size={14} className="text-emerald-500" />
           </div>
