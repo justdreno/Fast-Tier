@@ -1,4 +1,4 @@
-import { Trophy } from 'lucide-react';
+import { Trophy, Loader2 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { getGamemodes, type Gamemode } from '../lib/supabase';
 
@@ -27,11 +27,12 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
   const [gamemodes, setGamemodes] = useState<Gamemode[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // State for the sliding indicator
+  // Stores the styling for the sliding active bar
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
 
-  // Refs for the buttons to calculate positions
-  const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
+  // References to the DOM elements
+  const tabsRef = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchGamemodes() {
@@ -47,62 +48,66 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
     fetchGamemodes();
   }, []);
 
-  // Combine "Overall" with fetched gamemodes for unified rendering logic
-  const allTabs = [
-    { code: 'overall', display_name: 'Overall', isStatic: true },
-    ...gamemodes
-  ];
-
-  // Calculate position of the sliding pill whenever selection or data changes
+  // Update position of the sliding bar
   useEffect(() => {
-    const activeIndex = allTabs.findIndex(tab => tab.code === selectedGamemode);
-    const activeTabElement = tabsRef.current[activeIndex];
+    const activeTab = tabsRef.current[selectedGamemode];
 
-    if (activeTabElement) {
+    if (activeTab) {
       setIndicatorStyle({
-        left: activeTabElement.offsetLeft,
-        width: activeTabElement.offsetWidth,
+        left: activeTab.offsetLeft,
+        width: activeTab.offsetWidth,
         opacity: 1
       });
     }
-  }, [selectedGamemode, allTabs.length, loading]);
+  }, [selectedGamemode, gamemodes, loading]);
 
-  // Handle window resize to adjust the pill position
+  // Handle resize to keep bar aligned
   useEffect(() => {
     const handleResize = () => {
-      const activeIndex = allTabs.findIndex(tab => tab.code === selectedGamemode);
-      const activeTabElement = tabsRef.current[activeIndex];
-      if (activeTabElement) {
-        setIndicatorStyle({
-          left: activeTabElement.offsetLeft,
-          width: activeTabElement.offsetWidth,
-          opacity: 1
-        });
+      const activeTab = tabsRef.current[selectedGamemode];
+      if (activeTab) {
+        setIndicatorStyle(prev => ({
+          ...prev,
+          left: activeTab.offsetLeft,
+          width: activeTab.offsetWidth,
+        }));
       }
     };
-
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [selectedGamemode, allTabs]);
+  }, [selectedGamemode]);
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 overflow-hidden py-4 animate-pulse">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="h-12 w-24 bg-white/[0.04] rounded-xl"></div>
-        ))}
+      <div className="flex items-center justify-center w-full py-6">
+        <Loader2 className="animate-spin text-[#ff9f43]" size={24} />
       </div>
     );
   }
 
+  const allTabs = [
+    { code: 'overall', display_name: 'Overall' },
+    ...gamemodes
+  ];
+
   return (
     <div className="w-full">
-      {/* Container for the tabs */}
-      <div className="relative flex items-center bg-[#0a0a0a]/50 border border-white/[0.08] backdrop-blur-md rounded-2xl p-1.5 overflow-x-auto scrollbar-hide no-scrollbar">
+      {/* 
+        Container 
+        - border-b: Creates the thin grey line across the whole width
+      */}
+      <div
+        ref={containerRef}
+        className="relative flex items-center border-b border-white/[0.08] overflow-x-auto scrollbar-hide"
+      >
 
-        {/* THE SLIDING ANIMATED PILL */}
+        {/* 
+          THE SLIDING BAR 
+          - absolute bottom-0: sits right on top of the grey border
+          - h-[3px]: creates the underline thickness
+        */}
         <div
-          className="absolute top-1.5 bottom-1.5 rounded-xl bg-[#ff9f43] shadow-[0_0_15px_rgba(255,159,67,0.4)] transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] z-0"
+          className="absolute bottom-0 h-[3px] bg-gradient-to-r from-[#ff9f43] to-[#ffb060] shadow-[0_-2px_12px_rgba(255,159,67,0.6)] z-10 transition-all duration-300 ease-out rounded-t-full"
           style={{
             left: `${indicatorStyle.left}px`,
             width: `${indicatorStyle.width}px`,
@@ -111,7 +116,7 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
         />
 
         {/* Tab Buttons */}
-        {allTabs.map((tab, index) => {
+        {allTabs.map((tab) => {
           const isSelected = selectedGamemode === tab.code;
           const isOverall = tab.code === 'overall';
           const iconPath = !isOverall ? getIconPath(tab.code) : '';
@@ -119,32 +124,38 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
           return (
             <button
               key={tab.code}
-              ref={(el) => (tabsRef.current[index] = el)}
+              ref={(el) => (tabsRef.current[tab.code] = el)}
               onClick={() => setSelectedGamemode(tab.code)}
               className={`
-                relative z-10 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm
-                transition-colors duration-300 whitespace-nowrap flex-shrink-0 select-none
-                ${isSelected ? 'text-black' : 'text-white/40 hover:text-white'}
+                relative z-0 flex items-center justify-center gap-2.5 px-6 py-4 font-bold text-sm
+                transition-all duration-300 whitespace-nowrap flex-shrink-0 select-none
+                hover:bg-white/[0.02]
+                ${isSelected ? 'text-white' : 'text-white/40 hover:text-white/70'}
               `}
             >
-              {/* Icon Logic */}
-              <div className={`transition-transform duration-300 ${isSelected ? 'scale-110' : 'scale-100 group-hover:scale-105'}`}>
+              {/* Icon Container */}
+              <div className={`transition-transform duration-300 ${isSelected ? 'scale-110 -translate-y-0.5' : 'scale-100'}`}>
                 {isOverall ? (
                   <Trophy
-                    size={16}
-                    strokeWidth={2.5}
-                    className={isSelected ? 'text-black' : 'text-white/40'}
+                    size={18}
+                    strokeWidth={isSelected ? 2.5 : 2}
+                    className={`transition-colors duration-300 ${isSelected ? 'text-[#ff9f43]' : 'text-current'}`}
                   />
                 ) : (
                   <img
                     src={iconPath}
                     alt={tab.code}
-                    className={`w-4 h-4 object-contain ${isSelected ? 'brightness-0 contrast-200' : 'opacity-50 grayscale'}`}
+                    className={`w-5 h-5 object-contain transition-all duration-300 ${isSelected
+                        ? 'brightness-100 contrast-100 drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]'
+                        : 'opacity-40 grayscale'
+                      }`}
                   />
                 )}
               </div>
 
-              <span>{tab.display_name}</span>
+              <span className={`transition-colors duration-300 ${isSelected ? 'text-white drop-shadow-md' : ''}`}>
+                {tab.display_name}
+              </span>
             </button>
           );
         })}
