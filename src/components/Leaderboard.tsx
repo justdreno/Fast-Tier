@@ -11,55 +11,52 @@ interface LeaderboardProps {
   onGamemodeChange: (gamemode: string) => void;
 }
 
-// Tier colors for header backgrounds - Correct progression: LT5 → LT4 → LT3 → LT2 → LT1 → HT5 → HT4 → HT3 → HT2 → HT1
+// Tier colors for 5 tiers (combining HT and LT)
 const tierColors = [
-  { bg: 'from-[#ff9f43]/20 to-[#ff8c00]/10', border: 'border-[#ff9f43]/30', text: 'text-[#ff9f43]', icon: '/tiers/tier_1.svg' },   // HT1 - Best
-  { bg: 'from-[#c0c0c0]/20 to-[#a0a0a0]/10', border: 'border-[#c0c0c0]/30', text: 'text-[#c0c0c0]', icon: '/tiers/tier_2.svg' }, // HT2
-  { bg: 'from-[#cd7f32]/20 to-[#b87333]/10', border: 'border-[#cd7f32]/30', text: 'text-[#cd7f32]', icon: '/tiers/tier_3.svg' },  // HT3
-  { bg: 'from-[#ffd700]/20 to-[#ffcc00]/10', border: 'border-[#ffd700]/30', text: 'text-[#ffd700]', icon: null },                   // HT4
-  { bg: 'from-[#f59e0b]/20 to-[#d97706]/10', border: 'border-[#f59e0b]/30', text: 'text-[#f59e0b]', icon: null },                   // HT5
-  { bg: 'from-[#3b82f6]/20 to-[#2563eb]/10', border: 'border-[#3b82f6]/30', text: 'text-[#3b82f6]', icon: null },                   // LT1
-  { bg: 'from-[#06b6d4]/20 to-[#0891b2]/10', border: 'border-[#06b6d4]/30', text: 'text-[#06b6d4]', icon: null },                   // LT2
-  { bg: 'from-[#94a3b8]/20 to-[#64748b]/10', border: 'border-[#94a3b8]/30', text: 'text-[#94a3b8]', icon: null },                   // LT3
-  { bg: 'from-[#64748b]/20 to-[#475569]/10', border: 'border-[#64748b]/30', text: 'text-[#64748b]', icon: null },                   // LT4
-  { bg: 'from-[#475569]/20 to-[#334155]/10', border: 'border-[#475569]/30', text: 'text-[#475569]', icon: null },                   // LT5 - Worst
+  { bg: 'from-[#ffd700]/20 to-[#ffcc00]/10', border: 'border-[#ffd700]/30', text: 'text-[#ffd700]', icon: '/tiers/tier_1.svg' },   // Tier 1
+  { bg: 'from-[#c0c0c0]/20 to-[#a0a0a0]/10', border: 'border-[#c0c0c0]/30', text: 'text-[#c0c0c0]', icon: '/tiers/tier_2.svg' }, // Tier 2
+  { bg: 'from-[#cd7f32]/20 to-[#b87333]/10', border: 'border-[#cd7f32]/30', text: 'text-[#cd7f32]', icon: '/tiers/tier_3.svg' },  // Tier 3
+  { bg: 'from-[#3b82f6]/20 to-[#2563eb]/10', border: 'border-[#3b82f6]/30', text: 'text-[#3b82f6]', icon: null },                   // Tier 4
+  { bg: 'from-[#64748b]/20 to-[#475569]/10', border: 'border-[#64748b]/30', text: 'text-[#64748b]', icon: null },                   // Tier 5
 ];
 
-// Get tier level from tier code for sorting (1 = best/HT1, 10 = worst/LT5)
-// Progression: LT5 (worst) → LT4 → LT3 → LT2 → LT1 → HT5 → HT4 → HT3 → HT2 → HT1 (best)
-const getTierLevel = (tierCode: string): number => {
-  const tierOrder: { [key: string]: number } = {
-    'HT1': 1, 'HT2': 2, 'HT3': 3, 'HT4': 4, 'HT5': 5,
-    'LT1': 6, 'LT2': 7, 'LT3': 8, 'LT4': 9, 'LT5': 10
-  };
-  return tierOrder[tierCode] || 10;
+// Get the tier number from code (1-5)
+const getTierNumber = (tierCode: string): number => {
+  const match = tierCode.match(/\d/);
+  return match ? parseInt(match[0]) : 5;
 };
 
-// Group players by their tier level (1-10, where 1 = HT1 best, 10 = LT5 worst)
-// Players with no tier in this gamemode are NOT shown
-const groupPlayersByTier = (players: Player[], gamemode: string) => {
-  const groups: { [key: number]: Player[] } = { 
-    1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [] 
+// Check if tier is HT or LT
+const isHighTier = (tierCode: string): boolean => tierCode.startsWith('HT');
+
+// Group players by tier level (1-5), storing both HT and LT separately
+const groupPlayersByTierLevel = (players: Player[], gamemode: string) => {
+  const groups: { [key: number]: { ht: Player[], lt: Player[] } } = { 
+    1: { ht: [], lt: [] }, 
+    2: { ht: [], lt: [] }, 
+    3: { ht: [], lt: [] }, 
+    4: { ht: [], lt: [] }, 
+    5: { ht: [], lt: [] } 
   };
   
   players.forEach(player => {
     const relevantTiers = player.tiers?.filter(t => t.gamemode?.code === gamemode);
     
-    // Only add player if they have a tier in this gamemode
     if (relevantTiers && relevantTiers.length > 0) {
-      // Get best tier (lowest level number = best)
-      const bestTier = relevantTiers.reduce((best, current) => {
-        const bestLevel = getTierLevel(best.tier_definition?.code || 'LT5');
-        const currentLevel = getTierLevel(current.tier_definition?.code || 'LT5');
-        return currentLevel < bestLevel ? current : best;
-      });
+      // Get the tier for this gamemode
+      const playerTier = relevantTiers[0];
+      const tierCode = playerTier.tier_definition?.code || 'LT5';
+      const tierNum = getTierNumber(tierCode);
+      const isHT = isHighTier(tierCode);
       
-      const tierLevel = getTierLevel(bestTier.tier_definition?.code || 'LT5');
-      if (groups[tierLevel]) {
-        groups[tierLevel].push(player);
+      if (groups[tierNum]) {
+        if (isHT) {
+          groups[tierNum].ht.push(player);
+        } else {
+          groups[tierNum].lt.push(player);
+        }
       }
     }
-    // If no tier, player is NOT added to any group (won't show in list)
   });
   
   return groups;
@@ -98,7 +95,7 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
     return [...players].sort((a, b) => b.points - a.points);
   }, [players]);
 
-  const tierGroups = groupPlayersByTier(players, gamemode);
+  const tierGroups = groupPlayersByTierLevel(players, gamemode);
   const isOverall = gamemode === 'overall';
 
   if (loading) {
@@ -188,16 +185,16 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
             </table>
           </div>
         ) : (
-          // Gamemode Mode - Tier Columns (All 10 tiers)
+          // Gamemode Mode - 5 Tier Columns (HT and LT combined)
           <div className="p-3 sm:p-4 overflow-x-auto scrollbar-thin">
-            <div className="flex gap-2 min-w-[1400px]">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((tierLevel) => {
-                const tierPlayers = tierGroups[tierLevel];
+            <div className="flex gap-3 min-w-[800px]">
+              {[1, 2, 3, 4, 5].map((tierLevel) => {
+                const tierData = tierGroups[tierLevel];
                 const colors = tierColors[tierLevel - 1];
-                const tierNames = ['HT1', 'HT2', 'HT3', 'HT4', 'HT5', 'LT1', 'LT2', 'LT3', 'LT4', 'LT5'];
+                const hasPlayers = tierData.ht.length > 0 || tierData.lt.length > 0;
                 
                 return (
-                  <div key={tierLevel} className="flex-1 min-w-[130px]">
+                  <div key={tierLevel} className="flex-1 min-w-[150px]">
                     {/* Tier Header */}
                     <div className={`bg-gradient-to-b ${colors.bg} border ${colors.border} rounded-t-xl p-2 sm:p-3 mb-1`}>
                       <div className="flex items-center justify-center gap-1 sm:gap-2">
@@ -208,40 +205,73 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
                             className="w-5 h-5 sm:w-6 sm:h-6"
                           />
                         )}
-                        <span className={`font-bold text-xs sm:text-sm ${colors.text}`}>
-                          {tierNames[tierLevel - 1]}
+                        <span className={`font-bold text-sm sm:text-base ${colors.text}`}>
+                          Tier {tierLevel}
                         </span>
                       </div>
                     </div>
                     
-                    {/* Players List */}
+                    {/* Players List - Combined HT and LT */}
                     <div className="space-y-1">
-                      {tierPlayers.length > 0 ? (
-                        tierPlayers.map((player, index) => (
-                          <div
-                            key={player.id}
-                            onClick={() => onSelectPlayer({ player, rank: index + 1 })}
-                            className="group flex items-center gap-2 bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.05] hover:border-white/[0.1] rounded-lg p-2 cursor-pointer transition-all duration-200"
-                          >
-                            {/* Avatar */}
-                            <img
-                              src={`https://render.crafty.gg/3d/bust/${player.username}`}
-                              alt={player.username}
-                              className="w-8 h-8 sm:w-9 sm:h-9 object-cover rounded-lg border border-white/[0.08]"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = 'https://render.crafty.gg/3d/bust/MHF_Alex';
-                              }}
-                            />
-                            
-                            {/* Username */}
-                            <span className="flex-1 text-white text-xs sm:text-sm font-medium truncate group-hover:text-[#ff9f43] transition-colors">
-                              {player.username}
-                            </span>
-                            
-                            {/* Arrow Indicator */}
-                            <ChevronUp className="w-4 h-4 text-white/30 group-hover:text-white/60 transition-colors" />
-                          </div>
-                        ))
+                      {hasPlayers ? (
+                        <>
+                          {/* HT Players (2 arrows) */}
+                          {tierData.ht.map((player, index) => (
+                            <div
+                              key={`ht-${player.id}`}
+                              onClick={() => onSelectPlayer({ player, rank: index + 1 })}
+                              className="group flex items-center gap-2 bg-gradient-to-r from-white/[0.05] to-transparent hover:bg-white/[0.08] border border-white/[0.08] hover:border-[#ff9f43]/30 rounded-lg p-2 cursor-pointer transition-all duration-200"
+                            >
+                              {/* Avatar */}
+                              <img
+                                src={`https://render.crafty.gg/3d/bust/${player.username}`}
+                                alt={player.username}
+                                className="w-7 h-7 sm:w-8 sm:h-8 object-cover rounded-lg border border-white/[0.08]"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = 'https://render.crafty.gg/3d/bust/MHF_Alex';
+                                }}
+                              />
+                              
+                              {/* Username */}
+                              <span className="flex-1 text-white text-xs sm:text-sm font-medium truncate group-hover:text-[#ff9f43] transition-colors">
+                                {player.username}
+                              </span>
+                              
+                              {/* Double Arrow for HT (2 ChevronUp icons) */}
+                              <div className="flex flex-col -space-y-2">
+                                <ChevronUp className="w-3 h-3 text-[#ff9f43] group-hover:text-[#ff9f43]/80 transition-colors" />
+                                <ChevronUp className="w-3 h-3 text-[#ff9f43] group-hover:text-[#ff9f43]/80 transition-colors" />
+                              </div>
+                            </div>
+                          ))}
+                          
+                          {/* LT Players (1 arrow) */}
+                          {tierData.lt.map((player, index) => (
+                            <div
+                              key={`lt-${player.id}`}
+                              onClick={() => onSelectPlayer({ player, rank: index + 1 })}
+                              className="group flex items-center gap-2 bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.05] hover:border-white/[0.1] rounded-lg p-2 cursor-pointer transition-all duration-200"
+                            >
+                              {/* Avatar */}
+                              <img
+                                src={`https://render.crafty.gg/3d/bust/${player.username}`}
+                                alt={player.username}
+                                className="w-7 h-7 sm:w-8 sm:h-8 object-cover rounded-lg border border-white/[0.08]"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = 'https://render.crafty.gg/3d/bust/MHF_Alex';
+                                }}
+                              />
+                              
+                              {/* Username */}
+                              <span className="flex-1 text-white text-xs sm:text-sm font-medium truncate group-hover:text-[#ff9f43] transition-colors">
+                                {player.username}
+                              </span>
+                              
+                              {/* Single Arrow for LT */}
+                              <ChevronUp className="w-4 h-4 text-white/40 group-hover:text-white/60 transition-colors" />
+                            </div>
+                          ))}
+                        </>
                       ) : (
                         <div className="text-center py-8 text-white/20 text-xs">
                           No players
