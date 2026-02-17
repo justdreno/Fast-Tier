@@ -11,43 +11,54 @@ interface LeaderboardProps {
   onGamemodeChange: (gamemode: string) => void;
 }
 
-// Tier colors for header backgrounds
+// Tier colors for header backgrounds - Correct progression: LT5 → LT4 → LT3 → LT2 → LT1 → HT5 → HT4 → HT3 → HT2 → HT1
 const tierColors = [
-  { bg: 'from-[#ff9f43]/20 to-[#ff8c00]/10', border: 'border-[#ff9f43]/30', text: 'text-[#ff9f43]', icon: '/tiers/tier_1.svg' },
-  { bg: 'from-[#c0c0c0]/20 to-[#a0a0a0]/10', border: 'border-[#c0c0c0]/30', text: 'text-[#c0c0c0]', icon: '/tiers/tier_2.svg' },
-  { bg: 'from-[#cd7f32]/20 to-[#b87333]/10', border: 'border-[#cd7f32]/30', text: 'text-[#cd7f32]', icon: '/tiers/tier_3.svg' },
-  { bg: 'from-[#3b82f6]/20 to-[#2563eb]/10', border: 'border-[#3b82f6]/30', text: 'text-[#3b82f6]', icon: null },
-  { bg: 'from-[#64748b]/20 to-[#475569]/10', border: 'border-[#64748b]/30', text: 'text-[#64748b]', icon: null },
+  { bg: 'from-[#ff9f43]/20 to-[#ff8c00]/10', border: 'border-[#ff9f43]/30', text: 'text-[#ff9f43]', icon: '/tiers/tier_1.svg' },   // HT1 - Best
+  { bg: 'from-[#c0c0c0]/20 to-[#a0a0a0]/10', border: 'border-[#c0c0c0]/30', text: 'text-[#c0c0c0]', icon: '/tiers/tier_2.svg' }, // HT2
+  { bg: 'from-[#cd7f32]/20 to-[#b87333]/10', border: 'border-[#cd7f32]/30', text: 'text-[#cd7f32]', icon: '/tiers/tier_3.svg' },  // HT3
+  { bg: 'from-[#ffd700]/20 to-[#ffcc00]/10', border: 'border-[#ffd700]/30', text: 'text-[#ffd700]', icon: null },                   // HT4
+  { bg: 'from-[#f59e0b]/20 to-[#d97706]/10', border: 'border-[#f59e0b]/30', text: 'text-[#f59e0b]', icon: null },                   // HT5
+  { bg: 'from-[#3b82f6]/20 to-[#2563eb]/10', border: 'border-[#3b82f6]/30', text: 'text-[#3b82f6]', icon: null },                   // LT1
+  { bg: 'from-[#06b6d4]/20 to-[#0891b2]/10', border: 'border-[#06b6d4]/30', text: 'text-[#06b6d4]', icon: null },                   // LT2
+  { bg: 'from-[#94a3b8]/20 to-[#64748b]/10', border: 'border-[#94a3b8]/30', text: 'text-[#94a3b8]', icon: null },                   // LT3
+  { bg: 'from-[#64748b]/20 to-[#475569]/10', border: 'border-[#64748b]/30', text: 'text-[#64748b]', icon: null },                   // LT4
+  { bg: 'from-[#475569]/20 to-[#334155]/10', border: 'border-[#475569]/30', text: 'text-[#475569]', icon: null },                   // LT5 - Worst
 ];
 
-// Get tier level from tier code (HT1/LT1 = Tier 1, HT2/LT2 = Tier 2, etc.)
+// Get tier level from tier code for sorting (1 = best/HT1, 10 = worst/LT5)
+// Progression: LT5 (worst) → LT4 → LT3 → LT2 → LT1 → HT5 → HT4 → HT3 → HT2 → HT1 (best)
 const getTierLevel = (tierCode: string): number => {
-  const match = tierCode.match(/\d/);
-  return match ? parseInt(match[0]) : 5;
+  const tierOrder: { [key: string]: number } = {
+    'HT1': 1, 'HT2': 2, 'HT3': 3, 'HT4': 4, 'HT5': 5,
+    'LT1': 6, 'LT2': 7, 'LT3': 8, 'LT4': 9, 'LT5': 10
+  };
+  return tierOrder[tierCode] || 10;
 };
 
-// Group players by their tier level
+// Group players by their tier level (1-10, where 1 = HT1 best, 10 = LT3 worst)
 const groupPlayersByTier = (players: Player[], gamemode: string) => {
-  const groups: { [key: number]: Player[] } = { 1: [], 2: [], 3: [], 4: [], 5: [] };
+  const groups: { [key: number]: Player[] } = { 
+    1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [] 
+  };
   
   players.forEach(player => {
     const relevantTiers = player.tiers?.filter(t => t.gamemode?.code === gamemode);
     
     if (relevantTiers && relevantTiers.length > 0) {
-      // Get best tier
+      // Get best tier (lowest level number = best)
       const bestTier = relevantTiers.reduce((best, current) => {
-        const bestLevel = getTierLevel(best.tier_definition?.code || 'LT4');
-        const currentLevel = getTierLevel(current.tier_definition?.code || 'LT4');
+        const bestLevel = getTierLevel(best.tier_definition?.code || 'LT3');
+        const currentLevel = getTierLevel(current.tier_definition?.code || 'LT3');
         return currentLevel < bestLevel ? current : best;
       });
       
-      const tierLevel = getTierLevel(bestTier.tier_definition?.code || 'LT4');
+      const tierLevel = getTierLevel(bestTier.tier_definition?.code || 'LT3');
       if (groups[tierLevel]) {
         groups[tierLevel].push(player);
       }
     } else {
-      // No tier = Tier 5
-      groups[5].push(player);
+      // No tier = Tier 10 (LT3 equivalent)
+      groups[10].push(player);
     }
   });
   
@@ -177,27 +188,28 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
             </table>
           </div>
         ) : (
-          // Gamemode Mode - Tier Columns
+          // Gamemode Mode - Tier Columns (All 10 tiers)
           <div className="p-3 sm:p-4 overflow-x-auto scrollbar-thin">
-            <div className="flex gap-3 min-w-[1000px]">
-              {[1, 2, 3, 4, 5].map((tierLevel) => {
+            <div className="flex gap-2 min-w-[1400px]">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((tierLevel) => {
                 const tierPlayers = tierGroups[tierLevel];
                 const colors = tierColors[tierLevel - 1];
+                const tierNames = ['HT1', 'HT2', 'HT3', 'HT4', 'HT5', 'LT1', 'LT2', 'LT3', 'LT4', 'LT5'];
                 
                 return (
-                  <div key={tierLevel} className="flex-1 min-w-[180px]">
+                  <div key={tierLevel} className="flex-1 min-w-[130px]">
                     {/* Tier Header */}
-                    <div className={`bg-gradient-to-b ${colors.bg} border ${colors.border} rounded-t-xl p-3 mb-1`}>
-                      <div className="flex items-center justify-center gap-2">
+                    <div className={`bg-gradient-to-b ${colors.bg} border ${colors.border} rounded-t-xl p-2 sm:p-3 mb-1`}>
+                      <div className="flex items-center justify-center gap-1 sm:gap-2">
                         {colors.icon && (
                           <img 
                             src={colors.icon} 
                             alt={`Tier ${tierLevel}`} 
-                            className="w-6 h-6 sm:w-7 sm:h-7"
+                            className="w-5 h-5 sm:w-6 sm:h-6"
                           />
                         )}
-                        <span className={`font-bold text-sm sm:text-base ${colors.text}`}>
-                          Tier {tierLevel}
+                        <span className={`font-bold text-xs sm:text-sm ${colors.text}`}>
+                          {tierNames[tierLevel - 1]}
                         </span>
                       </div>
                     </div>
