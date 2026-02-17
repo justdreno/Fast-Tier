@@ -39,10 +39,6 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
 
           {/* Right Side Actions */}
           <div className="relative flex items-center gap-2 sm:gap-3">
-            {/* Glow border behind right items */}
-            <div
-              className="pointer-events-none absolute -inset-2 rounded-2xl border border-white/[0.08] shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_0_24px_rgba(255,159,67,0.18)] -z-10 transition-all duration-500 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.1),0_0_30px_rgba(255,159,67,0.3)]"
-            />
             {/* Orange glow on far-right edge */}
             <div
               className="pointer-events-none absolute -right-6 top-1/2 -translate-y-1/2 w-28 h-16 rounded-full bg-[#ff9f43]/25 blur-2xl -z-10 animate-glow-pulse"
