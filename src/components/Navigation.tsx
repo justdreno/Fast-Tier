@@ -1,5 +1,5 @@
 import { Menu, X, Search, XCircle, Trophy, Users, Info } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 interface NavigationProps {
@@ -20,52 +20,49 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showDiscordModal, setShowDiscordModal] = useState(false);
   
-  // Navigation State
+  // Navigation Animation State
   const location = useLocation();
-  const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0, opacity: 0 });
-  const [enableTransition, setEnableTransition] = useState(false); 
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
+  const [isReady, setIsReady] = useState(false); // Controls when the sliding animation is active
   
   const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
-  // Function to calculate underline position
+  // Function to calculate exact position
   const updatePosition = () => {
     const activeIndex = navItems.findIndex(item => item.path === location.pathname);
     
     if (activeIndex !== -1 && itemRefs.current[activeIndex]) {
       const activeItem = itemRefs.current[activeIndex];
       if (activeItem) {
-        setUnderlineStyle({
+        setIndicatorStyle({
           left: activeItem.offsetLeft,
           width: activeItem.offsetWidth,
           opacity: 1,
         });
       }
     } else {
-      setUnderlineStyle(prev => ({ ...prev, opacity: 0 }));
+      setIndicatorStyle(prev => ({ ...prev, opacity: 0 }));
     }
   };
 
-  // 1. Update on path change
-  useEffect(() => {
+  // useLayoutEffect runs BEFORE the browser paints. 
+  // This ensures the line is in the correct starting position before we turn on animations.
+  useLayoutEffect(() => {
     updatePosition();
   }, [location.pathname]);
 
-  // 2. Initial load and Resize handling
+  // Enable the "sliding" animation shortly after the component mounts
   useEffect(() => {
-    // Snap to position initially without animation
-    updatePosition();
-
-    // Enable animation shortly after mount
     const timer = setTimeout(() => {
-      setEnableTransition(true);
+      setIsReady(true);
     }, 100);
 
-    // Handle Resize
+    // Disable animation during window resize to prevent laggy movement
     const handleResize = () => {
-      setEnableTransition(false); // Disable animation during resize
+      setIsReady(false);
       updatePosition();
-      // Re-enable animation after resize stops
-      setTimeout(() => setEnableTransition(true), 100);
+      clearTimeout(timer);
+      setTimeout(() => setIsReady(true), 100);
     };
 
     window.addEventListener('resize', handleResize);
@@ -84,7 +81,7 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
           <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff9f43]/20 blur-3xl rounded-full pointer-events-none animate-pulse-slow" />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent animate-shimmer pointer-events-none" />
 
-          {/* Navbar Content */}
+          {/* Main Navbar Content */}
           <div className="relative flex items-center justify-between h-14 px-3 sm:px-4">
             
             {/* LEFT: Logo */}
@@ -122,12 +119,14 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
                 
                 {/* Sliding Underline */}
                 <div
-                  className="absolute bottom-0 h-[2px] bg-[#ff9f43] rounded-full shadow-[0_0_8px_rgba(255,159,67,0.8)]"
+                  className={`
+                    absolute bottom-0 h-[2px] bg-[#ff9f43] rounded-full shadow-[0_0_8px_rgba(255,159,67,0.8)]
+                    ${isReady ? 'transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]' : ''}
+                  `}
                   style={{
-                    left: `${underlineStyle.left}px`,
-                    width: `${underlineStyle.width}px`,
-                    opacity: underlineStyle.opacity,
-                    transition: enableTransition ? 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+                    left: `${indicatorStyle.left}px`,
+                    width: `${indicatorStyle.width}px`,
+                    opacity: indicatorStyle.opacity,
                   }}
                 />
               </div>
