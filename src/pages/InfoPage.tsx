@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Trophy, Target, ChevronRight, Info } from 'lucide-react';
+import { Trophy, Target, Medal, ChevronRight } from 'lucide-react';
 import Navigation from '../components/Navigation';
 
 const rankData = [
@@ -22,7 +22,6 @@ const tierPointsData = [
 ];
 
 export default function InfoPage() {
-  const [activeTab, setActiveTab] = useState<'ranks' | 'points'>('ranks');
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -31,219 +30,235 @@ export default function InfoPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] pb-12 font-sans selection:bg-[#ff9f43]/30">
+    <div className="min-h-screen bg-[#0a0a0a] overflow-hidden">
+      {/* Banner Header with parallax effect - Same as main page */}
+      <div
+        className={`hidden sm:block w-full h-64 sm:h-80 bg-cover bg-center bg-no-repeat relative transition-opacity duration-500 ${
+          isVisible ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{
+          backgroundImage: 'url(/banner.png)',
+        }}
+      >
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0a0a]" />
+        
+        {/* Bottom gradient fade to background */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
+        
+        {/* Subtle glow */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-20 bg-[#ff9f43]/5 blur-3xl" />
+      </div>
+
       <Navigation />
 
-      <div className="pt-28">
-        {/* Ambient Background */}
-        <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[500px] bg-[#ff9f43]/5 blur-[120px] rounded-full pointer-events-none" />
-
-        <div className="container mx-auto px-4 max-w-4xl relative z-10">
-
-          {/* Header Title */}
-          <div className={`text-center mb-12 transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-            <h1 className="text-4xl sm:text-5xl font-black text-white mb-4 tracking-tight">
-              Information
-            </h1>
-            <p className="text-white/40 text-base max-w-2xl mx-auto">
-              Understanding the FastTier ranking system and how points are calculated
-            </p>
-          </div>
-
-          {/* Navigation Tabs */}
-          <div className={`flex justify-center items-center gap-8 mb-10 transition-all duration-700 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-            <button
-              onClick={() => setActiveTab('ranks')}
-              className={`relative px-2 py-2 text-sm font-bold tracking-wide transition-colors duration-300 ${activeTab === 'ranks' ? 'text-[#ff9f43]' : 'text-white/40 hover:text-white'
-                }`}
-            >
-              Rank Titles
-              {activeTab === 'ranks' && (
-                <div className="absolute -bottom-2 left-0 w-full h-[2px] bg-[#ff9f43] shadow-[0_0_10px_#ff9f43]" />
-              )}
-            </button>
-            <button
-              onClick={() => setActiveTab('points')}
-              className={`relative px-2 py-2 text-sm font-bold tracking-wide transition-colors duration-300 ${activeTab === 'points' ? 'text-[#ff9f43]' : 'text-white/40 hover:text-white'
-                }`}
-            >
-              Points System
-              {activeTab === 'points' && (
-                <div className="absolute -bottom-2 left-0 w-full h-[2px] bg-[#ff9f43] shadow-[0_0_10px_#ff9f43]" />
-              )}
-            </button>
-          </div>
-
-          {/* CONTENT AREA */}
-          <div className="min-h-[500px]">
-
-            {/* --- RANKS TAB --- */}
-            {activeTab === 'ranks' && (
-              <div className="space-y-4">
-                <div className={`flex items-center justify-center gap-2 mb-6 text-white/30 text-xs uppercase tracking-widest font-bold transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
-                  <Trophy size={14} className="text-[#ff9f43]" />
-                  Total Points determine your rank
-                </div>
-
-                {rankData.map((rank, index) => (
-                  <div
-                    key={rank.name}
-                    className={`group relative bg-[#141414] border border-white/[0.08] rounded-2xl p-5 sm:p-6 hover:border-white/[0.15] hover:-translate-y-1 transition-all duration-500 ease-out shadow-lg ${rank.glow} ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                    style={{ transitionDelay: `${index * 75}ms` }}
-                  >
-                    {/* Hover Gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none" />
-
-                    <div className="relative flex flex-col sm:flex-row items-center gap-6">
-
-                      {/* Left: Icon */}
-                      <div className="flex-shrink-0">
-                        <div className="w-16 h-16 rounded-xl bg-black/40 border border-white/[0.05] flex items-center justify-center group-hover:scale-110 transition-transform duration-500 overflow-hidden">
-                          <img 
-                            src={rank.icon} 
-                            alt={rank.name}
-                            className="w-12 h-12 object-contain"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).style.display = 'none';
-                            }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Middle: Text */}
-                      <div className="flex-1 text-center sm:text-left">
-                        <h3
-                          className="text-xl font-black mb-1 tracking-tight group-hover:brightness-125 transition-all"
-                          style={{ color: rank.color }}
-                        >
-                          {rank.name}
-                        </h3>
-                        <p className="text-white/40 text-sm font-medium">
-                          {rank.description}
-                        </p>
-                      </div>
-
-                      {/* Right: Points */}
-                      <div className="flex-shrink-0 text-center sm:text-right min-w-[100px] border-t sm:border-t-0 sm:border-l border-white/[0.08] pt-4 sm:pt-0 sm:pl-6 mt-4 sm:mt-0 w-full sm:w-auto">
-                        <div className="text-[10px] uppercase font-bold text-white/30 tracking-widest mb-1">
-                          Min Points
-                        </div>
-                        <div className="text-2xl font-black text-white tracking-wide">
-                          {rank.minPoints}<span className="text-[#ff9f43]">+</span>
-                        </div>
-                      </div>
-
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* --- POINTS TAB --- */}
-            {activeTab === 'points' && (
-              <div className="animate-fade-in-up">
-
-                <div className="flex items-center justify-center gap-2 mb-6 text-white/30 text-xs uppercase tracking-widest font-bold">
-                  <Target size={14} className="text-[#ff9f43]" />
-                  Points awarded per gamemode tier
-                </div>
-
-                {/* Table Card */}
-                <div className="bg-[#141414] border border-white/[0.08] rounded-3xl overflow-hidden shadow-2xl">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="bg-white/[0.02] border-b border-white/[0.08]">
-                          <th className="py-5 px-6 text-xs font-bold text-white/40 uppercase tracking-widest">Rank Tier</th>
-                          <th className="py-5 px-6 text-center text-xs font-bold text-[#ff9f43] uppercase tracking-widest">High Tier (HT)</th>
-                          <th className="py-5 px-6 text-center text-xs font-bold text-white/40 uppercase tracking-widest">Low Tier (LT)</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-white/[0.04]">
-                        {tierPointsData.map((row) => (
-                          <tr key={row.tier} className="hover:bg-white/[0.02] transition-colors">
-                            <td className="py-5 px-6 font-bold text-white">{row.tier}</td>
-                            <td className="py-5 px-6 text-center">
-                              <span className="inline-block py-1 px-3 rounded-lg bg-[#ff9f43]/10 border border-[#ff9f43]/20 text-[#ff9f43] font-bold text-sm">
-                                +{row.htPoints}
-                              </span>
-                            </td>
-                            <td className="py-5 px-6 text-center">
-                              <span className="inline-block py-1 px-3 rounded-lg bg-white/[0.05] border border-white/[0.1] text-white/70 font-bold text-sm">
-                                +{row.ltPoints}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                {/* Calculation Example Card */}
-                <div className="mt-6 bg-gradient-to-r from-[#1a1a1a] to-[#141414] border border-white/[0.08] rounded-2xl p-6 sm:p-8 relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-[#ff9f43]/5 rounded-full blur-3xl group-hover:bg-[#ff9f43]/10 transition-colors duration-500 pointer-events-none" />
-
-                  <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2 relative z-10">
-                    <Info size={18} className="text-[#ff9f43]" />
-                    How does it add up?
-                  </h3>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 relative z-10">
-                    <div>
-                      <p className="text-white/50 text-sm leading-relaxed mb-4">
-                        Your total score is the <span className="text-white">sum of points</span> from your best tier in every gamemode.
-                        You can be Tier 1 in Sword and Tier 3 in UHC, and both will contribute to your Combat Rank.
-                      </p>
-                      <div className="inline-flex items-center gap-2 text-[#ff9f43] text-sm font-bold border-b border-[#ff9f43]/30 pb-0.5">
-                        Learn more about testing <ChevronRight size={14} />
-                      </div>
-                    </div>
-
-                    <div className="bg-black/30 rounded-xl p-4 border border-white/[0.05]">
-                      <div className="text-xs font-bold text-white/30 uppercase tracking-widest mb-3">Example Profile</div>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between items-center">
-                          <span className="text-white/70">Vanilla (HT1)</span>
-                          <span className="text-[#ff9f43] font-mono">+60</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-white/70">UHC (LT2)</span>
-                          <span className="text-white/40 font-mono">+20</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-white/70">Sword (HT2)</span>
-                          <span className="text-[#ff9f43] font-mono">+30</span>
-                        </div>
-                        <div className="border-t border-white/[0.1] pt-2 mt-2 flex justify-between items-center">
-                          <span className="font-bold text-white">Total Score</span>
-                          <span className="font-black text-[#ff9f43] text-lg">110</span>
-                        </div>
-                        <div className="text-right text-[10px] text-white/30">
-                          Result: Combat Ace
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            )}
-
-          </div>
-
-          {/* Footer Link */}
-          <div className={`mt-12 text-center transition-all duration-700 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-white/60 hover:text-white hover:bg-white/[0.06] hover:scale-105 transition-all duration-300 text-sm font-medium"
-            >
-              Back to Leaderboard
-            </Link>
-          </div>
-
+      <main className="w-[95%] max-w-[1400px] mx-auto mt-12 sm:-mt-28 pb-6 sm:pb-10 relative z-10">
+        {/* Title Section */}
+        <div className="px-3 sm:px-4 mb-6">
+          <h1 className="text-2xl sm:text-3xl font-black text-white mb-1 tracking-tight">
+            Information
+          </h1>
+          <p className="text-xs sm:text-sm text-white/30">
+            Understanding the ranking system and point calculations
+          </p>
         </div>
-      </div>
+
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          {/* LEFT COLUMN - Rank System */}
+          <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20">
+            {/* Header with Icon Tabs style */}
+            <div className="border-b border-white/[0.06] bg-[#141414]/50">
+              <div className="px-3 sm:px-4 py-3">
+                <div className="flex items-center gap-2.5">
+                  <Trophy size={18} className="text-[#ff9f43]" />
+                  <span className="font-bold text-sm text-white">Rank Titles</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Ranks Table Header */}
+            <div className="grid grid-cols-[auto_1fr_auto] gap-2 sm:gap-4 px-3 sm:px-4 py-3 border-b border-white/[0.04] bg-[#0f0f0f]/60">
+              <div className="text-[11px] font-bold text-white/30 uppercase tracking-wider w-12 sm:w-16 text-center">
+                Icon
+              </div>
+              <div className="text-[11px] font-bold text-white/30 uppercase tracking-wider">
+                Rank
+              </div>
+              <div className="text-[11px] font-bold text-white/30 uppercase tracking-wider text-right w-20 sm:w-24">
+                Points
+              </div>
+            </div>
+
+            {/* Ranks List */}
+            <div className="max-h-[600px] overflow-y-auto scrollbar-thin">
+              {rankData.map((rank, index) => (
+                <div
+                  key={rank.name}
+                  className={`group grid grid-cols-[auto_1fr_auto] gap-2 sm:gap-4 px-3 sm:px-4 py-3 border-b border-white/[0.03] hover:bg-white/[0.02] transition-all duration-200 ${
+                    isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                  }`}
+                  style={{ transitionDelay: `${index * 50}ms` }}
+                >
+                  {/* Icon */}
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-black/40 border border-white/[0.05] flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                      <img 
+                        src={rank.icon} 
+                        alt={rank.name}
+                        className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Rank Info */}
+                  <div className="flex flex-col justify-center min-w-0">
+                    <h3
+                      className="text-sm sm:text-base font-black tracking-tight group-hover:brightness-125 transition-all truncate"
+                      style={{ color: rank.color }}
+                    >
+                      {rank.name}
+                    </h3>
+                    <p className="text-white/40 text-xs truncate">
+                      {rank.description}
+                    </p>
+                  </div>
+
+                  {/* Points */}
+                  <div className="flex items-center justify-end w-20 sm:w-24">
+                    <div className="text-right">
+                      <div className="text-base sm:text-lg font-black text-white tracking-wide">
+                        {rank.minPoints}<span className="text-[#ff9f43]">+</span>
+                      </div>
+                      <div className="text-[9px] uppercase font-bold text-white/30 tracking-wider">
+                        Min
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN - Point System */}
+          <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20">
+            {/* Header */}
+            <div className="border-b border-white/[0.06] bg-[#141414]/50">
+              <div className="px-3 sm:px-4 py-3">
+                <div className="flex items-center gap-2.5">
+                  <Target size={18} className="text-[#ff9f43]" />
+                  <span className="font-bold text-sm text-white">Points System</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Points Table Header */}
+            <div className="grid grid-cols-[1fr_auto_auto] gap-2 sm:gap-4 px-3 sm:px-4 py-3 border-b border-white/[0.04] bg-[#0f0f0f]/60">
+              <div className="text-[11px] font-bold text-white/30 uppercase tracking-wider">
+                Tier Level
+              </div>
+              <div className="text-[11px] font-bold text-[#ff9f43] uppercase tracking-wider text-center w-16 sm:w-20">
+                HT Points
+              </div>
+              <div className="text-[11px] font-bold text-white/30 uppercase tracking-wider text-center w-16 sm:w-20">
+                LT Points
+              </div>
+            </div>
+
+            {/* Points List */}
+            <div>
+              {tierPointsData.map((row, index) => (
+                <div
+                  key={row.tier}
+                  className={`group grid grid-cols-[1fr_auto_auto] gap-2 sm:gap-4 px-3 sm:px-4 py-4 border-b border-white/[0.03] hover:bg-white/[0.02] transition-all duration-200 ${
+                    isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                  }`}
+                  style={{ transitionDelay: `${(index + 7) * 50}ms` }}
+                >
+                  {/* Tier Name */}
+                  <div className="flex items-center gap-2">
+                    <Medal size={16} className="text-white/30 group-hover:text-[#ff9f43] transition-colors" />
+                    <span className="text-sm sm:text-base font-bold text-white">{row.tier}</span>
+                  </div>
+
+                  {/* HT Points */}
+                  <div className="flex items-center justify-center w-16 sm:w-20">
+                    <span className="inline-block py-1.5 px-3 rounded-lg bg-[#ff9f43]/10 border border-[#ff9f43]/20 text-[#ff9f43] font-bold text-sm">
+                      +{row.htPoints}
+                    </span>
+                  </div>
+
+                  {/* LT Points */}
+                  <div className="flex items-center justify-center w-16 sm:w-20">
+                    <span className="inline-block py-1.5 px-3 rounded-lg bg-white/[0.05] border border-white/[0.1] text-white/70 font-bold text-sm">
+                      +{row.ltPoints}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* How It Works Card */}
+            <div className={`p-4 sm:p-5 border-t border-white/[0.06] transition-all duration-700 delay-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+              <div className="bg-gradient-to-r from-[#1a1a1a] to-[#141414] border border-white/[0.08] rounded-xl p-4 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff9f43]/5 rounded-full blur-3xl pointer-events-none" />
+                
+                <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2 relative z-10">
+                  <span className="w-5 h-5 rounded bg-[#ff9f43]/20 flex items-center justify-center">
+                    <span className="text-[#ff9f43] text-xs">?</span>
+                  </span>
+                  How does it add up?
+                </h3>
+
+                <p className="text-white/50 text-xs leading-relaxed mb-4 relative z-10">
+                  Your total score is the sum of points from your best tier in every gamemode. 
+                  You can be Tier 1 in Sword and Tier 3 in UHC, and both will contribute to your Combat Rank.
+                </p>
+
+                {/* Example */}
+                <div className="bg-black/30 rounded-lg p-3 border border-white/[0.05] relative z-10">
+                  <div className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-2">Example</div>
+                  <div className="space-y-1.5 text-xs">
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/60">Vanilla (HT1)</span>
+                      <span className="text-[#ff9f43] font-mono">+60</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/60">UHC (LT2)</span>
+                      <span className="text-white/40 font-mono">+20</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/60">Sword (HT2)</span>
+                      <span className="text-[#ff9f43] font-mono">+30</span>
+                    </div>
+                    <div className="border-t border-white/[0.1] pt-1.5 mt-1.5 flex justify-between items-center">
+                      <span className="font-bold text-white text-xs">Total</span>
+                      <span className="font-black text-[#ff9f43]">110 pts</span>
+                    </div>
+                    <div className="text-right text-[9px] text-white/30">
+                      Result: Combat Ace
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Back Button */}
+        <div className={`mt-8 text-center transition-all duration-700 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-white/60 hover:text-white hover:bg-white/[0.06] hover:scale-105 transition-all duration-300 text-sm font-medium"
+          >
+            <ChevronRight size={16} className="rotate-180" />
+            Back to Leaderboard
+          </Link>
+        </div>
+      </main>
     </div>
   );
 }
