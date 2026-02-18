@@ -1,5 +1,5 @@
 import { Menu, X, Search, XCircle, Trophy, Users, Info } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 interface NavigationProps {
@@ -20,38 +20,6 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showDiscordModal, setShowDiscordModal] = useState(false);
   const location = useLocation();
-  const navRef = useRef<HTMLDivElement>(null);
-  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
-  const [isInitialRender, setIsInitialRender] = useState(true);
-
-  useEffect(() => {
-    const activeIndex = navItems.findIndex(item => item.path === location.pathname);
-    if (navRef.current && activeIndex !== -1) {
-      const navButtons = navRef.current.querySelectorAll('.nav-item');
-      const activeButton = navButtons[activeIndex] as HTMLElement;
-      if (activeButton) {
-        // On initial render, set position immediately without animation
-        if (isInitialRender) {
-          const nav = navRef.current;
-          nav.style.setProperty('--indicator-transition', 'none');
-          setIndicatorStyle({
-            left: activeButton.offsetLeft,
-            width: activeButton.offsetWidth,
-          });
-          // Re-enable animation after a frame
-          requestAnimationFrame(() => {
-            nav.style.removeProperty('--indicator-transition');
-          });
-          setIsInitialRender(false);
-        } else {
-          setIndicatorStyle({
-            left: activeButton.offsetLeft,
-            width: activeButton.offsetWidth,
-          });
-        }
-      }
-    }
-  }, [location.pathname, isInitialRender]);
 
   return (
     <>
@@ -75,30 +43,21 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
               </Link>
             </div>
 
-            {/* Center Navigation Links with Sliding Underline */}
-            <div ref={navRef} className="hidden md:flex items-center gap-1 relative" style={{ '--indicator-transition': 'all 0.3s ease-out' } as React.CSSProperties}>
+            {/* Center Navigation Links */}
+            <div className="hidden md:flex items-center gap-6">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    className="nav-item flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors duration-300 text-white/70 hover:text-white"
+                    className="flex items-center gap-2 text-sm font-medium text-white hover:text-white/80 transition-colors"
                   >
                     <Icon size={16} />
                     {item.label}
                   </Link>
                 );
               })}
-              {/* Sliding Underline */}
-              <div
-                className="absolute bottom-0 h-[2px] bg-[#ff9f43] rounded-full"
-                style={{
-                  left: indicatorStyle.left,
-                  width: indicatorStyle.width,
-                  transition: 'var(--indicator-transition, all 0.3s ease-out)',
-                }}
-              />
             </div>
 
             {/* Right Side Actions */}
