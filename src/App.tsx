@@ -135,10 +135,8 @@ function App() {
         <Route 
           path="/info" 
           element={
-            <Suspense fallback={<PremiumLoader onComplete={() => {}} />}>
-              <PageTransition>
-                <InfoPage />
-              </PageTransition>
+            <Suspense fallback={null}>
+              <InfoPage />
             </Suspense>
           } 
         />
