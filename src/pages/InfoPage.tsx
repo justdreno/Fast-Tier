@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom';
-import { Trophy, Target, ChevronRight } from 'lucide-react';
+import { Trophy, Target } from 'lucide-react';
 import Navigation from '../components/Navigation';
 
 const rankData = [

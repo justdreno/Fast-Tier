@@ -20,21 +20,42 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showDiscordModal, setShowDiscordModal] = useState(false);
   const location = useLocation();
-  const navRef = useRef<HTMLDivElement>(null);
-  const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0 });
+
+  // State for the sliding underline
+  const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0, opacity: 0 });
   const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
+  // Calculate underline position
   useEffect(() => {
-    const activeIndex = navItems.findIndex(item => item.path === location.pathname);
-    if (activeIndex !== -1 && itemRefs.current[activeIndex]) {
-      const activeItem = itemRefs.current[activeIndex];
-      if (activeItem) {
-        setUnderlineStyle({
-          left: activeItem.offsetLeft,
-          width: activeItem.offsetWidth,
-        });
+    const calculatePosition = () => {
+      const activeIndex = navItems.findIndex(item => item.path === location.pathname);
+
+      if (activeIndex !== -1 && itemRefs.current[activeIndex]) {
+        const activeItem = itemRefs.current[activeIndex];
+        if (activeItem) {
+          setUnderlineStyle({
+            left: activeItem.offsetLeft,
+            width: activeItem.offsetWidth,
+            opacity: 1,
+          });
+        }
+      } else {
+        // Optional: fade out if no route matches
+        setUnderlineStyle(prev => ({ ...prev, opacity: 0 }));
       }
-    }
+    };
+
+    // Run calculation immediately and on window resize
+    calculatePosition();
+    window.addEventListener('resize', calculatePosition);
+
+    // a small timeout helps ensure fonts/layout are settled before calculating
+    const timer = setTimeout(calculatePosition, 50);
+
+    return () => {
+      window.removeEventListener('resize', calculatePosition);
+      clearTimeout(timer);
+    };
   }, [location.pathname]);
 
   return (
@@ -47,9 +68,11 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
           {/* Shimmer effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent animate-shimmer pointer-events-none" />
 
-          <div className="flex items-center justify-between h-14 px-3 sm:px-4">
-            {/* Logo */}
-            <div className="flex items-center">
+          {/* Main Navbar Container */}
+          <div className="relative flex items-center justify-between h-14 px-3 sm:px-4">
+
+            {/* LEFT: Logo Section (Flex-1 to push center content) */}
+            <div className="flex-1 flex items-center justify-start">
               <Link to="/" className="flex items-center group">
                 <img
                   src="/fast-tier.png"
@@ -59,34 +82,40 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
               </Link>
             </div>
 
-            {/* Center Navigation Links with Sliding Underline */}
-            <div ref={navRef} className="hidden md:flex items-center relative">
-              {navItems.map((item, index) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.path}
-                    ref={(el) => { itemRefs.current[index] = el; }}
-                    to={item.path}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white hover:text-white/80 transition-colors"
-                  >
-                    <Icon size={16} />
-                    {item.label}
-                  </Link>
-                );
-              })}
-              {/* Sliding Underline */}
-              <div
-                className="absolute bottom-0 h-[2px] bg-[#ff9f43] rounded-full transition-all duration-300 ease-out"
-                style={{
-                  left: underlineStyle.left,
-                  width: underlineStyle.width,
-                }}
-              />
+            {/* CENTER: Navigation Links (Absolute Centered) */}
+            <div className="hidden md:flex absolute left-1/2 top-0 bottom-0 -translate-x-1/2 items-center">
+              <div className="relative flex items-center h-full">
+                {navItems.map((item, index) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <Link
+                      key={item.path}
+                      ref={(el) => { itemRefs.current[index] = el; }}
+                      to={item.path}
+                      className={`flex items-center gap-2 px-5 py-2 text-sm font-medium transition-colors duration-300 ${isActive ? 'text-white' : 'text-white/60 hover:text-white/90'
+                        }`}
+                    >
+                      <Icon size={16} className={isActive ? 'text-[#ff9f43]' : ''} />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+
+                {/* Sliding Underline */}
+                <div
+                  className="absolute bottom-0 h-[2px] bg-[#ff9f43] rounded-full transition-all duration-300 ease-out shadow-[0_0_10px_#ff9f43]"
+                  style={{
+                    left: underlineStyle.left,
+                    width: underlineStyle.width,
+                    opacity: underlineStyle.opacity,
+                  }}
+                />
+              </div>
             </div>
 
-            {/* Right Side Actions */}
-            <div className="relative flex items-center gap-2 sm:gap-3">
+            {/* RIGHT: Actions (Search, Button, Mobile Menu) */}
+            <div className="flex-1 flex items-center justify-end gap-2 sm:gap-3">
               {/* Orange glow */}
               <div className="pointer-events-none absolute -right-6 top-1/2 -translate-y-1/2 w-28 h-16 rounded-full bg-[#ff9f43]/25 blur-2xl -z-10 animate-glow-pulse" />
 
@@ -104,10 +133,10 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
                 />
               </div>
 
-              {/* Get Tested Button */}
+              {/* Get Tested Button (Desktop) */}
               <button
                 onClick={() => setShowDiscordModal(true)}
-                className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#ff9f43] hover:bg-[#ff9f43]/90 text-white font-semibold text-sm rounded-lg transition-all duration-300 ease-bounce hover:scale-105 hover:shadow-[0_0_20px_rgba(255,159,67,0.5)] hover:-translate-y-0.5 active:scale-95"
+                className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#ff9f43] hover:bg-[#ff9f43]/90 text-white font-semibold text-sm rounded-lg transition-all duration-300 ease-bounce hover:scale-105 hover:shadow-[0_0_20px_rgba(255,159,67,0.5)] hover:-translate-y-0.5 active:scale-95 whitespace-nowrap"
               >
                 Get Tested
               </button>
@@ -137,9 +166,8 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
                     key={item.path}
                     to={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      isActive ? 'text-[#ff9f43] bg-[#ff9f43]/10' : 'text-white/50'
-                    }`}
+                    className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive ? 'text-[#ff9f43] bg-[#ff9f43]/10' : 'text-white/50'
+                      }`}
                   >
                     <Icon size={16} />
                     {item.label}
@@ -162,12 +190,12 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
 
       {/* Discord Modal */}
       {showDiscordModal && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
           style={{ zIndex: 99999 }}
           onClick={() => setShowDiscordModal(false)}
         >
-          <div 
+          <div
             className="bg-gradient-to-b from-[#141414] to-[#0f0f0f] border border-white/[0.08] rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl shadow-black/60 relative"
             onClick={(e) => e.stopPropagation()}
           >
