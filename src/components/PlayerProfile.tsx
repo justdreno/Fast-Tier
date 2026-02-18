@@ -1,9 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import {
-  X, Copy, Hash, User, CheckCircle, Trophy, Globe, Activity,
-  Heart, Flame, Sword, Axe, Hammer, Users, Swords
+  X, Copy, Hash, User, CheckCircle, Trophy, Globe, Swords
 } from 'lucide-react';
-import { LucideIcon } from 'lucide-react';
 import type { Player, PlayerTier } from '../lib/supabase';
 
 // --- Interfaces ---
@@ -32,16 +30,16 @@ const gamemodeLabels: Record<string, string> = {
   ltms: 'LTMs',
 };
 
-const gamemodeIcons: Record<string, LucideIcon> = {
-  vanilla: Heart,
-  uhc: Activity,
-  pot: Flame,
-  nethop: Flame,
-  smp: Users,
-  sword: Sword,
-  axe: Axe,
-  mace: Hammer,
-  ltms: Swords,
+const gamemodeIconPaths: Record<string, string> = {
+  vanilla: '/kits/vanilla.svg',
+  uhc: '/kits/uhc.svg',
+  pot: '/kits/pot.svg',
+  nethop: '/kits/nethop.svg',
+  smp: '/kits/smp.svg',
+  sword: '/kits/sword.svg',
+  axe: '/kits/axe.svg',
+  mace: '/kits/mace.svg',
+  ltms: '/kits/global.svg',
 };
 
 // Enhanced tier styling logic
@@ -312,7 +310,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                 {(player.tiers || []).map((tierData, index) => {
                   const gamemodeCode = getGamemodeCode(tierData);
                   const tierCode = getTierCode(tierData);
-                  const Icon = gamemodeIcons[gamemodeCode] || Swords;
+                  const iconPath = gamemodeIconPaths[gamemodeCode] || '/kits/global.svg';
                   const style = getTierStyle(tierCode);
 
                   return (
@@ -326,8 +324,12 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                       }}
                     >
                       <div className="flex items-start justify-between mb-3">
-                        <div className={`p-1.5 rounded-lg ${style.iconBg}`}>
-                          <Icon size={16} className={style.text} />
+                        <div className={`p-1.5 rounded-lg ${style.iconBg} flex items-center justify-center`}>
+                          <img 
+                            src={iconPath} 
+                            alt={gamemodeCode}
+                            className="w-4 h-4 object-contain"
+                          />
                         </div>
                         <div className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider shadow-sm ${style.badge}`}>
                           {tierCode}

@@ -96,26 +96,7 @@ function HomePage() {
   );
 }
 
-// Page transition wrapper
-function PageTransition({ children }: { children: React.ReactNode }) {
-  const [visible, setVisible] = useState(false);
-  
-  useEffect(() => {
-    setVisible(false);
-    const timer = setTimeout(() => setVisible(true), 50);
-    return () => clearTimeout(timer);
-  }, []);
 
-  return (
-    <div 
-      className={`transition-all duration-500 ease-out ${
-        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-      }`}
-    >
-      {children}
-    </div>
-  );
-}
 
 function App() {
   return (
@@ -125,10 +106,8 @@ function App() {
         <Route 
           path="/apply" 
           element={
-            <Suspense fallback={<PremiumLoader onComplete={() => {}} />}>
-              <PageTransition>
-                <ApplyPage />
-              </PageTransition>
+            <Suspense fallback={null}>
+              <ApplyPage />
             </Suspense>
           } 
         />
