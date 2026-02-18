@@ -22,7 +22,7 @@ const tierPointsData = [
 
 export default function InfoPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] overflow-hidden">
+    <div className="min-h-screen bg-[#0a0a0a]">
       {/* Banner Header - No animation */}
       <div
         className="hidden sm:block w-full h-64 sm:h-80 bg-cover bg-center bg-no-repeat relative opacity-100"
@@ -42,7 +42,7 @@ export default function InfoPage() {
 
       <Navigation />
 
-      <main className="w-[95%] max-w-[1200px] mx-auto mt-12 sm:-mt-28 pb-6 sm:pb-10 relative z-10">
+      <main className="w-[95%] max-w-[1200px] mx-auto mt-12 sm:-mt-28 pb-6 sm:pb-10 relative z-10" style={{ minHeight: '50vh' }}>
         {/* Title Section */}
         <div className="px-3 sm:px-4 mb-4 sm:mb-5">
           <h1 className="text-2xl sm:text-3xl font-black text-white mb-1 tracking-tight">

@@ -13,6 +13,7 @@ body {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   overflow-x: hidden;
+  scrollbar-gutter: stable;
 }
 
 /* Mobile optimizations */

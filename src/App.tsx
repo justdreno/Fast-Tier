@@ -33,17 +33,11 @@ function HomePage() {
       {/* Premium Loading Screen */}
       {isLoading && <PremiumLoader onComplete={handleLoadingComplete} />}
       
-      {/* Main Content - Hidden until loaded */}
-      <div 
-        className={`min-h-screen bg-[#0a0a0a] overflow-hidden transition-opacity duration-300 ease-out ${
-          contentVisible ? 'opacity-100' : 'opacity-0'
-        }`}
-      >
-        {/* Banner Header with parallax effect */}
+      {/* Main Content */}
+      <div className="min-h-screen bg-[#0a0a0a]">
+        {/* Banner Header */}
         <div
-          className={`hidden sm:block w-full h-64 sm:h-80 bg-cover bg-center bg-no-repeat relative transition-opacity duration-500 ${
-            contentVisible ? 'opacity-100' : 'opacity-0'
-          }`}
+          className="hidden sm:block w-full h-64 sm:h-80 bg-cover bg-center bg-no-repeat relative"
           style={{
             backgroundImage: 'url(/banner.png)',
           }}
