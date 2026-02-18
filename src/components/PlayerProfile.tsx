@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   X, Copy, Hash, User, CheckCircle, Trophy, Globe, Activity,
   Heart, Flame, Sword, Axe, Hammer, Users, Swords
@@ -106,14 +106,57 @@ const getTierStyle = (tierCode: string) => {
 
 export default function PlayerProfile({ player, rank, onClose }: PlayerProfileProps) {
   const [toast, setToast] = useState<ToastState>({ message: '', visible: false, exiting: false });
+  const [isClosing, setIsClosing] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     // Prevent body scroll when modal is open
+    const originalOverflow = document.body.style.overflow;
+    const originalTouchAction = document.body.style.touchAction;
     document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+    
+    // Trigger entrance animation
+    requestAnimationFrame(() => {
+      setIsVisible(true);
+    });
+
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = originalOverflow;
+      document.body.style.touchAction = originalTouchAction;
     };
   }, []);
+
+  // Handle close with animation
+  const handleClose = useCallback(() => {
+    if (isClosing) return;
+    setIsClosing(true);
+    setIsVisible(false);
+    
+    // Wait for animation to complete before calling onClose
+    setTimeout(() => {
+      onClose();
+    }, 300);
+  }, [isClosing, onClose]);
+
+  // Handle backdrop click
+  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      handleClose();
+    }
+  }, [handleClose]);
+
+  // Handle escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [handleClose]);
 
   const showToast = (message: string) => {
     setToast({ message, visible: true, exiting: false });
@@ -144,57 +187,45 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
   };
 
   return (
-    <>
-      <style>{`
-        @keyframes overlayShow {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes contentShow {
-          from { opacity: 0; transform: scale(0.96) translateY(10px); }
-          to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-overlay { animation: overlayShow 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-content { animation: contentShow 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-item { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
-      `}</style>
-
-      {/* Backdrop - Darker and no blur to avoid transparency issues */}
+    <div 
+      className="fixed inset-0 z-[100]"
+      onClick={handleBackdropClick}
+    >
+      {/* Backdrop with blur */}
       <div
-        className="fixed inset-0 z-[100] bg-black/90 animate-overlay"
-        onClick={onClose}
+        className={`absolute inset-0 bg-black/80 transition-all duration-300 ease-out ${
+          isVisible ? 'opacity-100 backdrop-blur-sm' : 'opacity-0'
+        }`}
       />
 
-      {/* Modal Container - Centered and scrollable */}
-      <div className="fixed inset-0 z-[101] flex items-start justify-center p-4 overflow-y-auto">
+      {/* Modal Container */}
+      <div className="absolute inset-0 flex items-start sm:items-center justify-center p-2 sm:p-4 overflow-y-auto">
         <div
-          className="w-full max-w-2xl bg-[#09090b] border border-white/[0.08] rounded-3xl shadow-2xl overflow-hidden animate-content relative my-auto"
+          className={`w-full max-w-2xl bg-[#0f0f0f] border border-white/[0.08] rounded-2xl sm:rounded-3xl shadow-2xl shadow-black/60 overflow-hidden relative transition-all duration-300 ease-out my-auto ${
+            isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'
+          }`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Decorative Top Gradient */}
           <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#ff9f43]/10 via-[#ff9f43]/5 to-transparent pointer-events-none" />
 
           {/* Header Actions */}
-          <div className="relative flex items-center justify-end px-6 py-4 z-10">
+          <div className="relative flex items-center justify-end px-4 sm:px-6 py-3 sm:py-4 z-10">
             <button
-              onClick={onClose}
-              className="group p-2 rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.05] transition-all duration-200"
+              onClick={handleClose}
+              className="group p-2 rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.05] transition-all duration-200 hover:scale-110"
             >
               <X size={18} className="text-zinc-400 group-hover:text-white transition-colors" />
             </button>
           </div>
 
-          <div className="px-8 pb-8">
+          <div className="px-4 sm:px-8 pb-6 sm:pb-8">
             {/* Player Header Section */}
-            <div className="flex flex-col sm:flex-row gap-6 mb-8 relative z-10">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-6 sm:mb-8 relative z-10">
               {/* Avatar Column */}
               <div className="flex-shrink-0 relative group mx-auto sm:mx-0">
                 <div className="absolute -inset-0.5 bg-gradient-to-br from-[#ff9f43] to-[#ff6b00] rounded-[20px] opacity-30 blur-lg group-hover:opacity-50 transition-opacity duration-500" />
-                <div className="relative w-28 h-28 bg-[#121214] rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 bg-[#121214] rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
                   <img
                     src={`https://render.crafty.gg/3d/bust/${player.username}`}
                     alt={player.username}
@@ -210,31 +241,31 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
               </div>
 
               {/* Info Column */}
-              <div className="flex-1 text-center sm:text-left pt-2">
-                <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4">
+              <div className="flex-1 text-center sm:text-left pt-0 sm:pt-2">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-3 sm:gap-4">
                   <div>
-                    <h1 className="text-3xl font-black text-white tracking-tight mb-2 flex items-center gap-3">
+                    <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2 flex items-center gap-2 sm:gap-3 justify-center sm:justify-start">
                       {player.username}
                       <button
                         onClick={() => handleCopy(player.username, 'Username')}
-                        className="text-zinc-600 hover:text-[#ff9f43] transition-colors"
+                        className="text-zinc-600 hover:text-[#ff9f43] transition-colors p-1 hover:bg-white/[0.05] rounded-lg"
                       >
                         <Copy size={16} />
                       </button>
                     </h1>
 
                     {/* Stats Pill */}
-                    <div className="inline-flex items-center gap-3 px-3 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-lg">
+                    <div className="inline-flex items-center gap-2 sm:gap-3 px-2.5 sm:px-3 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-lg flex-wrap justify-center sm:justify-start">
                       <div className="flex items-center gap-1.5 text-zinc-400">
                         <User size={13} />
                         <span className="text-xs font-medium uppercase tracking-wider">{player.rank}</span>
                       </div>
-                      <div className="w-px h-3 bg-white/10" />
+                      <div className="w-px h-3 bg-white/10 hidden sm:block" />
                       <div className="flex items-center gap-1.5 text-[#ff9f43]">
                         <Trophy size={13} className="opacity-60" />
                         <span className="text-xs font-bold">{player.points?.toLocaleString() || 0} pts</span>
                       </div>
-                      <div className="w-px h-3 bg-white/10" />
+                      <div className="w-px h-3 bg-white/10 hidden sm:block" />
                       <div className="flex items-center gap-1.5 text-zinc-400">
                         <Globe size={13} />
                         <span className="text-xs font-medium">{player.region}</span>
@@ -245,7 +276,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                   {/* UID Box */}
                   <div
                     onClick={() => handleCopy(player.uid, 'UID')}
-                    className="group cursor-pointer flex flex-col items-center sm:items-end gap-1"
+                    className="group cursor-pointer flex flex-col items-center sm:items-end gap-1 mt-2 sm:mt-0"
                   >
                     <span className="text-[10px] uppercase font-bold text-zinc-600 tracking-widest group-hover:text-[#ff9f43] transition-colors">
                       Unique ID
@@ -261,7 +292,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
             </div>
 
             {/* Separator */}
-            <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-6" />
+            <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-4 sm:my-6" />
 
             {/* Gamemode Tiers */}
             <div>
@@ -281,7 +312,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                   <p className="text-sm">No tier data available</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                   {(player.tiers || []).map((tierData, index) => {
                     const gamemodeCode = getGamemodeCode(tierData);
                     const tierCode = getTierCode(tierData);
@@ -291,8 +322,13 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                     return (
                       <div
                         key={index}
-                        className={`relative group p-3 rounded-xl border ${style.border} bg-gradient-to-br ${style.gradient} transition-all duration-300 hover:scale-[1.02] ${style.glow} cursor-default animate-item`}
-                        style={{ animationDelay: `${index * 50}ms` }}
+                        className={`relative group p-3 rounded-xl border ${style.border} bg-gradient-to-br ${style.gradient} transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 ${style.glow} cursor-default`}
+                        style={{ 
+                          animationDelay: `${index * 50}ms`,
+                          opacity: isVisible ? 1 : 0,
+                          transform: isVisible ? 'translateY(0)' : 'translateY(10px)',
+                          transition: `all 0.3s cubic-bezier(0.16, 1, 0.3, 1) ${index * 50}ms`
+                        }}
                       >
                         <div className="flex items-start justify-between mb-3">
                           <div className={`p-1.5 rounded-lg ${style.iconBg}`}>
@@ -316,7 +352,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
             </div>
 
             {/* Footer */}
-            <div className="mt-8 flex items-center justify-between text-[10px] text-zinc-600">
+            <div className="mt-6 sm:mt-8 flex items-center justify-between text-[10px] text-zinc-600">
               <span className="flex items-center gap-1.5">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 Live Data
@@ -343,6 +379,6 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
           <span className="text-sm font-medium text-zinc-200 pr-1">{toast.message}</span>
         </div>
       </div>
-    </>
+    </div>
   );
 }

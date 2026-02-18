@@ -156,11 +156,21 @@ body {
 }
 
 .tier-card .gamemode-label {
-  transition: all 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tier-card:hover .gamemode-label {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
+}
+
+/* Tier card hover effects */
+.tier-card {
+  position: relative;
+  z-index: 1;
+}
+
+.tier-card:hover {
+  z-index: 10;
 }
 
 /* Mobile: Always show tier labels */
@@ -171,6 +181,18 @@ body {
   }
 
   .tier-card .gamemode-label {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
   }
+}
+
+/* Smooth modal backdrop */
+.modal-backdrop {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Prevent scroll glitches */
+.no-scroll {
+  overflow: hidden;
+  touch-action: none;
 }

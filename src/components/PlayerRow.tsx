@@ -132,7 +132,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
       </td>
       <td className="px-3 sm:px-4 py-3 sm:py-4">
         {gamemode === 'overall' ? (
-          <div className="flex gap-3 sm:gap-4 justify-end overflow-x-auto scrollbar-thin">
+          <div className="flex gap-3 sm:gap-4 justify-end overflow-visible">
             {allGamemodes.map((gmCode) => {
               const playerTier = displayTiers.find(t => t.gamemode?.code === gmCode);
               const iconPath = gamemodeIconPaths[gmCode] || '/kits/global.svg';
@@ -140,11 +140,11 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
               if (playerTier) {
                 const tierCode = playerTier.tier_definition?.code ?? 'N/A';
                 return (
-                  <div key={gmCode} className="flex flex-col items-center gap-1 flex-shrink-0 group/tier">
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/[0.08] border border-white/[0.15] flex items-center justify-center group-hover/tier:bg-[#ff9f43]/20 group-hover/tier:border-[#ff9f43]/40 group-hover/tier:scale-110 transition-all duration-300 ease-out">
-                      <img src={iconPath} alt={gmCode} className="w-4 h-4 sm:w-5 sm:h-5 group-hover/tier:scale-110 transition-transform duration-300" />
+                  <div key={gmCode} className="flex flex-col items-center gap-1 flex-shrink-0 tier-card cursor-pointer">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/[0.08] border border-white/[0.15] flex items-center justify-center hover:bg-[#ff9f43]/20 hover:border-[#ff9f43]/40 hover:scale-110 hover:shadow-lg hover:shadow-[#ff9f43]/20 transition-all duration-300 ease-out will-change-transform">
+                      <img src={iconPath} alt={gmCode} className="w-4 h-4 sm:w-5 sm:h-5 hover:scale-110 transition-transform duration-300" />
                     </div>
-                    <span className="text-[9px] sm:text-[10px] font-bold text-[#ff9f43] group-hover/tier:scale-105 transition-transform duration-300">{tierCode}</span>
+                    <span className="gamemode-label text-[9px] sm:text-[10px] font-bold text-[#ff9f43]">{tierCode}</span>
                   </div>
                 );
               }
@@ -168,11 +168,11 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
                 const tierCode = playerTier.tier_definition?.code ?? 'N/A';
                 const iconPath = gamemodeIconPaths[gamemodeCode] || '/kits/global.svg';
                 return (
-                  <div key={index} className="flex flex-col items-center gap-1">
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/[0.08] border border-white/[0.15] flex items-center justify-center">
-                      <img src={iconPath} alt={gamemodeCode} className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <div key={index} className="flex flex-col items-center gap-1 tier-card cursor-pointer">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/[0.08] border border-white/[0.15] flex items-center justify-center hover:bg-[#ff9f43]/20 hover:border-[#ff9f43]/40 hover:scale-110 hover:shadow-lg hover:shadow-[#ff9f43]/20 transition-all duration-300 ease-out will-change-transform">
+                      <img src={iconPath} alt={gamemodeCode} className="w-4 h-4 sm:w-5 sm:h-5 hover:scale-110 transition-transform duration-300" />
                     </div>
-                    <span className="text-[9px] sm:text-[10px] font-bold text-[#ff9f43]">{tierCode}</span>
+                    <span className="gamemode-label text-[9px] sm:text-[10px] font-bold text-[#ff9f43]">{tierCode}</span>
                   </div>
                 );
               })
