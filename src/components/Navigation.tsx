@@ -46,8 +46,8 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
                 className="pointer-events-none absolute -right-6 top-1/2 -translate-y-1/2 w-28 h-16 rounded-full bg-[#ff9f43]/25 blur-2xl -z-10 animate-glow-pulse"
               />
 
-              {/* Search Bar with smooth animation */}
-              <div className={`relative transition-all duration-400 ease-smooth ${isSearchFocused ? 'w-48 sm:w-56 scale-105' : 'w-36 sm:w-44'}`}>
+              {/* Search Bar - Fixed width, no transition */}
+              <div className="relative w-40 sm:w-48">
                 <Search className={`absolute left-2.5 top-1/2 -translate-y-1/2 transition-colors duration-300 ${isSearchFocused ? 'text-[#ff9f43]' : 'text-white/30'}`} size={14} />
                 <input
                   type="text"
@@ -56,7 +56,7 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
                   onChange={(e) => setSearchQuery?.(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
-                  className="w-full pl-8 pr-3 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9f43]/50 focus:ring-2 focus:ring-[#ff9f43]/20 focus:bg-white/[0.08] transition-all duration-300 hover:bg-white/[0.06] hover:border-white/[0.12]"
+                  className="w-full pl-8 pr-3 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9f43]/50 focus:ring-2 focus:ring-[#ff9f43]/20 focus:bg-white/[0.08] hover:bg-white/[0.06] hover:border-white/[0.12]"
                 />
               </div>
 
