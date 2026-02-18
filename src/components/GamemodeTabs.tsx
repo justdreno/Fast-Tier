@@ -50,15 +50,19 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
 
   // Update position of the sliding bar
   useEffect(() => {
-    const activeTab = tabsRef.current[selectedGamemode];
-
-    if (activeTab) {
-      setIndicatorStyle({
-        left: activeTab.offsetLeft,
-        width: activeTab.offsetWidth,
-        opacity: 1
-      });
-    }
+    const updateIndicator = () => {
+      const activeTab = tabsRef.current[selectedGamemode];
+      if (activeTab) {
+        setIndicatorStyle({
+          left: activeTab.offsetLeft,
+          width: activeTab.offsetWidth,
+          opacity: 1
+        });
+      }
+    };
+    
+    // Use rAF to measure after layout
+    requestAnimationFrame(updateIndicator);
   }, [selectedGamemode, gamemodes, loading]);
 
   // Handle resize to keep bar aligned

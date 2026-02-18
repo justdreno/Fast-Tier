@@ -102,7 +102,7 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
   // Don't show loading state on initial load (handled by PremiumLoader in App.tsx)
   if (loading && !isInitialLoad) {
     return (
-      <div className="animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+      <div data-testid="leaderboard-loading">
         <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20">
           <div className="border-b border-white/[0.06] bg-[#141414]/50">
             <div className="px-3 sm:px-4 py-2">
@@ -119,7 +119,7 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
 
   if (error) {
     return (
-      <div className="animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+      <div data-testid="leaderboard-error">
         <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20">
           <div className="border-b border-white/[0.06] bg-[#141414]/50">
             <div className="px-3 sm:px-4 py-2">
@@ -135,7 +135,7 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
   }
 
   return (
-    <div className="animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+    <div data-testid="leaderboard-container">
       <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20">
         {/* Header with Gamemode Tabs */}
         <div className="border-b border-white/[0.06] bg-[#141414]/50">
@@ -166,9 +166,9 @@ export default function Leaderboard({ gamemode, searchQuery, onSelectPlayer, onG
                   sortedPlayers.map((player, index) => (
                     <tr
                       key={player.id}
+                      data-testid={`player-row-${player.id}`}
                       onClick={() => onSelectPlayer({ player, rank: index + 1 })}
-                      className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-all duration-300 cursor-pointer group animate-fadeInUp"
-                      style={{ animationDelay: `${0.25 + index * 0.05}s` }}
+                      className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors duration-200 cursor-pointer group"
                     >
                       <PlayerRow player={player} rank={index + 1} gamemode={gamemode} />
                     </tr>

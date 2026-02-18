@@ -55,27 +55,9 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
   const podiumBg = getPodiumBackground(rank);
   const rankIcon = getRankIcon(player.rank);
 
-  // Calculate animation delay based on rank for staggered effect
-  const animationDelay = Math.min((rank - 1) * 0.05, 0.5);
-
   return (
     <>
-      <style>{`
-        @keyframes rowSlideIn {
-          0% {
-            opacity: 0;
-            transform: translateX(-20px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-        .animate-row-in {
-          animation: rowSlideIn 0.5s ease-out forwards;
-        }
-      `}</style>
-      <td className="px-2 sm:px-3 py-2 sm:py-3 pr-4 sm:pr-6 animate-row-in" style={{ animationDelay: `${animationDelay}s` }}>
+      <td className="px-2 sm:px-3 py-2 sm:py-3 pr-4 sm:pr-6">
         <div className="relative w-full h-14 sm:h-16 flex items-center justify-center pr-4 sm:pr-6">
           {podiumBg ? (
             <>
@@ -104,7 +86,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           )}
         </div>
       </td>
-      <td className="pl-5 pr-3 sm:pl-6 sm:pr-4 py-3 sm:py-4 animate-row-in" style={{ animationDelay: `${animationDelay + 0.05}s` }}>
+      <td className="pl-5 pr-3 sm:pl-6 sm:pr-4 py-3 sm:py-4">
         <div className="flex items-center gap-3 sm:gap-4">
           {/* Avatar with rank badge overlay */}
           <div className="relative">
@@ -148,7 +130,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
           </div>
         </div>
       </td>
-      <td className="px-3 sm:px-4 py-3 sm:py-4 animate-row-in" style={{ animationDelay: `${animationDelay + 0.1}s` }}>
+      <td className="px-3 sm:px-4 py-3 sm:py-4">
         {gamemode === 'overall' ? (
           <div className="flex gap-3 sm:gap-4 justify-end overflow-x-auto scrollbar-thin">
             {allGamemodes.map((gmCode) => {

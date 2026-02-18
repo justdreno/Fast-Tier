@@ -14,14 +14,17 @@ function HomePage() {
   const [selectedGamemode, setSelectedGamemode] = useState('overall');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState<{ player: Player; rank: number } | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [contentVisible, setContentVisible] = useState(false);
+  
+  // Skip loader if already shown this session
+  const hasSeenLoader = sessionStorage.getItem('ft-loader-shown') === '1';
+  const [isLoading, setIsLoading] = useState(!hasSeenLoader);
+  const [contentVisible, setContentVisible] = useState(hasSeenLoader);
 
   // Handle loading complete
   const handleLoadingComplete = () => {
+    sessionStorage.setItem('ft-loader-shown', '1');
     setIsLoading(false);
-    // Small delay before showing content for smooth transition
-    setTimeout(() => setContentVisible(true), 100);
+    setContentVisible(true);
   };
 
   return (
@@ -31,46 +34,34 @@ function HomePage() {
       
       {/* Main Content - Hidden until loaded */}
       <div 
-        className={`min-h-screen bg-[#0a0a0a] overflow-hidden transition-all duration-1000 ease-out ${
-          contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        className={`min-h-screen bg-[#0a0a0a] overflow-hidden transition-opacity duration-300 ease-out ${
+          contentVisible ? 'opacity-100' : 'opacity-0'
         }`}
       >
         {/* Banner Header with parallax effect */}
         <div
-          className={`hidden sm:block w-full h-64 sm:h-80 bg-cover bg-center bg-no-repeat relative transition-all duration-1000 delay-200 ${
-            contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+          className={`hidden sm:block w-full h-64 sm:h-80 bg-cover bg-center bg-no-repeat relative transition-opacity duration-500 ${
+            contentVisible ? 'opacity-100' : 'opacity-0'
           }`}
           style={{
             backgroundImage: 'url(/banner.png)',
           }}
         >
-          {/* Animated gradient overlay */}
-          <div 
-            className={`absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0a0a] transition-all duration-1000 delay-500 ${
-              contentVisible ? 'opacity-100' : 'opacity-0'
-            }`} 
-          />
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0a0a]" />
           
           {/* Bottom gradient fade to background */}
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
           
-          {/* Subtle animated glow */}
-          <div 
-            className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-20 bg-[#ff9f43]/5 blur-3xl transition-all duration-1000 delay-700 ${
-              contentVisible ? 'opacity-100' : 'opacity-0'
-            }`}
-          />
+          {/* Subtle glow */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-20 bg-[#ff9f43]/5 blur-3xl" />
         </div>
 
         <Navigation searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         
         <main className="w-[95%] max-w-[1200px] mx-auto mt-12 sm:-mt-28 pb-6 sm:pb-10 relative z-10">
-          {/* Title Section with staggered animation */}
-          <div 
-            className={`px-3 sm:px-4 mb-4 sm:mb-5 transition-all duration-700 delay-300 ${
-              contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-          >
+          {/* Title Section */}
+          <div className="px-3 sm:px-4 mb-4 sm:mb-5">
             <h1 className="text-2xl sm:text-3xl font-black text-white mb-1 tracking-tight">
               Rankings
             </h1>
@@ -79,12 +70,8 @@ function HomePage() {
             </p>
           </div>
           
-          {/* Leaderboard with animation */}
-          <div 
-            className={`transition-all duration-700 delay-500 ${
-              contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-          >
+          {/* Leaderboard */}
+          <div>
             <Leaderboard 
               gamemode={selectedGamemode} 
               searchQuery={searchQuery} 

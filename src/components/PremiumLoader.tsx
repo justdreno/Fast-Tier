@@ -10,37 +10,34 @@ export default function PremiumLoader({ onComplete }: PremiumLoaderProps) {
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    // Simulate loading progress with variable speeds
+    // Fast loading - total ~1.2s instead of ~5s
     const intervals = [
-      { target: 20, duration: 400 },
-      { target: 45, duration: 600 },
-      { target: 70, duration: 800 },
-      { target: 85, duration: 500 },
-      { target: 95, duration: 700 },
-      { target: 100, duration: 400 },
+      { target: 40, duration: 150 },
+      { target: 75, duration: 200 },
+      { target: 95, duration: 200 },
+      { target: 100, duration: 100 },
     ];
 
     let currentIndex = 0;
+    let currentProgress = 0;
+    const timers: number[] = [];
     
     const loadNext = () => {
       if (currentIndex >= intervals.length) {
-        // Start fade out
-        setTimeout(() => {
-          setFadeOut(true);
-          setTimeout(onComplete, 800); // Wait for fade animation
-        }, 200);
+        setFadeOut(true);
+        const t = window.setTimeout(onComplete, 350);
+        timers.push(t);
         return;
       }
 
       const interval = intervals[currentIndex];
-      const step = (interval.target - progress) / (interval.duration / 16);
+      const step = (interval.target - currentProgress) / (interval.duration / 16);
       
-      let currentProgress = progress;
-      const timer = setInterval(() => {
+      const timer = window.setInterval(() => {
         currentProgress += step;
         if (currentProgress >= interval.target) {
           currentProgress = interval.target;
-          clearInterval(timer);
+          window.clearInterval(timer);
           currentIndex++;
           setProgress(currentProgress);
           loadNext();
@@ -48,19 +45,20 @@ export default function PremiumLoader({ onComplete }: PremiumLoaderProps) {
           setProgress(currentProgress);
         }
       }, 16);
+      timers.push(timer);
     };
 
-    // Start after a brief delay
-    const startTimer = setTimeout(loadNext, 300);
+    // Start immediately - no initial delay
+    loadNext();
     
     return () => {
-      clearTimeout(startTimer);
+      timers.forEach(t => window.clearTimeout(t));
     };
   }, []);
 
   return (
     <div 
-      className={`fixed inset-0 z-[200] bg-[#0a0a0a] flex flex-col items-center justify-center transition-all duration-800 ease-out ${
+      className={`fixed inset-0 z-[200] bg-[#0a0a0a] flex flex-col items-center justify-center transition-all duration-300 ease-out ${
         fadeOut ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
       }`}
     >
