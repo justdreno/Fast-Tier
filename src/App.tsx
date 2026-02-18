@@ -8,7 +8,7 @@ import type { Player } from './lib/supabase';
 
 // Lazy load other pages for code splitting
 const ApplyPage = lazy(() => import('./pages/ApplyPage'));
-const InfoPage = lazy(() => import('./pages/InfoPage'));
+import InfoPage from './pages/InfoPage';
 const PartnersPage = lazy(() => import('./pages/PartnersPage'));
 
 function HomePage() {
@@ -72,15 +72,13 @@ function HomePage() {
           </div>
           
           {/* Leaderboard */}
-          <div>
-            <Leaderboard 
-              gamemode={selectedGamemode} 
-              searchQuery={searchQuery} 
-              onSelectPlayer={setSelectedPlayer}
-              onGamemodeChange={setSelectedGamemode}
-              isInitialLoad={isLoading}
-            />
-          </div>
+          <Leaderboard 
+            gamemode={selectedGamemode} 
+            searchQuery={searchQuery} 
+            onSelectPlayer={setSelectedPlayer}
+            onGamemodeChange={setSelectedGamemode}
+            isInitialLoad={isLoading}
+          />
         </main>
 
       </div>
@@ -112,14 +110,7 @@ function App() {
             </Suspense>
           } 
         />
-        <Route 
-          path="/info" 
-          element={
-            <Suspense fallback={null}>
-              <InfoPage />
-            </Suspense>
-          } 
-        />
+        <Route path="/info" element={<InfoPage />} />
         <Route 
           path="/partners" 
           element={
