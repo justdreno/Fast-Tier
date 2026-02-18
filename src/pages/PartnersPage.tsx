@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ExternalLink, Users, ChevronRight, Server, Signal, Globe } from 'lucide-react';
+import { ExternalLink, Users, ChevronRight, Server, Signal, Globe, Trophy, Info } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import { getPartners, type Partner } from '../lib/supabase';
 
@@ -64,14 +64,54 @@ export default function PartnersPage() {
     }
   }
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a]">
+        {/* Banner Header */}
+        <div
+          className="hidden sm:block w-full h-64 sm:h-80 bg-cover bg-center bg-no-repeat relative"
+          style={{ backgroundImage: 'url(/banner.png)' }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0a0a]" />
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-20 bg-[#ff9f43]/5 blur-3xl" />
+        </div>
+
+        <Navigation />
+
+        <main className="w-[95%] max-w-[1200px] mx-auto mt-12 sm:-mt-28 pb-6 sm:pb-10 relative z-10">
+          <div className="px-3 sm:px-4 mb-4 sm:mb-5">
+            <h1 className="text-2xl sm:text-3xl font-black text-white mb-1 tracking-tight">
+              Partners
+            </h1>
+            <p className="text-xs sm:text-sm text-white/30">
+              Minecraft servers partnered with FastTiers
+            </p>
+          </div>
+
+          {/* Loading State */}
+          <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20">
+            <div className="border-b border-white/[0.06] bg-[#141414]/50 px-3 sm:px-4 py-3">
+              <div className="flex items-center gap-2.5">
+                <Trophy size={18} className="text-[#ff9f43]" />
+                <span className="font-bold text-sm text-white">Partner Servers</span>
+              </div>
+            </div>
+            <div className="p-8 sm:p-12 text-center">
+              <div className="text-white/30 text-sm sm:text-base">Loading partners...</div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
-      {/* Banner Header - No animation */}
+      {/* Banner Header */}
       <div
         className="hidden sm:block w-full h-64 sm:h-80 bg-cover bg-center bg-no-repeat relative"
-        style={{
-          backgroundImage: 'url(/banner.png)',
-        }}
+        style={{ backgroundImage: 'url(/banner.png)' }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0a0a]" />
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
@@ -92,11 +132,7 @@ export default function PartnersPage() {
         </div>
 
         {/* Partners Grid */}
-        {loading ? (
-          <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] p-12 text-center">
-            <div className="text-white/30 text-sm">Loading partners...</div>
-          </div>
-        ) : partners.length === 0 ? (
+        {partners.length === 0 ? (
           <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] p-12 text-center">
             <Users size={48} className="mx-auto mb-4 text-white/20" />
             <div className="text-white/40 text-sm">No partners yet</div>
@@ -109,10 +145,7 @@ export default function PartnersPage() {
               const playerCount = status?.players?.online || 0;
               const maxPlayers = status?.players?.max || 0;
               
-              // Use custom icon from DB, or fetched icon from API, or fallback
               const serverIcon = partner.icon_url || status?.icon || null;
-              
-              // Use custom banner from DB, or fallback to default
               const bannerImage = partner.banner_url || '/banner.png';
 
               return (
@@ -149,7 +182,7 @@ export default function PartnersPage() {
                       </div>
                     </div>
                     
-                    {/* Server Icon - Fixed positioning */}
+                    {/* Server Icon */}
                     <div className="absolute -bottom-8 left-4">
                       <div className="w-16 h-16 rounded-xl bg-[#1a1a1a] border-2 border-white/[0.1] overflow-hidden shadow-lg group-hover:border-[#ff9f43]/50 transition-colors duration-300 flex items-center justify-center">
                         {serverIcon ? (

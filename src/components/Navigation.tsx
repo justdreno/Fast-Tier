@@ -1,6 +1,6 @@
-import { Menu, X, Search, Info, Users, XCircle } from 'lucide-react';
+import { Menu, X, Search, XCircle, Trophy, Users, Info } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 interface NavigationProps {
   searchQuery?: string;
@@ -13,6 +13,9 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showDiscordModal, setShowDiscordModal] = useState(false);
+  const location = useLocation();
+  
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <>
@@ -25,12 +28,9 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent animate-shimmer pointer-events-none" />
 
           <div className="flex items-center justify-between h-14 px-3 sm:px-4">
-            {/* Logo with hover animation */}
+            {/* Logo */}
             <div className="flex items-center">
-              <Link
-                to="/"
-                className="flex items-center group"
-              >
+              <Link to="/" className="flex items-center group">
                 <img
                   src="/fast-tier.png"
                   alt="FastTiers"
@@ -39,14 +39,49 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
               </Link>
             </div>
 
+            {/* Center Navigation Links */}
+            <div className="hidden md:flex items-center gap-1">
+              <Link
+                to="/"
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 ${
+                  isActive('/') 
+                    ? 'text-white bg-white/[0.08]' 
+                    : 'text-white/50 hover:text-white hover:bg-white/[0.05]'
+                }`}
+              >
+                <Trophy size={16} />
+                Rankings
+              </Link>
+              <Link
+                to="/info"
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 ${
+                  isActive('/info') 
+                    ? 'text-[#ff9f43] bg-[#ff9f43]/10' 
+                    : 'text-white/50 hover:text-white hover:bg-white/[0.05]'
+                }`}
+              >
+                <Info size={16} />
+                Info
+              </Link>
+              <Link
+                to="/partners"
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 ${
+                  isActive('/partners') 
+                    ? 'text-[#ff9f43] bg-[#ff9f43]/10' 
+                    : 'text-white/50 hover:text-white hover:bg-white/[0.05]'
+                }`}
+              >
+                <Users size={16} />
+                Partners
+              </Link>
+            </div>
+
             {/* Right Side Actions */}
             <div className="relative flex items-center gap-2 sm:gap-3">
-              {/* Orange glow on far-right edge */}
-              <div
-                className="pointer-events-none absolute -right-6 top-1/2 -translate-y-1/2 w-28 h-16 rounded-full bg-[#ff9f43]/25 blur-2xl -z-10 animate-glow-pulse"
-              />
+              {/* Orange glow */}
+              <div className="pointer-events-none absolute -right-6 top-1/2 -translate-y-1/2 w-28 h-16 rounded-full bg-[#ff9f43]/25 blur-2xl -z-10 animate-glow-pulse" />
 
-              {/* Search Bar - Fixed width, no transition */}
+              {/* Search Bar */}
               <div className="relative w-40 sm:w-48">
                 <Search className={`absolute left-2.5 top-1/2 -translate-y-1/2 transition-colors duration-300 ${isSearchFocused ? 'text-[#ff9f43]' : 'text-white/30'}`} size={14} />
                 <input
@@ -60,7 +95,7 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
                 />
               </div>
 
-              {/* Discord Button with hover animation */}
+              {/* Discord Button */}
               <a
                 href={discordLink}
                 target="_blank"
@@ -72,25 +107,7 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
                 </svg>
               </a>
 
-              {/* Info Button */}
-              <Link
-                to="/info"
-                className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white/[0.04] text-white/60 hover:text-[#ff9f43] hover:bg-white/[0.12] hover:scale-110 transition-all duration-300 ease-bounce"
-                title="Information"
-              >
-                <Info size={18} className="transition-transform duration-300" />
-              </Link>
-
-              {/* Partners Button */}
-              <Link
-                to="/partners"
-                className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white/[0.04] text-white/60 hover:text-[#ff9f43] hover:bg-white/[0.12] hover:scale-110 transition-all duration-300 ease-bounce"
-                title="Partners"
-              >
-                <Users size={18} className="transition-transform duration-300" />
-              </Link>
-
-              {/* Get Tested Button with hover animation */}
+              {/* Get Tested Button */}
               <button
                 onClick={() => setShowDiscordModal(true)}
                 className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#ff9f43] hover:bg-[#ff9f43]/90 text-black font-semibold text-sm rounded-lg transition-all duration-300 ease-bounce hover:scale-105 hover:shadow-[0_0_20px_rgba(255,159,67,0.5)] hover:-translate-y-0.5 active:scale-95"
@@ -98,7 +115,7 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
                 Get Tested
               </button>
 
-              {/* Mobile Menu Button with animation */}
+              {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg bg-white/[0.04] text-white/60 hover:text-white hover:bg-white/[0.12] transition-all duration-300 ease-bounce hover:scale-110 active:scale-95"
@@ -110,13 +127,46 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
             </div>
           </div>
 
-          {/* Mobile Menu with slide animation */}
+          {/* Mobile Menu */}
           <div
-            className={`md:hidden border-t border-white/[0.06] overflow-hidden transition-all duration-400 ease-smooth ${isMobileMenuOpen ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}
+            className={`md:hidden border-t border-white/[0.06] overflow-hidden transition-all duration-400 ease-smooth ${isMobileMenuOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}
           >
-            <div className="p-4 animate-fade-in-up">
+            <div className="p-4 space-y-2">
+              <Link
+                to="/"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  isActive('/') ? 'text-white bg-white/[0.08]' : 'text-white/50'
+                }`}
+              >
+                <Trophy size={16} />
+                Rankings
+              </Link>
+              <Link
+                to="/info"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  isActive('/info') ? 'text-[#ff9f43] bg-[#ff9f43]/10' : 'text-white/50'
+                }`}
+              >
+                <Info size={16} />
+                Info
+              </Link>
+              <Link
+                to="/partners"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  isActive('/partners') ? 'text-[#ff9f43] bg-[#ff9f43]/10' : 'text-white/50'
+                }`}
+              >
+                <Users size={16} />
+                Partners
+              </Link>
               <button
-                onClick={() => setShowDiscordModal(true)}
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setShowDiscordModal(true);
+                }}
                 className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#ff9f43] hover:bg-[#ff9f43]/90 text-black font-semibold text-sm rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,159,67,0.5)] active:scale-95"
               >
                 Get Tested
@@ -126,7 +176,7 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
         </nav>
       </div>
 
-      {/* Discord Modal - Completely separate from nav */}
+      {/* Discord Modal */}
       {showDiscordModal && (
         <div 
           className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
