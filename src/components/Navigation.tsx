@@ -1,4 +1,4 @@
-import { Menu, X, Search, Info, XCircle } from 'lucide-react';
+import { Menu, X, Search, Info, Users, XCircle } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -79,6 +79,15 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
                 title="Information"
               >
                 <Info size={18} className="transition-transform duration-300" />
+              </Link>
+
+              {/* Partners Button */}
+              <Link
+                to="/partners"
+                className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white/[0.04] text-white/60 hover:text-[#ff9f43] hover:bg-white/[0.12] hover:scale-110 transition-all duration-300 ease-bounce"
+                title="Partners"
+              >
+                <Users size={18} className="transition-transform duration-300" />
               </Link>
 
               {/* Get Tested Button with hover animation */}

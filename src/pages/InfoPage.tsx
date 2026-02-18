@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Trophy, Target, Medal, ChevronRight } from 'lucide-react';
+import { Trophy, Target, ChevronRight } from 'lucide-react';
 import Navigation from '../components/Navigation';
 
 const rankData = [
@@ -14,28 +13,19 @@ const rankData = [
 ];
 
 const tierPointsData = [
-  { tier: 'Tier 1', htPoints: 60, ltPoints: 45 },
-  { tier: 'Tier 2', htPoints: 30, ltPoints: 20 },
-  { tier: 'Tier 3', htPoints: 10, ltPoints: 6 },
-  { tier: 'Tier 4', htPoints: 4, ltPoints: 3 },
-  { tier: 'Tier 5', htPoints: 2, ltPoints: 1 },
+  { tier: 'Tier 1', htPoints: 60, ltPoints: 45, icon: '/tiers/tier_1.svg' },
+  { tier: 'Tier 2', htPoints: 30, ltPoints: 20, icon: '/tiers/tier_2.svg' },
+  { tier: 'Tier 3', htPoints: 10, ltPoints: 6, icon: '/tiers/tier_3.svg' },
+  { tier: 'Tier 4', htPoints: 4, ltPoints: 3, emoji: '4️⃣' },
+  { tier: 'Tier 5', htPoints: 2, ltPoints: 1, emoji: '5️⃣' },
 ];
 
 export default function InfoPage() {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <div className="min-h-screen bg-[#0a0a0a] overflow-hidden">
-      {/* Banner Header with parallax effect - Same as main page */}
+      {/* Banner Header - No animation */}
       <div
-        className={`hidden sm:block w-full h-64 sm:h-80 bg-cover bg-center bg-no-repeat relative transition-opacity duration-500 ${
-          isVisible ? 'opacity-100' : 'opacity-0'
-        }`}
+        className="hidden sm:block w-full h-64 sm:h-80 bg-cover bg-center bg-no-repeat relative opacity-100"
         style={{
           backgroundImage: 'url(/banner.png)',
         }}
@@ -153,7 +143,10 @@ export default function InfoPage() {
             </div>
 
             {/* Points Table Header */}
-            <div className="grid grid-cols-[1fr_auto_auto] gap-2 sm:gap-4 px-3 sm:px-4 py-3 border-b border-white/[0.04] bg-[#0f0f0f]/60">
+            <div className="grid grid-cols-[auto_1fr_auto_auto] gap-2 sm:gap-4 px-3 sm:px-4 py-3 border-b border-white/[0.04] bg-[#0f0f0f]/60">
+              <div className="text-[11px] font-bold text-white/30 uppercase tracking-wider w-10 text-center">
+                
+              </div>
               <div className="text-[11px] font-bold text-white/30 uppercase tracking-wider">
                 Tier Level
               </div>
@@ -170,11 +163,23 @@ export default function InfoPage() {
               {tierPointsData.map((row) => (
                 <div
                   key={row.tier}
-                  className="group grid grid-cols-[1fr_auto_auto] gap-2 sm:gap-4 px-3 sm:px-4 py-4 border-b border-white/[0.03] hover:bg-white/[0.02] transition-all duration-200"
+                  className="group grid grid-cols-[auto_1fr_auto_auto] gap-2 sm:gap-4 px-3 sm:px-4 py-4 border-b border-white/[0.03] hover:bg-white/[0.02] transition-all duration-200"
                 >
+                  {/* Tier Icon/Emoji */}
+                  <div className="flex items-center justify-center w-10">
+                    {row.icon ? (
+                      <img 
+                        src={row.icon} 
+                        alt={row.tier}
+                        className="w-6 h-6 sm:w-7 sm:h-7 object-contain"
+                      />
+                    ) : (
+                      <span className="text-xl">{row.emoji}</span>
+                    )}
+                  </div>
+
                   {/* Tier Name */}
-                  <div className="flex items-center gap-2">
-                    <Medal size={16} className="text-white/30 group-hover:text-[#ff9f43] transition-colors" />
+                  <div className="flex items-center">
                     <span className="text-sm sm:text-base font-bold text-white">{row.tier}</span>
                   </div>
 

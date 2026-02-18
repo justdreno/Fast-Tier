@@ -379,6 +379,23 @@ export interface Application {
   updated_at: string;
 }
 
+// Partner Types
+export interface Partner {
+  id: string;
+  name: string;
+  server_ip: string;
+  website_url: string;
+  description: string;
+  icon_url?: string;
+  banner_url?: string;
+  player_count?: number;
+  tags?: string[];
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
 // Application Functions
 export async function createApplication(applicationData: {
   username: string;
@@ -439,4 +456,74 @@ export async function getGamemodeByCode(code: string): Promise<Gamemode | null> 
 
   if (error) return null;
   return data;
+}
+
+// Mock partners for development
+const mockPartners: Partner[] = [
+  {
+    id: '1',
+    name: 'Hypixel',
+    server_ip: 'hypixel.net',
+    website_url: 'https://hypixel.net',
+    description: 'The largest Minecraft server network with various PvP game modes including UHC, Bedwars, and SkyWars.',
+    icon_url: 'https://via.placeholder.com/64/FF6B00/FFFFFF?text=H',
+    banner_url: 'https://via.placeholder.com/400x150/1a1a2e/FF6B00?text=Hypixel',
+    player_count: 80000,
+    tags: ['Minigames', 'PvP', 'UHC'],
+    is_active: true,
+    sort_order: 1,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: '2',
+    name: 'Mineplex',
+    server_ip: 'mineplex.com',
+    website_url: 'https://mineplex.com',
+    description: 'Home of Super Smash Mobs and Champions - featuring competitive PvP gameplay.',
+    icon_url: 'https://via.placeholder.com/64/3B82F6/FFFFFF?text=M',
+    banner_url: 'https://via.placeholder.com/400x150/1e3a8a/3B82F6?text=Mineplex',
+    player_count: 25000,
+    tags: ['Minigames', 'Champions', 'PvP'],
+    is_active: true,
+    sort_order: 2,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: '3',
+    name: 'Lunar Network',
+    server_ip: 'lunar.gg',
+    website_url: 'https://lunar.gg',
+    description: 'Competitive PvP network with PotPvP, UHC, and various competitive game modes.',
+    icon_url: 'https://via.placeholder.com/64/8B5CF6/FFFFFF?text=L',
+    banner_url: 'https://via.placeholder.com/400x150/2e1065/8B5CF6?text=Lunar',
+    player_count: 15000,
+    tags: ['PotPvP', 'UHC', 'Competitive'],
+    is_active: true,
+    sort_order: 3,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+];
+
+// Partner API Functions
+export async function getPartners(): Promise<Partner[]> {
+  if (!supabase) {
+    console.log('Using mock partners - Supabase not configured');
+    return mockPartners;
+  }
+  
+  const { data, error } = await supabase
+    .from('partners')
+    .select('*')
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching partners:', error);
+    throw error;
+  }
+
+  return data || [];
 }

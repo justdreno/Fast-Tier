@@ -9,6 +9,7 @@ import type { Player } from './lib/supabase';
 // Lazy load other pages for code splitting
 const ApplyPage = lazy(() => import('./pages/ApplyPage'));
 const InfoPage = lazy(() => import('./pages/InfoPage'));
+const PartnersPage = lazy(() => import('./pages/PartnersPage'));
 
 function HomePage() {
   const [selectedGamemode, setSelectedGamemode] = useState('overall');
@@ -116,6 +117,14 @@ function App() {
           element={
             <Suspense fallback={null}>
               <InfoPage />
+            </Suspense>
+          } 
+        />
+        <Route 
+          path="/partners" 
+          element={
+            <Suspense fallback={null}>
+              <PartnersPage />
             </Suspense>
           } 
         />
