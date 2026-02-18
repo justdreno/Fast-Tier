@@ -12,6 +12,7 @@ interface ServerStatus {
   };
   version?: string;
   motd?: string;
+  icon?: string;
 }
 
 export default function PartnersPage() {
@@ -50,7 +51,8 @@ export default function PartnersPage() {
           online: data.online,
           players: data.players,
           version: data.version,
-          motd: data.motd?.clean?.[0]
+          motd: data.motd?.clean?.[0],
+          icon: data.icon
         }
       }));
     } catch (error) {
@@ -106,6 +108,12 @@ export default function PartnersPage() {
               const isOnline = status?.online;
               const playerCount = status?.players?.online || 0;
               const maxPlayers = status?.players?.max || 0;
+              
+              // Use custom icon from DB, or fetched icon from API, or fallback
+              const serverIcon = partner.icon_url || status?.icon || null;
+              
+              // Use custom banner from DB, or fallback to default
+              const bannerImage = partner.banner_url || '/banner.png';
 
               return (
                 <a
@@ -120,10 +128,12 @@ export default function PartnersPage() {
                     <div 
                       className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
                       style={{ 
-                        backgroundImage: `url(${partner.banner_url || '/banner.png'})` 
+                        backgroundImage: `url(${bannerImage})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f]/40 to-transparent" />
                     
                     {/* Server Status Badge */}
                     <div className="absolute top-3 right-3">
@@ -139,20 +149,27 @@ export default function PartnersPage() {
                       </div>
                     </div>
                     
-                    {/* Server Icon */}
-                    <div className="absolute -bottom-6 left-4">
-                      <div className="w-16 h-16 rounded-xl bg-[#1a1a1a] border-2 border-white/[0.1] overflow-hidden shadow-lg group-hover:border-[#ff9f43]/50 transition-colors duration-300">
-                        <img
-                          src={partner.icon_url || 'https://via.placeholder.com/64?text=?'}
-                          alt={partner.name}
-                          className="w-full h-full object-cover"
-                        />
+                    {/* Server Icon - Fixed positioning */}
+                    <div className="absolute -bottom-8 left-4">
+                      <div className="w-16 h-16 rounded-xl bg-[#1a1a1a] border-2 border-white/[0.1] overflow-hidden shadow-lg group-hover:border-[#ff9f43]/50 transition-colors duration-300 flex items-center justify-center">
+                        {serverIcon ? (
+                          <img
+                            src={serverIcon}
+                            alt={partner.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <Server size={24} className="text-white/30" />
+                        )}
                       </div>
                     </div>
                   </div>
 
                   {/* Content */}
-                  <div className="pt-8 pb-5 px-4">
+                  <div className="pt-10 pb-5 px-4">
                     <div className="flex items-start justify-between mb-2">
                       <div>
                         <h3 className="text-lg font-black text-white group-hover:text-[#ff9f43] transition-colors duration-300">
@@ -163,7 +180,7 @@ export default function PartnersPage() {
                           <span className="text-xs text-white/40 font-mono">{partner.server_ip}</span>
                         </div>
                       </div>
-                      <ExternalLink size={16} className="text-white/20 group-hover:text-[#ff9f43] transition-colors duration-300" />
+                      <ExternalLink size={16} className="text-white/20 group-hover:text-[#ff9f43] transition-colors duration-300 mt-1" />
                     </div>
 
                     <p className="text-white/50 text-sm leading-relaxed line-clamp-2 mb-3">
