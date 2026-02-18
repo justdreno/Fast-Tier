@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import {
   X, Copy, Hash, User, CheckCircle, Trophy, Globe, Activity,
   Heart, Flame, Sword, Axe, Hammer, Users, Swords
@@ -141,6 +142,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
 
   // Handle backdrop click
   const handleBackdropClick = useCallback((e: React.MouseEvent) => {
+    // Only close if clicking directly on the backdrop, not the modal content
     if (e.target === e.currentTarget) {
       handleClose();
     }
@@ -186,10 +188,10 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
     return tier.gamemode?.code || 'unknown';
   };
 
-  return (
+  const modalContent = (
     <div 
-      className="fixed inset-0 z-[100]"
-      onClick={handleBackdropClick}
+      className="fixed inset-0 z-[9999]"
+      onMouseDown={handleBackdropClick}
     >
       {/* Backdrop with blur */}
       <div
@@ -204,7 +206,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
           className={`w-full max-w-2xl bg-[#0f0f0f] border border-white/[0.08] rounded-2xl sm:rounded-3xl shadow-2xl shadow-black/60 overflow-hidden relative transition-all duration-300 ease-out my-auto ${
             isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'
           }`}
-          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
         >
           {/* Decorative Top Gradient */}
           <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#ff9f43]/10 via-[#ff9f43]/5 to-transparent pointer-events-none" />
@@ -324,10 +326,9 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                         key={index}
                         className={`relative group p-3 rounded-xl border ${style.border} bg-gradient-to-br ${style.gradient} transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 ${style.glow} cursor-default`}
                         style={{ 
-                          animationDelay: `${index * 50}ms`,
                           opacity: isVisible ? 1 : 0,
                           transform: isVisible ? 'translateY(0)' : 'translateY(10px)',
-                          transition: `all 0.3s cubic-bezier(0.16, 1, 0.3, 1) ${index * 50}ms`
+                          transition: `all 0.3s cubic-bezier(0.16, 1, 0.3, 1) ${150 + index * 50}ms`
                         }}
                       >
                         <div className="flex items-start justify-between mb-3">
@@ -365,7 +366,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
 
       {/* Modern Toast Notification */}
       <div
-        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[102] transition-all duration-300 ${toast.visible
+        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[10000] transition-all duration-300 ${toast.visible
             ? toast.exiting
               ? 'opacity-0 translate-y-2'
               : 'opacity-100 translate-y-0'
@@ -381,4 +382,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
       </div>
     </div>
   );
+
+  // Render modal at document body level using portal
+  return createPortal(modalContent, document.body);
 }
