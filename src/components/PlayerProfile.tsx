@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { createPortal } from 'react-dom';
 import {
   X, Copy, Hash, User, CheckCircle, Trophy, Globe, Activity,
   Heart, Flame, Sword, Axe, Hammer, Users, Swords
@@ -113,9 +112,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
   useEffect(() => {
     // Prevent body scroll when modal is open
     const originalOverflow = document.body.style.overflow;
-    const originalTouchAction = document.body.style.touchAction;
     document.body.style.overflow = 'hidden';
-    document.body.style.touchAction = 'none';
     
     // Trigger entrance animation
     requestAnimationFrame(() => {
@@ -124,7 +121,6 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
 
     return () => {
       document.body.style.overflow = originalOverflow;
-      document.body.style.touchAction = originalTouchAction;
     };
   }, []);
 
@@ -134,19 +130,10 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
     setIsClosing(true);
     setIsVisible(false);
     
-    // Wait for animation to complete before calling onClose
     setTimeout(() => {
       onClose();
     }, 300);
   }, [isClosing, onClose]);
-
-  // Handle backdrop click
-  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
-    // Only close if clicking directly on the backdrop, not the modal content
-    if (e.target === e.currentTarget) {
-      handleClose();
-    }
-  }, [handleClose]);
 
   // Handle escape key
   useEffect(() => {
@@ -178,41 +165,44 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
     showToast(`${label} copied to clipboard`);
   };
 
-  // Get tier display name from tier_definition
   const getTierCode = (tier: PlayerTier): string => {
     return tier.tier_definition?.code || 'N/A';
   };
 
-  // Get gamemode code
   const getGamemodeCode = (tier: PlayerTier): string => {
     return tier.gamemode?.code || 'unknown';
   };
 
-  const modalContent = (
+  return (
     <div 
-      className="fixed inset-0 z-[9999]"
-      onMouseDown={handleBackdropClick}
+      className="fixed inset-0 z-[100]"
+      onClick={(e) => {
+        // Close when clicking the backdrop (the wrapper div itself)
+        if (e.target === e.currentTarget) {
+          handleClose();
+        }
+      }}
     >
-      {/* Backdrop with blur */}
+      {/* Backdrop */}
       <div
-        className={`absolute inset-0 bg-black/80 transition-all duration-300 ease-out ${
-          isVisible ? 'opacity-100 backdrop-blur-sm' : 'opacity-0'
+        className={`absolute inset-0 bg-black/80 transition-opacity duration-300 ${
+          isVisible ? 'opacity-100' : 'opacity-0'
         }`}
       />
 
-      {/* Modal Container */}
-      <div className="absolute inset-0 flex items-start sm:items-center justify-center p-2 sm:p-4 overflow-y-auto">
+      {/* Centered Modal */}
+      <div className="absolute inset-0 flex items-center justify-center p-4 overflow-y-auto">
         <div
-          className={`w-full max-w-2xl bg-[#0f0f0f] border border-white/[0.08] rounded-2xl sm:rounded-3xl shadow-2xl shadow-black/60 overflow-hidden relative transition-all duration-300 ease-out my-auto ${
+          className={`w-full max-w-2xl bg-[#0f0f0f] border border-white/[0.08] rounded-3xl shadow-2xl shadow-black/60 overflow-hidden relative transition-all duration-300 ${
             isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'
           }`}
-          onMouseDown={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Decorative Top Gradient */}
           <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#ff9f43]/10 via-[#ff9f43]/5 to-transparent pointer-events-none" />
 
           {/* Header Actions */}
-          <div className="relative flex items-center justify-end px-4 sm:px-6 py-3 sm:py-4 z-10">
+          <div className="relative flex items-center justify-end px-6 py-4 z-10">
             <button
               onClick={handleClose}
               className="group p-2 rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.05] transition-all duration-200 hover:scale-110"
@@ -221,13 +211,13 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
             </button>
           </div>
 
-          <div className="px-4 sm:px-8 pb-6 sm:pb-8">
+          <div className="px-8 pb-8">
             {/* Player Header Section */}
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-6 sm:mb-8 relative z-10">
+            <div className="flex flex-col sm:flex-row gap-6 mb-8 relative z-10">
               {/* Avatar Column */}
               <div className="flex-shrink-0 relative group mx-auto sm:mx-0">
                 <div className="absolute -inset-0.5 bg-gradient-to-br from-[#ff9f43] to-[#ff6b00] rounded-[20px] opacity-30 blur-lg group-hover:opacity-50 transition-opacity duration-500" />
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 bg-[#121214] rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+                <div className="relative w-28 h-28 bg-[#121214] rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
                   <img
                     src={`https://render.crafty.gg/3d/bust/${player.username}`}
                     alt={player.username}
@@ -243,10 +233,10 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
               </div>
 
               {/* Info Column */}
-              <div className="flex-1 text-center sm:text-left pt-0 sm:pt-2">
-                <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-3 sm:gap-4">
+              <div className="flex-1 text-center sm:text-left pt-2">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4">
                   <div>
-                    <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2 flex items-center gap-2 sm:gap-3 justify-center sm:justify-start">
+                    <h1 className="text-3xl font-black text-white tracking-tight mb-2 flex items-center gap-3 justify-center sm:justify-start">
                       {player.username}
                       <button
                         onClick={() => handleCopy(player.username, 'Username')}
@@ -257,17 +247,17 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                     </h1>
 
                     {/* Stats Pill */}
-                    <div className="inline-flex items-center gap-2 sm:gap-3 px-2.5 sm:px-3 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-lg flex-wrap justify-center sm:justify-start">
+                    <div className="inline-flex items-center gap-3 px-3 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-lg">
                       <div className="flex items-center gap-1.5 text-zinc-400">
                         <User size={13} />
                         <span className="text-xs font-medium uppercase tracking-wider">{player.rank}</span>
                       </div>
-                      <div className="w-px h-3 bg-white/10 hidden sm:block" />
+                      <div className="w-px h-3 bg-white/10" />
                       <div className="flex items-center gap-1.5 text-[#ff9f43]">
                         <Trophy size={13} className="opacity-60" />
                         <span className="text-xs font-bold">{player.points?.toLocaleString() || 0} pts</span>
                       </div>
-                      <div className="w-px h-3 bg-white/10 hidden sm:block" />
+                      <div className="w-px h-3 bg-white/10" />
                       <div className="flex items-center gap-1.5 text-zinc-400">
                         <Globe size={13} />
                         <span className="text-xs font-medium">{player.region}</span>
@@ -278,7 +268,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                   {/* UID Box */}
                   <div
                     onClick={() => handleCopy(player.uid, 'UID')}
-                    className="group cursor-pointer flex flex-col items-center sm:items-end gap-1 mt-2 sm:mt-0"
+                    className="group cursor-pointer flex flex-col items-center sm:items-end gap-1"
                   >
                     <span className="text-[10px] uppercase font-bold text-zinc-600 tracking-widest group-hover:text-[#ff9f43] transition-colors">
                       Unique ID
@@ -294,7 +284,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
             </div>
 
             {/* Separator */}
-            <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-4 sm:my-6" />
+            <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-6" />
 
             {/* Gamemode Tiers */}
             <div>
@@ -314,7 +304,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
                   <p className="text-sm">No tier data available</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {(player.tiers || []).map((tierData, index) => {
                     const gamemodeCode = getGamemodeCode(tierData);
                     const tierCode = getTierCode(tierData);
@@ -353,7 +343,7 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
             </div>
 
             {/* Footer */}
-            <div className="mt-6 sm:mt-8 flex items-center justify-between text-[10px] text-zinc-600">
+            <div className="mt-8 flex items-center justify-between text-[10px] text-zinc-600">
               <span className="flex items-center gap-1.5">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 Live Data
@@ -364,14 +354,15 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
         </div>
       </div>
 
-      {/* Modern Toast Notification */}
+      {/* Toast Notification */}
       <div
-        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[10000] transition-all duration-300 ${toast.visible
+        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[101] transition-all duration-300 ${
+          toast.visible
             ? toast.exiting
               ? 'opacity-0 translate-y-2'
               : 'opacity-100 translate-y-0'
             : 'opacity-0 translate-y-4 pointer-events-none'
-          }`}
+        }`}
       >
         <div className="flex items-center gap-3 px-4 py-3 bg-[#18181b] border border-white/10 rounded-xl shadow-2xl shadow-black/50">
           <div className="p-1 rounded-full bg-emerald-500/10">
@@ -382,7 +373,4 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
       </div>
     </div>
   );
-
-  // Render modal at document body level using portal
-  return createPortal(modalContent, document.body);
 }

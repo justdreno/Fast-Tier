@@ -82,15 +82,16 @@ function HomePage() {
           </div>
         </main>
 
-        {/* Player Profile Modal */}
-        {selectedPlayer && (
-          <PlayerProfile
-            player={selectedPlayer.player}
-            rank={selectedPlayer.rank}
-            onClose={() => setSelectedPlayer(null)}
-          />
-        )}
       </div>
+      
+      {/* Player Profile Modal - Outside of overflow-hidden container */}
+      {selectedPlayer && (
+        <PlayerProfile
+          player={selectedPlayer.player}
+          rank={selectedPlayer.rank}
+          onClose={() => setSelectedPlayer(null)}
+        />
+      )}
     </>
   );
 }
