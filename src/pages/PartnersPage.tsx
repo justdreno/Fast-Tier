@@ -1,11 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ExternalLink, Users, ChevronRight } from 'lucide-react';
+import { ExternalLink, Users, ChevronRight, Server, Signal, Globe } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import { getPartners, type Partner } from '../lib/supabase';
 
+interface ServerStatus {
+  online: boolean;
+  players?: {
+    online: number;
+    max: number;
+  };
+  version?: string;
+  motd?: string;
+}
+
 export default function PartnersPage() {
   const [partners, setPartners] = useState<Partner[]>([]);
+  const [serverStatuses, setServerStatuses] = useState<Record<string, ServerStatus>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,6 +24,11 @@ export default function PartnersPage() {
       try {
         const data = await getPartners();
         setPartners(data);
+        
+        // Fetch server status for each partner
+        data.forEach(partner => {
+          fetchServerStatus(partner.server_ip);
+        });
       } catch (error) {
         console.error('Error fetching partners:', error);
       } finally {
@@ -23,11 +39,34 @@ export default function PartnersPage() {
     fetchPartners();
   }, []);
 
+  async function fetchServerStatus(serverIp: string) {
+    try {
+      const response = await fetch(`https://api.mcsrvstat.us/2/${serverIp}`);
+      const data = await response.json();
+      
+      setServerStatuses(prev => ({
+        ...prev,
+        [serverIp]: {
+          online: data.online,
+          players: data.players,
+          version: data.version,
+          motd: data.motd?.clean?.[0]
+        }
+      }));
+    } catch (error) {
+      console.error(`Error fetching status for ${serverIp}:`, error);
+      setServerStatuses(prev => ({
+        ...prev,
+        [serverIp]: { online: false }
+      }));
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] overflow-hidden">
+    <div className="min-h-screen bg-[#0a0a0a]">
       {/* Banner Header - No animation */}
       <div
-        className="hidden sm:block w-full h-64 sm:h-80 bg-cover bg-center bg-no-repeat relative opacity-100"
+        className="hidden sm:block w-full h-64 sm:h-80 bg-cover bg-center bg-no-repeat relative"
         style={{
           backgroundImage: 'url(/banner.png)',
         }}
@@ -62,72 +101,111 @@ export default function PartnersPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {partners.map((partner) => (
-              <a
-                key={partner.id}
-                href={partner.website_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20 hover:border-[#ff9f43]/30 hover:shadow-[#ff9f43]/10 transition-all duration-300"
-              >
-                {/* Partner Banner */}
-                <div className="relative h-32 overflow-hidden">
-                  <div 
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                    style={{ 
-                      backgroundImage: `url(${partner.banner_url || '/banner.png'})` 
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-transparent to-transparent" />
-                  
-                  {/* Server Icon */}
-                  <div className="absolute -bottom-6 left-4">
-                    <div className="w-16 h-16 rounded-xl bg-[#1a1a1a] border-2 border-white/[0.1] overflow-hidden shadow-lg group-hover:border-[#ff9f43]/50 transition-colors duration-300">
-                      <img
-                        src={partner.icon_url || 'https://via.placeholder.com/64?text=?'}
-                        alt={partner.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </div>
-                </div>
+            {partners.map((partner) => {
+              const status = serverStatuses[partner.server_ip];
+              const isOnline = status?.online;
+              const playerCount = status?.players?.online || 0;
+              const maxPlayers = status?.players?.max || 0;
 
-                {/* Content */}
-                <div className="pt-8 pb-5 px-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h3 className="text-lg font-black text-white group-hover:text-[#ff9f43] transition-colors duration-300">
-                        {partner.name}
-                      </h3>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-white/40">{partner.server_ip}</span>
-                        <span className="w-1 h-1 rounded-full bg-white/20" />
-                        <span className="text-xs text-white/40">{partner.player_count || '0'} players</span>
+              return (
+                <a
+                  key={partner.id}
+                  href={partner.website_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20 hover:border-[#ff9f43]/30 hover:shadow-[#ff9f43]/10 transition-all duration-300"
+                >
+                  {/* Partner Banner */}
+                  <div className="relative h-32 overflow-hidden">
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                      style={{ 
+                        backgroundImage: `url(${partner.banner_url || '/banner.png'})` 
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-transparent to-transparent" />
+                    
+                    {/* Server Status Badge */}
+                    <div className="absolute top-3 right-3">
+                      <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${
+                        isOnline 
+                          ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400' 
+                          : 'bg-red-500/20 border-red-500/30 text-red-400'
+                      }`}>
+                        <Signal size={10} className={isOnline ? 'animate-pulse' : ''} />
+                        <span className="text-[10px] font-bold uppercase">
+                          {isOnline ? 'Online' : 'Offline'}
+                        </span>
                       </div>
                     </div>
-                    <ExternalLink size={16} className="text-white/20 group-hover:text-[#ff9f43] transition-colors duration-300" />
+                    
+                    {/* Server Icon */}
+                    <div className="absolute -bottom-6 left-4">
+                      <div className="w-16 h-16 rounded-xl bg-[#1a1a1a] border-2 border-white/[0.1] overflow-hidden shadow-lg group-hover:border-[#ff9f43]/50 transition-colors duration-300">
+                        <img
+                          src={partner.icon_url || 'https://via.placeholder.com/64?text=?'}
+                          alt={partner.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
                   </div>
 
-                  <p className="text-white/50 text-sm leading-relaxed line-clamp-2">
-                    {partner.description}
-                  </p>
-
-                  {/* Tags */}
-                  {partner.tags && partner.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      {partner.tags.slice(0, 3).map((tag, index) => (
-                        <span
-                          key={index}
-                          className="px-2 py-0.5 bg-white/[0.05] border border-white/[0.08] rounded text-[10px] text-white/50"
-                        >
-                          {tag}
-                        </span>
-                      ))}
+                  {/* Content */}
+                  <div className="pt-8 pb-5 px-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <h3 className="text-lg font-black text-white group-hover:text-[#ff9f43] transition-colors duration-300">
+                          {partner.name}
+                        </h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Server size={12} className="text-white/30" />
+                          <span className="text-xs text-white/40 font-mono">{partner.server_ip}</span>
+                        </div>
+                      </div>
+                      <ExternalLink size={16} className="text-white/20 group-hover:text-[#ff9f43] transition-colors duration-300" />
                     </div>
-                  )}
-                </div>
-              </a>
-            ))}
+
+                    <p className="text-white/50 text-sm leading-relaxed line-clamp-2 mb-3">
+                      {partner.description}
+                    </p>
+
+                    {/* Server Stats */}
+                    <div className="flex items-center gap-4 mb-3 p-2.5 bg-white/[0.03] rounded-lg border border-white/[0.05]">
+                      <div className="flex items-center gap-1.5">
+                        <Users size={14} className={isOnline ? 'text-[#ff9f43]' : 'text-white/30'} />
+                        <span className={`text-sm font-bold ${isOnline ? 'text-white' : 'text-white/40'}`}>
+                          {isOnline ? `${playerCount.toLocaleString()}/${maxPlayers.toLocaleString()}` : 'N/A'}
+                        </span>
+                      </div>
+                      {isOnline && status?.version && (
+                        <>
+                          <div className="w-px h-3 bg-white/10" />
+                          <div className="flex items-center gap-1.5">
+                            <Globe size={12} className="text-white/30" />
+                            <span className="text-xs text-white/50">{status.version}</span>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Tags */}
+                    {partner.tags && partner.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {partner.tags.slice(0, 3).map((tag, index) => (
+                          <span
+                            key={index}
+                            className="px-2 py-0.5 bg-white/[0.05] border border-white/[0.08] rounded text-[10px] text-white/50"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </a>
+              );
+            })}
           </div>
         )}
 
