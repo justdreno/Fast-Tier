@@ -22,6 +22,7 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
   const location = useLocation();
   const navRef = useRef<HTMLDivElement>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const [isInitialRender, setIsInitialRender] = useState(true);
 
   useEffect(() => {
     const activeIndex = navItems.findIndex(item => item.path === location.pathname);
@@ -29,13 +30,28 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
       const navButtons = navRef.current.querySelectorAll('.nav-item');
       const activeButton = navButtons[activeIndex] as HTMLElement;
       if (activeButton) {
-        setIndicatorStyle({
-          left: activeButton.offsetLeft,
-          width: activeButton.offsetWidth,
-        });
+        // On initial render, set position immediately without animation
+        if (isInitialRender) {
+          const nav = navRef.current;
+          nav.style.setProperty('--indicator-transition', 'none');
+          setIndicatorStyle({
+            left: activeButton.offsetLeft,
+            width: activeButton.offsetWidth,
+          });
+          // Re-enable animation after a frame
+          requestAnimationFrame(() => {
+            nav.style.removeProperty('--indicator-transition');
+          });
+          setIsInitialRender(false);
+        } else {
+          setIndicatorStyle({
+            left: activeButton.offsetLeft,
+            width: activeButton.offsetWidth,
+          });
+        }
       }
     }
-  }, [location.pathname]);
+  }, [location.pathname, isInitialRender]);
 
   return (
     <>
@@ -60,17 +76,14 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
             </div>
 
             {/* Center Navigation Links with Sliding Underline */}
-            <div ref={navRef} className="hidden md:flex items-center gap-1 relative">
+            <div ref={navRef} className="hidden md:flex items-center gap-1 relative" style={{ '--indicator-transition': 'all 0.3s ease-out' } as React.CSSProperties}>
               {navItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = location.pathname === item.path;
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`nav-item flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors duration-300 relative ${
-                      isActive ? 'text-white' : 'text-white/50 hover:text-white'
-                    }`}
+                    className="nav-item flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors duration-300 text-white/70 hover:text-white"
                   >
                     <Icon size={16} />
                     {item.label}
@@ -79,10 +92,11 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
               })}
               {/* Sliding Underline */}
               <div
-                className="absolute bottom-0 h-0.5 bg-[#ff9f43] transition-all duration-300 ease-out"
+                className="absolute bottom-0 h-[2px] bg-[#ff9f43] rounded-full"
                 style={{
                   left: indicatorStyle.left,
                   width: indicatorStyle.width,
+                  transition: 'var(--indicator-transition, all 0.3s ease-out)',
                 }}
               />
             </div>

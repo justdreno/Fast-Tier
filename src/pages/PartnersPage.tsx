@@ -157,7 +157,7 @@ export default function PartnersPage() {
                   className="group bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20 hover:border-[#ff9f43]/30 hover:shadow-[#ff9f43]/10 transition-all duration-300"
                 >
                   {/* Partner Banner */}
-                  <div className="relative h-32 overflow-hidden">
+                  <div className="relative h-36 overflow-hidden">
                     <div 
                       className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
                       style={{ 
@@ -166,7 +166,7 @@ export default function PartnersPage() {
                         backgroundPosition: 'center'
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f]/40 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f]/50 to-transparent" />
                     
                     {/* Server Status Badge */}
                     <div className="absolute top-3 right-3">
@@ -181,28 +181,28 @@ export default function PartnersPage() {
                         </span>
                       </div>
                     </div>
-                    
-                    {/* Server Icon */}
-                    <div className="absolute -bottom-8 left-4">
-                      <div className="w-16 h-16 rounded-xl bg-[#1a1a1a] border-2 border-white/[0.1] overflow-hidden shadow-lg group-hover:border-[#ff9f43]/50 transition-colors duration-300 flex items-center justify-center">
-                        {serverIcon ? (
-                          <img
-                            src={serverIcon}
-                            alt={partner.name}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).style.display = 'none';
-                            }}
-                          />
-                        ) : (
-                          <Server size={24} className="text-white/30" />
-                        )}
-                      </div>
+                  </div>
+                  
+                  {/* Server Icon - Outside banner to prevent cutoff */}
+                  <div className="relative px-4 -mt-8 mb-2">
+                    <div className="w-16 h-16 rounded-xl bg-[#1a1a1a] border-2 border-white/[0.1] overflow-hidden shadow-lg group-hover:border-[#ff9f43]/50 transition-colors duration-300 flex items-center justify-center">
+                      {serverIcon ? (
+                        <img
+                          src={serverIcon}
+                          alt={partner.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                      ) : (
+                        <Server size={24} className="text-white/30" />
+                      )}
                     </div>
                   </div>
 
                   {/* Content */}
-                  <div className="pt-10 pb-5 px-4">
+                  <div className="pt-4 pb-5 px-4">
                     <div className="flex items-start justify-between mb-2">
                       <div>
                         <h3 className="text-lg font-black text-white group-hover:text-[#ff9f43] transition-colors duration-300">
