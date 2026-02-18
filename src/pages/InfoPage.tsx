@@ -52,9 +52,9 @@ export default function InfoPage() {
 
       <Navigation />
 
-      <main className="w-[95%] max-w-[1400px] mx-auto mt-12 sm:-mt-28 pb-6 sm:pb-10 relative z-10">
+      <main className="w-[95%] max-w-[1200px] mx-auto mt-12 sm:-mt-28 pb-6 sm:pb-10 relative z-10">
         {/* Title Section */}
-        <div className="px-3 sm:px-4 mb-6">
+        <div className="px-3 sm:px-4 mb-4 sm:mb-5">
           <h1 className="text-2xl sm:text-3xl font-black text-white mb-1 tracking-tight">
             Information
           </h1>
@@ -91,14 +91,11 @@ export default function InfoPage() {
             </div>
 
             {/* Ranks List */}
-            <div className="max-h-[600px] overflow-y-auto scrollbar-thin">
-              {rankData.map((rank, index) => (
+            <div className="no-scrollbar">
+              {rankData.map((rank) => (
                 <div
                   key={rank.name}
-                  className={`group grid grid-cols-[auto_1fr_auto] gap-2 sm:gap-4 px-3 sm:px-4 py-3 border-b border-white/[0.03] hover:bg-white/[0.02] transition-all duration-200 ${
-                    isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-                  }`}
-                  style={{ transitionDelay: `${index * 50}ms` }}
+                  className="group grid grid-cols-[auto_1fr_auto] gap-2 sm:gap-4 px-3 sm:px-4 py-3 border-b border-white/[0.03] hover:bg-white/[0.02] transition-all duration-200"
                 >
                   {/* Icon */}
                   <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center">
@@ -170,13 +167,10 @@ export default function InfoPage() {
 
             {/* Points List */}
             <div>
-              {tierPointsData.map((row, index) => (
+              {tierPointsData.map((row) => (
                 <div
                   key={row.tier}
-                  className={`group grid grid-cols-[1fr_auto_auto] gap-2 sm:gap-4 px-3 sm:px-4 py-4 border-b border-white/[0.03] hover:bg-white/[0.02] transition-all duration-200 ${
-                    isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-                  }`}
-                  style={{ transitionDelay: `${(index + 7) * 50}ms` }}
+                  className="group grid grid-cols-[1fr_auto_auto] gap-2 sm:gap-4 px-3 sm:px-4 py-4 border-b border-white/[0.03] hover:bg-white/[0.02] transition-all duration-200"
                 >
                   {/* Tier Name */}
                   <div className="flex items-center gap-2">
@@ -202,7 +196,7 @@ export default function InfoPage() {
             </div>
 
             {/* How It Works Card */}
-            <div className={`p-4 sm:p-5 border-t border-white/[0.06] transition-all duration-700 delay-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+            <div className="p-4 sm:p-5 border-t border-white/[0.06]">
               <div className="bg-gradient-to-r from-[#1a1a1a] to-[#141414] border border-white/[0.08] rounded-xl p-4 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff9f43]/5 rounded-full blur-3xl pointer-events-none" />
                 
@@ -249,7 +243,7 @@ export default function InfoPage() {
         </div>
 
         {/* Back Button */}
-        <div className={`mt-8 text-center transition-all duration-700 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <div className="mt-8 text-center">
           <Link
             to="/"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-white/60 hover:text-white hover:bg-white/[0.06] hover:scale-105 transition-all duration-300 text-sm font-medium"
