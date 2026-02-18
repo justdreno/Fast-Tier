@@ -43,18 +43,22 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
               </Link>
             </div>
 
-            {/* Center Navigation Links */}
-            <div className="hidden md:flex items-center gap-6">
+            {/* Center Navigation Links with Underline */}
+            <div className="hidden md:flex items-center gap-6 relative">
               {navItems.map((item) => {
                 const Icon = item.icon;
+                const isActive = location.pathname === item.path;
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    className="flex items-center gap-2 text-sm font-medium text-white hover:text-white/80 transition-colors"
+                    className="flex items-center gap-2 text-sm font-medium text-white hover:text-white/80 transition-colors relative py-2"
                   >
                     <Icon size={16} />
                     {item.label}
+                    {isActive && (
+                      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#ff9f43] rounded-full" />
+                    )}
                   </Link>
                 );
               })}
