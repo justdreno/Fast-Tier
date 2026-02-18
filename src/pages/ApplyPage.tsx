@@ -14,7 +14,6 @@ import {
   Trophy
 } from 'lucide-react';
 import { createApplication, getApplicationByDiscordId, getGamemodeByCode, supabase } from '../lib/supabase';
-import Navigation from '../components/Navigation';
 
 interface ApplicationForm {
   username: string;
@@ -151,7 +150,6 @@ export default function ApplyPage() {
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] pb-12 font-sans selection:bg-[#ff9f43]/30">
-        <Navigation />
         <div className="pt-24 flex items-center justify-center min-h-[80vh]">
           <div className="container mx-auto px-4 max-w-2xl">
             <div className="bg-[#141414] border border-white/[0.08] rounded-3xl p-8 sm:p-12 shadow-2xl shadow-black/50 text-center animate-fade-in-up">
@@ -177,8 +175,6 @@ export default function ApplyPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] pb-12 font-sans selection:bg-[#ff9f43]/30">
-      <Navigation />
-
       <div className="pt-24">
         {/* Background Glows */}
         <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-[#ff9f43]/5 blur-[100px] rounded-full pointer-events-none" />

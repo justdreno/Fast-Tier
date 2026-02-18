@@ -1,5 +1,4 @@
 import { Trophy, Target } from 'lucide-react';
-import Navigation from '../components/Navigation';
 
 const rankData = [
   { name: 'Combat Grandmaster', minPoints: 400, color: '#f59e0b', glow: 'shadow-[#f59e0b]/20', icon: '/ranks/combat_master.webp', description: 'The absolute peak of performance.' },
@@ -38,8 +37,6 @@ export default function InfoPage() {
         {/* Subtle glow */}
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-20 bg-[#ff9f43]/5 blur-3xl" />
       </div>
-
-      <Navigation />
 
       <main className="w-[95%] max-w-[1200px] mx-auto mt-12 sm:-mt-28 pb-6 sm:pb-10 relative z-10" style={{ minHeight: '50vh' }}>
         {/* Title Section */}

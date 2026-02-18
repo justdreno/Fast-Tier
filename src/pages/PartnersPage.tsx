@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, Users, ChevronRight, Server, Signal, Globe, Trophy, Info } from 'lucide-react';
-import Navigation from '../components/Navigation';
 import { getPartners, type Partner } from '../lib/supabase';
 
 interface ServerStatus {
@@ -77,8 +76,6 @@ export default function PartnersPage() {
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-20 bg-[#ff9f43]/5 blur-3xl" />
         </div>
 
-        <Navigation />
-
         <main className="w-[95%] max-w-[1200px] mx-auto mt-12 sm:-mt-28 pb-6 sm:pb-10 relative z-10">
           <div className="px-3 sm:px-4 mb-4 sm:mb-5">
             <h1 className="text-2xl sm:text-3xl font-black text-white mb-1 tracking-tight">
@@ -117,8 +114,6 @@ export default function PartnersPage() {
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-20 bg-[#ff9f43]/5 blur-3xl" />
       </div>
-
-      <Navigation />
 
       <main className="w-[95%] max-w-[1200px] mx-auto mt-12 sm:-mt-28 pb-6 sm:pb-10 relative z-10">
         {/* Title Section */}

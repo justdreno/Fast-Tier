@@ -4,6 +4,7 @@ import PremiumLoader from './components/PremiumLoader';
 import Navigation from './components/Navigation';
 import Leaderboard from './components/Leaderboard';
 import PlayerProfile from './components/PlayerProfile';
+import { SearchProvider, useSearch } from './contexts/SearchContext';
 import type { Player } from './lib/supabase';
 
 // Lazy load other pages for code splitting
@@ -13,19 +14,17 @@ import PartnersPage from './pages/PartnersPage';
 
 function HomePage() {
   const [selectedGamemode, setSelectedGamemode] = useState('overall');
-  const [searchQuery, setSearchQuery] = useState('');
+  const { searchQuery, setSearchQuery } = useSearch();
   const [selectedPlayer, setSelectedPlayer] = useState<{ player: Player; rank: number } | null>(null);
   
   // Skip loader if already shown this session
   const hasSeenLoader = sessionStorage.getItem('ft-loader-shown') === '1';
   const [isLoading, setIsLoading] = useState(!hasSeenLoader);
-  const [contentVisible, setContentVisible] = useState(hasSeenLoader);
 
   // Handle loading complete
   const handleLoadingComplete = () => {
     sessionStorage.setItem('ft-loader-shown', '1');
     setIsLoading(false);
-    setContentVisible(true);
   };
 
   return (
@@ -52,8 +51,6 @@ function HomePage() {
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-20 bg-[#ff9f43]/5 blur-3xl" />
         </div>
 
-        <Navigation searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-        
         <main className="w-[95%] max-w-[1200px] mx-auto mt-12 sm:-mt-28 pb-6 sm:pb-10 relative z-10">
           {/* Title Section */}
           <div className="px-3 sm:px-4 mb-4 sm:mb-5">
@@ -89,11 +86,10 @@ function HomePage() {
   );
 }
 
-
-
-function App() {
+function AppContent() {
   return (
-    <BrowserRouter>
+    <>
+      <Navigation />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route 
@@ -107,6 +103,16 @@ function App() {
         <Route path="/info" element={<InfoPage />} />
         <Route path="/partners" element={<PartnersPage />} />
       </Routes>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <SearchProvider>
+        <AppContent />
+      </SearchProvider>
     </BrowserRouter>
   );
 }

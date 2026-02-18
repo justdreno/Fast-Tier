@@ -1,11 +1,7 @@
 import { Menu, X, Search, XCircle, Trophy, Users, Info } from 'lucide-react';
 import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-
-interface NavigationProps {
-  searchQuery?: string;
-  setSearchQuery?: (query: string) => void;
-}
+import { useSearch } from '../contexts/SearchContext';
 
 const discordLink = import.meta.env.VITE_DISCORD_SERVER_LINK || 'https://discord.gg/FastTiers';
 
@@ -15,7 +11,8 @@ const navItems = [
   { path: '/partners', label: 'Partners', icon: Users },
 ];
 
-export default function Navigation({ searchQuery = '', setSearchQuery }: NavigationProps) {
+export default function Navigation() {
+  const { searchQuery, setSearchQuery } = useSearch();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showDiscordModal, setShowDiscordModal] = useState(false);
@@ -144,7 +141,7 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
                   type="text"
                   placeholder="Search..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery?.(e.target.value)}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
                   className="w-full pl-8 pr-3 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9f43]/50 focus:ring-2 focus:ring-[#ff9f43]/20 focus:bg-white/[0.08] hover:bg-white/[0.06] hover:border-white/[0.12]"
