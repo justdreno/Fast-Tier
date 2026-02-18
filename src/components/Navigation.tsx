@@ -1,5 +1,5 @@
 import { Menu, X, Search, XCircle, Trophy, Users, Info } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 interface NavigationProps {
@@ -20,6 +20,22 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showDiscordModal, setShowDiscordModal] = useState(false);
   const location = useLocation();
+  const navRef = useRef<HTMLDivElement>(null);
+  const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0 });
+  const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+
+  useEffect(() => {
+    const activeIndex = navItems.findIndex(item => item.path === location.pathname);
+    if (activeIndex !== -1 && itemRefs.current[activeIndex]) {
+      const activeItem = itemRefs.current[activeIndex];
+      if (activeItem) {
+        setUnderlineStyle({
+          left: activeItem.offsetLeft,
+          width: activeItem.offsetWidth,
+        });
+      }
+    }
+  }, [location.pathname]);
 
   return (
     <>
@@ -43,25 +59,30 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
               </Link>
             </div>
 
-            {/* Center Navigation Links with Underline */}
-            <div className="hidden md:flex items-center gap-6 relative">
-              {navItems.map((item) => {
+            {/* Center Navigation Links with Sliding Underline */}
+            <div ref={navRef} className="hidden md:flex items-center relative">
+              {navItems.map((item, index) => {
                 const Icon = item.icon;
-                const isActive = location.pathname === item.path;
                 return (
                   <Link
                     key={item.path}
+                    ref={(el) => { itemRefs.current[index] = el; }}
                     to={item.path}
-                    className="flex items-center gap-2 text-sm font-medium text-white hover:text-white/80 transition-colors relative py-2"
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white hover:text-white/80 transition-colors"
                   >
                     <Icon size={16} />
                     {item.label}
-                    {isActive && (
-                      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#ff9f43] rounded-full" />
-                    )}
                   </Link>
                 );
               })}
+              {/* Sliding Underline */}
+              <div
+                className="absolute bottom-0 h-[2px] bg-[#ff9f43] rounded-full transition-all duration-300 ease-out"
+                style={{
+                  left: underlineStyle.left,
+                  width: underlineStyle.width,
+                }}
+              />
             </div>
 
             {/* Right Side Actions */}
@@ -86,7 +107,7 @@ export default function Navigation({ searchQuery = '', setSearchQuery }: Navigat
               {/* Get Tested Button */}
               <button
                 onClick={() => setShowDiscordModal(true)}
-                className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#ff9f43] hover:bg-[#ff9f43]/90 text-black font-semibold text-sm rounded-lg transition-all duration-300 ease-bounce hover:scale-105 hover:shadow-[0_0_20px_rgba(255,159,67,0.5)] hover:-translate-y-0.5 active:scale-95"
+                className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#ff9f43] hover:bg-[#ff9f43]/90 text-white font-semibold text-sm rounded-lg transition-all duration-300 ease-bounce hover:scale-105 hover:shadow-[0_0_20px_rgba(255,159,67,0.5)] hover:-translate-y-0.5 active:scale-95"
               >
                 Get Tested
               </button>

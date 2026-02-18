@@ -247,16 +247,6 @@ export default function InfoPage() {
           </div>
         </div>
 
-        {/* Back Button */}
-        <div className="mt-8 text-center">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-white/60 hover:text-white hover:bg-white/[0.06] hover:scale-105 transition-all duration-300 text-sm font-medium"
-          >
-            <ChevronRight size={16} className="rotate-180" />
-            Back to Leaderboard
-          </Link>
-        </div>
       </main>
     </div>
   );
