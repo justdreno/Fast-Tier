@@ -122,6 +122,10 @@ async function fetchAPI(endpoint: string, options?: RequestInit) {
     },
   });
 
+  console.log('Response status:', response.status);
+  console.log('Content-Type:', response.headers.get('content-type'));
+  console.log('Response URL:', response.url);
+
   if (!response.ok) {
     const text = await response.text();
     console.error('API Error Response:', text.substring(0, 200));
@@ -134,7 +138,14 @@ async function fetchAPI(endpoint: string, options?: RequestInit) {
     throw new Error(error.error || `HTTP error! status: ${response.status}`);
   }
 
-  return response.json();
+  const text = await response.text();
+  console.log('Response body preview:', text.substring(0, 100));
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    console.error('JSON parse error. Full response:', text);
+    throw new Error('Invalid JSON response from server');
+  }
 }
 
 export async function getPlayers(): Promise<Player[]> {
