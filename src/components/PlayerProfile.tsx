@@ -218,10 +218,10 @@ export default function PlayerProfile({ player, rank, onClose }: PlayerProfilePr
               <div className="absolute -inset-0.5 bg-gradient-to-br from-[#ff9f43] to-[#ff6b00] rounded-[20px] opacity-30 blur-lg group-hover:opacity-50 transition-opacity duration-500" />
               <div className="relative w-28 h-28 bg-[#121214] rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
                 <img
-                  src={`https://render.crafty.gg/3d/bust/${player.username}`}
+                  src={`https://mc-heads.net/avatar/${player.username}`}
                   alt={player.username}
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                  onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150?text=?'; }}
+                  onError={(e) => { (e.target as HTMLImageElement).src = 'https://mc-heads.net/avatar/MHF_Alex'; }}
                 />
               </div>
               {}

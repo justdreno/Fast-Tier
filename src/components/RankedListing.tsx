@@ -45,11 +45,11 @@ export default function RankedListing({
       {}
       <div className="relative z-10 ml-auto mr-4">
         <img
-          src={avatarUrl || `https://render.crafty.gg/3d/bust/${username}`}
+          src={avatarUrl || `https://mc-heads.net/avatar/${username}`}
           alt={username}
           className="w-12 h-12 object-cover rounded-lg"
           onError={(e) => {
-            e.currentTarget.src = 'https://render.crafty.gg/3d/bust/MHF_Alex';
+            e.currentTarget.src = 'https://mc-heads.net/avatar/MHF_Alex';
           }}
         />
       </div>
