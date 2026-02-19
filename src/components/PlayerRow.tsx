@@ -91,11 +91,11 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
             <div className="relative group/avatar">
               <div className="absolute inset-0 bg-gradient-to-br from-[#ff9f43] to-[#ff8c00] rounded-lg opacity-0 group-hover/avatar:opacity-40 blur-md transition-all duration-500 ease-out group-hover/avatar:scale-110" />
               <img
-                src={`https://mc-heads.net/avatar/${player.username}`}
+                src={`https://render.crafty.gg/3d/bust/${player.username}`}
                 alt={player.username}
                 className="relative w-11 h-11 sm:w-14 sm:h-14 object-cover rounded-lg border border-white/[0.06] group-hover/avatar:border-[#ff9f43]/50 group-hover/avatar:scale-105 transition-all duration-300 ease-out group-hover/avatar:shadow-lg group-hover/avatar:shadow-[#ff9f43]/20"
                 onError={(e) => {
-                  e.currentTarget.src = 'https://mc-heads.net/avatar/MHF_Alex';
+                  e.currentTarget.src = 'https://render.crafty.gg/3d/bust/MHF_Alex';
                 }}
               />
             </div>
