@@ -111,7 +111,10 @@ export interface Partner {
 }
 
 async function fetchAPI(endpoint: string, options?: RequestInit) {
-  const response = await fetch(`${API_URL}${endpoint}`, {
+  const url = `${API_URL}${endpoint}`;
+  console.log('Fetching:', url);
+  
+  const response = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -120,7 +123,14 @@ async function fetchAPI(endpoint: string, options?: RequestInit) {
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Unknown error' }));
+    const text = await response.text();
+    console.error('API Error Response:', text.substring(0, 200));
+    let error;
+    try {
+      error = JSON.parse(text);
+    } catch {
+      error = { error: `HTTP ${response.status}: ${text.substring(0, 100)}` };
+    }
     throw new Error(error.error || `HTTP error! status: ${response.status}`);
   }
 
