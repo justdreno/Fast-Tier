@@ -1,4 +1,4 @@
-import type { Player } from '../lib/supabase';
+import type { Player } from '../lib/database';
 
 interface PlayerRowProps {
   player: Player;
@@ -20,7 +20,6 @@ const gamemodeIconPaths: Record<string, string> = {
   ltms: '/kits/global.svg',
 };
 
-// Function to get rank icon based on player rank title
 const getRankIcon = (rankTitle: string): string => {
   const rankLower = rankTitle.toLowerCase();
   if (rankLower.includes('grandmaster')) return '/ranks/combat_ace.webp';
@@ -31,7 +30,6 @@ const getRankIcon = (rankTitle: string): string => {
   return '/ranks/rookie.webp';
 };
 
-// Function to get podium background for top 3 ranks
 const getPodiumBackground = (rank: number): string | null => {
   switch (rank) {
     case 1:
@@ -46,7 +44,7 @@ const getPodiumBackground = (rank: number): string | null => {
 };
 
 export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
-  // Filter tiers by gamemode
+
   const playerTiers = player.tiers || [];
   const displayTiers = gamemode === 'overall'
     ? playerTiers
@@ -61,7 +59,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
         <div className="relative w-full h-14 sm:h-16 flex items-center justify-center pr-4 sm:pr-6">
           {podiumBg ? (
             <>
-              {/* Podium background - show full image */}
+              {}
               <div
                 className="absolute inset-0 flex items-center justify-center"
               >
@@ -71,7 +69,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
                   className="h-full w-auto max-w-none object-contain"
                 />
               </div>
-              {/* Rank number - centered on top */}
+              {}
               <span className="relative z-10 text-2xl sm:text-3xl font-black text-white drop-shadow-lg italic"
                 style={{
                   textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
@@ -88,7 +86,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
       </td>
       <td className="pl-5 pr-3 sm:pl-6 sm:pr-4 py-3 sm:py-4">
         <div className="flex items-center gap-3 sm:gap-4">
-          {/* Avatar with rank badge overlay */}
+          {}
           <div className="relative">
             <div className="relative group/avatar">
               <div className="absolute inset-0 bg-gradient-to-br from-[#ff9f43] to-[#ff8c00] rounded-lg opacity-0 group-hover/avatar:opacity-40 blur-md transition-all duration-500 ease-out group-hover/avatar:scale-110" />
@@ -103,21 +101,21 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
             </div>
           </div>
 
-          {/* Player info */}
+          {}
           <div className="min-w-0 flex-1">
-            {/* Username with Region */}
+            {}
             <div className="flex items-center gap-2 mb-0.5">
               <div className="text-white font-bold text-sm sm:text-base group-hover:text-[#ff9f43] transition-colors duration-300 truncate">
                 {player.username}
               </div>
               <span className={`flex-shrink-0 px-1.5 sm:px-2 py-0.5 rounded font-bold text-[9px] sm:text-[10px] tracking-wider uppercase ${player.region === 'NA'
-                ? 'bg-[#ef4444]/15 text-[#ef4444] border border-[#ef4444]/25'
-                : 'bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/25'
+                ? 'text-[#ff9f43]'
+                : 'text-white/30'
                 }`}>
                 {player.region}
               </span>
             </div>
-            {/* Rank title with icon */}
+            {}
             <div className="flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">
               <img
                 src={rankIcon}
@@ -149,7 +147,7 @@ export default function PlayerRow({ player, rank, gamemode }: PlayerRowProps) {
                 );
               }
 
-              // Empty slot
+
               return (
                 <div key={gmCode} className="flex flex-col items-center gap-1 flex-shrink-0">
                   <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-dashed border-white/20 flex items-center justify-center">

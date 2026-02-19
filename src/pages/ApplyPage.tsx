@@ -13,7 +13,7 @@ import {
   Sparkles,
   Trophy
 } from 'lucide-react';
-import { createApplication, getApplicationByDiscordId, getGamemodeByCode, supabase } from '../lib/supabase';
+import { createApplication, getApplicationByDiscordId, getGamemodeByCode } from '../lib/database';
 
 interface ApplicationForm {
   username: string;
@@ -41,7 +41,6 @@ const gamemodes = [
   { code: 'mace', name: 'Mace' },
 ];
 
-// Validation helpers
 const validateMinecraftUsername = (username: string): boolean => {
   const regex = /^[a-zA-Z0-9_]{3,16}$/;
   return regex.test(username);
@@ -69,7 +68,7 @@ export default function ApplyPage() {
   const [activeTab, setActiveTab] = useState('application');
 
   useEffect(() => {
-    // Trigger entrance animation
+
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
   }, []);
@@ -81,11 +80,6 @@ export default function ApplyPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!supabase) {
-      showToast('Applications are currently unavailable. Please try again later.', 'error');
-      return;
-    }
 
     if (!validateMinecraftUsername(form.username)) {
       showToast('Invalid Minecraft username.', 'error');
@@ -146,7 +140,6 @@ export default function ApplyPage() {
     }));
   };
 
-  // Success Screen
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] pb-12 font-sans selection:bg-[#ff9f43]/30">
@@ -176,45 +169,45 @@ export default function ApplyPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] pb-12 font-sans selection:bg-[#ff9f43]/30">
       <div className="pt-24">
-        {/* Background Glows */}
+        {}
         <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-[#ff9f43]/5 blur-[100px] rounded-full pointer-events-none" />
         <div className="fixed bottom-0 left-0 w-[300px] h-[300px] bg-blue-500/5 blur-[100px] rounded-full pointer-events-none" />
 
         <div className="container mx-auto px-4 max-w-3xl">
 
-          {/* Header Section - Styled like the screenshot */}
-          <div className={`mb-8 transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+          {}
+          <div className={`mb-8 transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
 
-            {/* Tabs */}
+            {}
             <div className="flex items-center gap-8 mb-4 px-2 border-b border-white/[0.08]">
               <button
                 onClick={() => setActiveTab('application')}
-                className={`pb-4 text-sm font-bold tracking-wide transition-all relative ${activeTab === 'application' ? 'text-[#ff9f43]' : 'text-white/40 hover:text-white/60'}`}
+                className={`pb-4 text-sm font-bold tracking-wide transition-all relative ${activeTab === 'application' ? 'text-white' : 'text-white/50'}`}
               >
                 Application Form
                 {activeTab === 'application' && <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#ff9f43] shadow-[0_0_10px_#ff9f43]" />}
               </button>
               <button
                 onClick={() => setActiveTab('requirements')}
-                className={`pb-4 text-sm font-bold tracking-wide transition-all relative ${activeTab === 'requirements' ? 'text-[#ff9f43]' : 'text-white/40 hover:text-white/60'}`}
+                className={`pb-4 text-sm font-bold tracking-wide transition-all relative ${activeTab === 'requirements' ? 'text-white' : 'text-white/50'}`}
               >
                 Requirements
                 {activeTab === 'requirements' && <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#ff9f43] shadow-[0_0_10px_#ff9f43]" />}
               </button>
             </div>
 
-            {/* The "Combat Grandmaster" Style Card */}
+            {}
             <div className="relative group">
-              {/* Card Glow Effect on Hover */}
+              {}
               <div className="absolute -inset-0.5 bg-gradient-to-r from-[#ff9f43]/20 to-[#ff8c00]/20 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
 
               <div className="relative bg-[#141414] border border-white/[0.08] rounded-xl p-5 flex flex-col sm:flex-row items-center justify-between shadow-xl overflow-hidden">
 
-                {/* Decorative Shine */}
+                {}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/[0.02] -skew-x-12 translate-x-32 group-hover:translate-x-10 transition-transform duration-700 ease-out pointer-events-none" />
 
                 <div className="flex items-center gap-5 w-full sm:w-auto z-10">
-                  {/* Icon Box */}
+                  {}
                   <div className="relative w-16 h-16 flex-shrink-0">
                     <div className="absolute inset-0 bg-[#ff9f43]/10 rotate-45 rounded-xl border border-[#ff9f43]/20 group-hover:rotate-90 group-hover:scale-110 transition-all duration-500 ease-out"></div>
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -222,7 +215,7 @@ export default function ApplyPage() {
                     </div>
                   </div>
 
-                  {/* Text Content */}
+                  {}
                   <div className="text-center sm:text-left">
                     <h1 className="text-xl sm:text-2xl font-black text-[#ff9f43] tracking-tight group-hover:text-[#ffb773] transition-colors">
                       FastTiers Application
@@ -234,7 +227,7 @@ export default function ApplyPage() {
                   </div>
                 </div>
 
-                {/* Right Side Stats (Mimicking "Min Points") */}
+                {}
                 <div className="mt-4 sm:mt-0 flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto border-t sm:border-t-0 border-white/[0.08] pt-3 sm:pt-0 sm:pl-6">
                   <span className="text-xs text-white/40 font-bold uppercase tracking-wider mb-0 sm:mb-1">
                     Current Status
@@ -251,14 +244,14 @@ export default function ApplyPage() {
             </div>
           </div>
 
-          {/* Form Card */}
-          <div className={`bg-[#141414] border border-white/[0.08] rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden transition-all duration-700 ease-out delay-100 ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-[0.99]'}`}>
+          {}
+          <div className={`bg-[#141414] border border-white/[0.08] rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden transition-all duration-700 ease-out delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
 
             <form onSubmit={handleSubmit} className="relative z-10 space-y-6">
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Minecraft Username */}
-                <div className={`transition-all duration-500 delay-150 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
+                {}
+                <div className={`transition-all duration-500 delay-150 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                   <label className="flex items-center gap-2 text-xs font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">
                     <User size={14} className="text-[#ff9f43]" />
                     Minecraft Username
@@ -275,8 +268,8 @@ export default function ApplyPage() {
                   />
                 </div>
 
-                {/* Discord Username */}
-                <div className={`transition-all duration-500 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}`}>
+                {}
+                <div className={`transition-all duration-500 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                   <label className="flex items-center gap-2 text-xs font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">
                     <User size={14} className="text-[#ff9f43]" />
                     Discord Username
@@ -294,7 +287,7 @@ export default function ApplyPage() {
                 </div>
               </div>
 
-              {/* Discord ID */}
+              {}
               <div className={`transition-all duration-500 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                 <label className="flex items-center gap-2 text-xs font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">
                   <span className="text-[#ff9f43] font-black">#</span>
@@ -321,8 +314,8 @@ export default function ApplyPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Gamemode */}
-                <div className={`transition-all duration-500 delay-400 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
+                {}
+                <div className={`transition-all duration-500 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                   <label className="flex items-center gap-2 text-xs font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">
                     <Gamepad2 size={14} className="text-[#ff9f43]" />
                     Gamemode
@@ -347,8 +340,8 @@ export default function ApplyPage() {
                   </div>
                 </div>
 
-                {/* Region */}
-                <div className={`transition-all duration-500 delay-450 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}`}>
+                {}
+                <div className={`transition-all duration-500 delay-450 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                   <label className="flex items-center gap-2 text-xs font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">
                     <Globe size={14} className="text-[#ff9f43]" />
                     Region
@@ -376,7 +369,7 @@ export default function ApplyPage() {
                 </div>
               </div>
 
-              {/* Email */}
+              {}
               <div className={`transition-all duration-500 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                 <label className="flex items-center gap-2 text-xs font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">
                   <Mail size={14} className="text-[#ff9f43]" />
@@ -394,7 +387,7 @@ export default function ApplyPage() {
                 />
               </div>
 
-              {/* Submit Button */}
+              {}
               <div className={`pt-4 transition-all duration-500 delay-600 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                 <button
                   type="submit"
@@ -417,7 +410,7 @@ export default function ApplyPage() {
             </form>
           </div>
 
-          {/* Footer / Discord Link */}
+          {}
           <div className={`mt-10 text-center transition-all duration-700 ease-out delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             <a
               href="https://discord.gg/FastTiers"
@@ -433,12 +426,12 @@ export default function ApplyPage() {
           </div>
         </div>
 
-        {/* Toast Notification */}
+        {}
         {toast.visible && (
           <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-bounce-in">
             <div className={`flex items-center gap-3 px-5 py-3 rounded-xl shadow-2xl backdrop-blur-md ${toast.type === 'success'
-              ? 'bg-[#10b981]/10 border border-[#10b981]/30 text-[#10b981]'
-              : 'bg-[#ef4444]/10 border border-[#ef4444]/30 text-[#ef4444]'
+              ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-400'
+              : 'bg-red-500/20 border border-red-500/30 text-red-400'
               }`}>
               {toast.type === 'success' ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
               <span className="text-sm font-bold">{toast.message}</span>

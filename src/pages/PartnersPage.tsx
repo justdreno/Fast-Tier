@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, Users, ChevronRight, Server, Signal, Globe, Trophy, Info } from 'lucide-react';
-import { getPartners, type Partner } from '../lib/supabase';
+import { getPartners, type Partner } from '../lib/database';
 
 interface ServerStatus {
   online: boolean;
@@ -24,8 +24,8 @@ export default function PartnersPage() {
       try {
         const data = await getPartners();
         setPartners(data);
-        
-        // Fetch server status for each partner
+
+
         data.forEach(partner => {
           fetchServerStatus(partner.server_ip);
         });
@@ -43,7 +43,7 @@ export default function PartnersPage() {
     try {
       const response = await fetch(`https://api.mcsrvstat.us/2/${serverIp}`);
       const data = await response.json();
-      
+
       setServerStatuses(prev => ({
         ...prev,
         [serverIp]: {
@@ -66,7 +66,7 @@ export default function PartnersPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0a0a0a]">
-        {/* Banner Header */}
+        {}
         <div
           className="hidden sm:block w-full h-64 sm:h-80 bg-cover bg-center bg-no-repeat relative"
           style={{ backgroundImage: 'url(/banner.png)' }}
@@ -86,7 +86,7 @@ export default function PartnersPage() {
             </p>
           </div>
 
-          {/* Loading State */}
+          {}
           <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20">
             <div className="border-b border-white/[0.06] bg-[#141414]/50 px-3 sm:px-4 py-3">
               <div className="flex items-center gap-2.5">
@@ -105,7 +105,7 @@ export default function PartnersPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
-      {/* Banner Header */}
+      {}
       <div
         className="hidden sm:block w-full h-64 sm:h-80 bg-cover bg-center bg-no-repeat relative"
         style={{ backgroundImage: 'url(/banner.png)' }}
@@ -116,7 +116,7 @@ export default function PartnersPage() {
       </div>
 
       <main className="w-[95%] max-w-[1200px] mx-auto mt-12 sm:-mt-28 pb-6 sm:pb-10 relative z-10">
-        {/* Title Section */}
+        {}
         <div className="px-3 sm:px-4 mb-4 sm:mb-5">
           <h1 className="text-2xl sm:text-3xl font-black text-white mb-1 tracking-tight">
             Partners
@@ -126,7 +126,7 @@ export default function PartnersPage() {
           </p>
         </div>
 
-        {/* Partners Grid */}
+        {}
         {partners.length === 0 ? (
           <div className="bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] p-12 text-center">
             <Users size={48} className="mx-auto mb-4 text-white/20" />
@@ -139,7 +139,7 @@ export default function PartnersPage() {
               const isOnline = status?.online;
               const playerCount = status?.players?.online || 0;
               const maxPlayers = status?.players?.max || 0;
-              
+
               const serverIcon = partner.icon_url || status?.icon || null;
               const bannerImage = partner.banner_url || '/banner.png';
 
@@ -151,23 +151,23 @@ export default function PartnersPage() {
                   rel="noopener noreferrer"
                   className="group bg-gradient-to-b from-[#0f0f0f]/80 to-[#0f0f0f]/40 rounded-2xl border border-white/[0.05] overflow-hidden shadow-2xl shadow-black/20 hover:border-[#ff9f43]/30 hover:shadow-[#ff9f43]/10 transition-all duration-300"
                 >
-                  {/* Partner Banner */}
+                  {}
                   <div className="relative h-36 overflow-hidden">
-                    <div 
+                    <div
                       className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                      style={{ 
+                      style={{
                         backgroundImage: `url(${bannerImage})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center'
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f]/50 to-transparent" />
-                    
-                    {/* Server Status Badge */}
+
+                    {}
                     <div className="absolute top-3 right-3">
                       <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${
-                        isOnline 
-                          ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400' 
+                        isOnline
+                          ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
                           : 'bg-red-500/20 border-red-500/30 text-red-400'
                       }`}>
                         <Signal size={10} className={isOnline ? 'animate-pulse' : ''} />
@@ -177,8 +177,8 @@ export default function PartnersPage() {
                       </div>
                     </div>
                   </div>
-                  
-                  {/* Server Icon - Outside banner to prevent cutoff */}
+
+                  {}
                   <div className="relative px-4 -mt-8 mb-2">
                     <div className="w-16 h-16 rounded-xl bg-[#1a1a1a] border-2 border-white/[0.1] overflow-hidden shadow-lg group-hover:border-[#ff9f43]/50 transition-colors duration-300 flex items-center justify-center">
                       {serverIcon ? (
@@ -196,7 +196,7 @@ export default function PartnersPage() {
                     </div>
                   </div>
 
-                  {/* Content */}
+                  {}
                   <div className="pt-4 pb-5 px-4">
                     <div className="flex items-start justify-between mb-2">
                       <div>
@@ -215,11 +215,11 @@ export default function PartnersPage() {
                       {partner.description}
                     </p>
 
-                    {/* Server Stats */}
+                    {}
                     <div className="flex items-center gap-4 mb-3 p-2.5 bg-white/[0.03] rounded-lg border border-white/[0.05]">
                       <div className="flex items-center gap-1.5">
                         <Users size={14} className={isOnline ? 'text-[#ff9f43]' : 'text-white/30'} />
-                        <span className={`text-sm font-bold ${isOnline ? 'text-white' : 'text-white/40'}`}>
+                        <span className={`text-sm font-bold ${isOnline ? 'text-[#ff9f43]' : 'text-white/30'}`}>
                           {isOnline ? `${playerCount.toLocaleString()}/${maxPlayers.toLocaleString()}` : 'N/A'}
                         </span>
                       </div>
@@ -234,7 +234,7 @@ export default function PartnersPage() {
                       )}
                     </div>
 
-                    {/* Tags */}
+                    {}
                     {partner.tags && partner.tags.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {partner.tags.slice(0, 3).map((tag, index) => (

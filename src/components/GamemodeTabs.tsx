@@ -1,6 +1,6 @@
 import { Trophy, Loader2 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import { getGamemodes, type Gamemode } from '../lib/supabase';
+import { getGamemodes, type Gamemode } from '../lib/database';
 
 interface GamemodeTabsProps {
   selectedGamemode: string;
@@ -27,10 +27,10 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
   const [gamemodes, setGamemodes] = useState<Gamemode[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Stores the styling for the sliding active bar
+
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
 
-  // References to the DOM elements
+
   const tabsRef = useRef<{ [key: string]: HTMLButtonElement | null }>({});
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -48,7 +48,7 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
     fetchGamemodes();
   }, []);
 
-  // Update position of the sliding bar
+
   useEffect(() => {
     const updateIndicator = () => {
       const activeTab = tabsRef.current[selectedGamemode];
@@ -60,12 +60,12 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
         });
       }
     };
-    
-    // Use rAF to measure after layout
+
+
     requestAnimationFrame(updateIndicator);
   }, [selectedGamemode, gamemodes, loading]);
 
-  // Handle resize to keep bar aligned
+
   useEffect(() => {
     const handleResize = () => {
       const activeTab = tabsRef.current[selectedGamemode];
@@ -96,20 +96,13 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
 
   return (
     <div className="w-full">
-      {/* 
-        Container 
-        - border-b: Creates the thin grey line across the whole width
-      */}
+      {}
       <div
         ref={containerRef}
         className="relative flex items-center border-b border-white/[0.08] overflow-x-auto scrollbar-hide"
       >
 
-        {/* 
-          THE SLIDING BAR 
-          - absolute bottom-0: sits right on top of the grey border
-          - h-[3px]: creates the underline thickness
-        */}
+        {}
         <div
           className="absolute bottom-0 h-[3px] bg-gradient-to-r from-[#ff9f43] to-[#ffb060] shadow-[0_-2px_12px_rgba(255,159,67,0.6)] z-10 transition-all duration-300 ease-out rounded-t-full"
           style={{
@@ -119,7 +112,7 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
           }}
         />
 
-        {/* Tab Buttons */}
+        {}
         {allTabs.map((tab) => {
           const isSelected = selectedGamemode === tab.code;
           const isOverall = tab.code === 'overall';
@@ -134,30 +127,30 @@ export default function GamemodeTabs({ selectedGamemode, setSelectedGamemode }: 
                 relative z-0 flex items-center justify-center gap-2.5 px-6 py-4 font-bold text-sm
                 transition-all duration-300 whitespace-nowrap flex-shrink-0 select-none
                 hover:bg-white/[0.02]
-                ${isSelected ? 'text-white' : 'text-white/40 hover:text-white/70'}
+                ${isSelected ? 'text-white' : 'text-white/50'}
               `}
             >
-              {/* Icon Container */}
-              <div className={`transition-transform duration-300 ${isSelected ? 'scale-110 -translate-y-0.5' : 'scale-100'}`}>
+              {}
+              <div className={`transition-transform duration-300 ${isSelected ? 'scale-110' : 'scale-100'}`}>
                 {isOverall ? (
                   <Trophy
                     size={18}
                     strokeWidth={isSelected ? 2.5 : 2}
-                    className={`transition-colors duration-300 ${isSelected ? 'text-[#ff9f43]' : 'text-current'}`}
+                    className={`transition-colors duration-300 ${isSelected ? 'text-[#ff9f43]' : 'text-white/50'}`}
                   />
                 ) : (
                   <img
                     src={iconPath}
                     alt={tab.code}
                     className={`w-5 h-5 object-contain transition-all duration-300 ${isSelected
-                        ? 'brightness-100 contrast-100 drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]'
-                        : 'opacity-40 grayscale'
+                        ? 'scale-110'
+                        : 'scale-100'
                       }`}
                   />
                 )}
               </div>
 
-              <span className={`transition-colors duration-300 ${isSelected ? 'text-white drop-shadow-md' : ''}`}>
+              <span className={`transition-colors duration-300 ${isSelected ? 'text-[#ff9f43]' : 'text-white/50'}`}>
                 {tab.display_name}
               </span>
             </button>

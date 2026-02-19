@@ -5,11 +5,11 @@ interface RankedListingProps {
   className?: string;
 }
 
-export default function RankedListing({ 
-  rank, 
-  username, 
+export default function RankedListing({
+  rank,
+  username,
   avatarUrl,
-  className = '' 
+  className = ''
 }: RankedListingProps) {
   const getRankStyle = (rank: number) => {
     switch (rank) {
@@ -26,23 +26,23 @@ export default function RankedListing({
 
   return (
     <div className={`relative flex items-center overflow-hidden ${className}`}>
-      {/* Slanted background */}
-      <div 
+      {}
+      <div
         className={`absolute inset-y-0 left-0 bg-gradient-to-r ${getRankStyle(rank)}`}
         style={{
           clipPath: 'polygon(0 0, 85% 0, 100% 100%, 0 100%)',
           width: '120px'
         }}
       />
-      
-      {/* Number */}
+
+      {}
       <div className="relative z-10 flex items-center justify-center w-16 h-14">
         <span className="text-2xl font-bold text-white drop-shadow-md">
           {rank}.
         </span>
       </div>
-      
-      {/* Avatar */}
+
+      {}
       <div className="relative z-10 ml-auto mr-4">
         <img
           src={avatarUrl || `https://render.crafty.gg/3d/bust/${username}`}

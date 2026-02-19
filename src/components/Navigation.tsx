@@ -16,18 +16,18 @@ export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showDiscordModal, setShowDiscordModal] = useState(false);
-  
-  // Navigation Animation State
+
+
   const location = useLocation();
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
-  const [isReady, setIsReady] = useState(false); // Controls when the sliding animation is active
-  
+  const [isReady, setIsReady] = useState(false);
+
   const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
-  // Function to calculate exact position
+
   const updatePosition = () => {
     const activeIndex = navItems.findIndex(item => item.path === location.pathname);
-    
+
     if (activeIndex !== -1 && itemRefs.current[activeIndex]) {
       const activeItem = itemRefs.current[activeIndex];
       if (activeItem) {
@@ -42,19 +42,19 @@ export default function Navigation() {
     }
   };
 
-  // useLayoutEffect runs BEFORE the browser paints. 
-  // This ensures the line is in the correct starting position before we turn on animations.
+
+
   useLayoutEffect(() => {
     updatePosition();
   }, [location.pathname]);
 
-  // Enable the "sliding" animation shortly after the component mounts
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsReady(true);
     }, 100);
 
-    // Disable animation during window resize to prevent laggy movement
+
     const handleResize = () => {
       setIsReady(false);
       updatePosition();
@@ -73,15 +73,15 @@ export default function Navigation() {
     <>
       <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-[1200px]" style={{ transform: 'translateX(-50%)' }}>
         <nav className="bg-gradient-to-r from-[#09090d] to-[#0f0509] border border-white/[0.08] rounded-2xl shadow-2xl shadow-black/50 relative overflow-visible backdrop-blur-md" style={{ willChange: 'transform' }}>
-          
-          {/* Background Effects */}
+
+          {}
           <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff9f43]/20 blur-3xl rounded-full pointer-events-none animate-pulse-slow" />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent animate-shimmer pointer-events-none" />
 
-          {/* Main Navbar Content */}
+          {}
           <div className="relative flex items-center justify-between h-14 px-3 sm:px-4">
-            
-            {/* LEFT: Logo */}
+
+            {}
             <div className="flex-1 flex items-center justify-start">
               <Link to="/" className="flex items-center group">
                 <img
@@ -92,7 +92,7 @@ export default function Navigation() {
               </Link>
             </div>
 
-            {/* CENTER: Navigation Links */}
+            {}
             <div className="hidden md:flex absolute left-1/2 top-0 bottom-0 -translate-x-1/2 items-center">
               <div className="relative flex items-center h-full">
                 {navItems.map((item, index) => {
@@ -113,8 +113,8 @@ export default function Navigation() {
                     </Link>
                   );
                 })}
-                
-                {/* Sliding Underline */}
+
+                {}
                 <div
                   className={`
                     absolute bottom-0 h-[2px] bg-[#ff9f43] rounded-full shadow-[0_0_8px_rgba(255,159,67,0.8)]
@@ -129,12 +129,12 @@ export default function Navigation() {
               </div>
             </div>
 
-            {/* RIGHT: Actions */}
+            {}
             <div className="flex-1 flex items-center justify-end gap-2 sm:gap-3">
-              {/* Glow effect */}
+              {}
               <div className="pointer-events-none absolute -right-6 top-1/2 -translate-y-1/2 w-28 h-16 rounded-full bg-[#ff9f43]/25 blur-2xl -z-10 animate-glow-pulse" />
 
-              {/* Search Bar */}
+              {}
               <div className="relative w-40 sm:w-48">
                 <Search className={`absolute left-2.5 top-1/2 -translate-y-1/2 transition-colors duration-300 ${isSearchFocused ? 'text-[#ff9f43]' : 'text-white/30'}`} size={14} />
                 <input
@@ -148,7 +148,7 @@ export default function Navigation() {
                 />
               </div>
 
-              {/* Get Tested Button (Desktop) */}
+              {}
               <button
                 onClick={() => setShowDiscordModal(true)}
                 className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#ff9f43] hover:bg-[#ff9f43]/90 text-white font-semibold text-sm rounded-lg transition-all duration-300 ease-bounce hover:scale-105 hover:shadow-[0_0_20px_rgba(255,159,67,0.5)] hover:-translate-y-0.5 active:scale-95 whitespace-nowrap"
@@ -156,7 +156,7 @@ export default function Navigation() {
                 Get Tested
               </button>
 
-              {/* Mobile Menu Button */}
+              {}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg bg-white/[0.04] text-white/60 hover:text-white hover:bg-white/[0.12] transition-all duration-300 ease-bounce hover:scale-110 active:scale-95"
@@ -168,7 +168,7 @@ export default function Navigation() {
             </div>
           </div>
 
-          {/* Mobile Menu Content */}
+          {}
           <div
             className={`md:hidden border-t border-white/[0.06] overflow-hidden transition-all duration-400 ease-smooth ${isMobileMenuOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}
           >
@@ -204,18 +204,18 @@ export default function Navigation() {
         </nav>
       </div>
 
-      {/* Discord Modal Overlay */}
+      {}
       {showDiscordModal && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
           style={{ zIndex: 99999 }}
           onClick={() => setShowDiscordModal(false)}
         >
-          <div 
+          <div
             className="bg-gradient-to-b from-[#141414] to-[#0f0f0f] border border-white/[0.08] rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl shadow-black/60 relative"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
+            {}
             <button
               onClick={() => setShowDiscordModal(false)}
               className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors"
@@ -223,7 +223,7 @@ export default function Navigation() {
               <XCircle size={24} />
             </button>
 
-            {/* Discord Icon */}
+            {}
             <div className="flex justify-center mb-6">
               <div className="w-16 h-16 bg-[#5865F2]/20 rounded-2xl flex items-center justify-center">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="#5865F2">
@@ -239,7 +239,7 @@ export default function Navigation() {
               To get tested and receive your tier ranking, please join our Discord server. Our testers will help you get started!
             </p>
 
-            {/* Link that uses discordLink */}
+            {}
             <a
               href={discordLink}
               target="_blank"
@@ -253,7 +253,7 @@ export default function Navigation() {
               Join Discord Server
             </a>
 
-            {/* Cancel Button */}
+            {}
             <button
               onClick={() => setShowDiscordModal(false)}
               className="w-full mt-3 px-6 py-3 bg-white/[0.05] hover:bg-white/[0.1] text-white/60 hover:text-white font-semibold rounded-xl transition-all duration-300"

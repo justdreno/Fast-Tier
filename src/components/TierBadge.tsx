@@ -29,10 +29,10 @@ const gamemodeColors: Record<string, { bg: string; border: string }> = {
 
 export default function TierBadge({ gamemode, tier }: TierBadgeProps) {
   const colors = gamemodeColors[gamemode] || { bg: 'bg-[#6b7280]', border: 'border-[#6b7280]' };
-  
+
   const getTierBadgeStyle = () => {
     if (tier.startsWith('HT')) {
-      // High tier - vibrant colors
+
       return {
         iconBg: colors.bg,
         labelBg: 'bg-[#3d3d1f]',
@@ -40,7 +40,7 @@ export default function TierBadge({ gamemode, tier }: TierBadgeProps) {
         border: colors.border,
       };
     } else if (tier.startsWith('LT')) {
-      // Low tier - muted colors
+
       return {
         iconBg: colors.bg,
         labelBg: 'bg-[#2a2a2a]',
@@ -60,7 +60,7 @@ export default function TierBadge({ gamemode, tier }: TierBadgeProps) {
 
   return (
     <div className="flex items-center">
-      {/* Icon circle */}
+      {}
       <div className={`
         w-9 h-9 rounded-full flex items-center justify-center
         ${style.iconBg} bg-opacity-80
@@ -69,14 +69,14 @@ export default function TierBadge({ gamemode, tier }: TierBadgeProps) {
         relative z-10
         p-1.5
       `}>
-        <img 
-          src={gamemodeIcons[gamemode] || '/kits/global.svg'} 
+        <img
+          src={gamemodeIcons[gamemode] || '/kits/global.svg'}
           alt={gamemode}
           className="w-full h-full object-contain"
         />
       </div>
-      
-      {/* Tier label pill */}
+
+      {}
       <div className={`
         -ml-1 px-3 py-1 rounded-r-lg rounded-l-none
         ${style.labelBg}
